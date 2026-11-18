@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Three browser experiments on sensitivity analysis and feature attribution, using one data pipeline.">
+  <meta name="theme-color" content="#101e2f">
+  <title>Sensitivity Analysis Lab · Cutting Through the Noise</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="assets/lab.css">
+  <script type="module" src="assets/lab.mjs"></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="shell header-row">
+      <a class="brand" href="#"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>Sensitivity Analysis Lab</a>
+      <nav aria-label="Site">
+        <a href="https://snowch.github.io/labs/">All labs</a>
+        <a href="https://github.com/snowch/sensitivity-analysis-lab">Source</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero" aria-labelledby="title">
+      <div class="shell hero-grid">
+        <div>
+          <p class="kicker"><span></span> Sensitivity analysis &amp; attribution</p>
+          <h1 id="title">Cutting Through<br>the <em>Noise.</em></h1>
+          <p class="lede">A data pipeline is running slowly. You have time to investigate two inputs. Which two would you pick, and what evidence would change your mind?</p>
+          <div class="hero-actions"><a class="button primary" href="#rank">Start the lab <span aria-hidden="true">↓</span></a><span>3 investigations · ~12 min · runs in your browser</span></div>
+        </div>
+        <figure class="pipeline">
+          <figcaption><span class="kicker">The system under test</span><strong>Event processing pipeline</strong></figcaption>
+          <ol aria-label="Pipeline stages">
+            <li><span>01</span><strong>Fetch</strong><small>Cache · network</small></li>
+            <li><span>02</span><strong>Process</strong><small>Payload · decode</small></li>
+            <li><span>03</span><strong>Queue</strong><small>Load · capacity</small></li>
+            <li><span>04</span><strong>Write</strong><small>Sink · flush</small></li>
+          </ol>
+          <div class="pipeline-caption"><span>13 simulator inputs</span><span>End-to-end latency <strong>ms</strong></span></div>
+        </figure>
+      </div>
+    </section>
+
+    <nav class="outline shell" aria-label="Investigations">
+      <a href="#rank"><span>01</span><div><strong>Rank the knobs</strong><small>Monte Carlo · 3 min</small></div><b aria-hidden="true">↓</b></a>
+      <a href="#assumptions"><span>02</span><div><strong>Break the ranking</strong><small>Sobol indices · 4 min</small></div><b aria-hidden="true">↓</b></a>
+      <a href="#logs"><span>03</span><div><strong>Work from logs</strong><small>Permutation importance · 5 min</small></div><b aria-hidden="true">↓</b></a>
+    </nav>
+
+    <noscript><p class="shell notice">Enable JavaScript to run the experiments. You can still read the lessons and worked explanations.</p></noscript>
+
+    <section id="rank" class="lesson shell" aria-labelledby="rank-title">
+      <header class="lesson-header">
+        <p class="kicker"><span></span> 01 / Monte Carlo screening</p>
+        <h2 id="rank-title">Rank the knobs</h2>
+        <p>Run the simulation. Pick two inputs to investigate and use the sign of each bar to say which way latency moves.</p>
+      </header>
+      <div class="experiment">
+        <form id="screen-form" class="controls">
+          <h3>Configure the simulation</h3>
+          <p>Each run draws 13 independent inputs from the assumed ranges.</p>
+          <label for="screen-count">Simulated runs</label>
+          <select id="screen-count" name="count"><option>2048</option><option selected>8192</option><option>32768</option></select>
+          <label for="screen-seed">Random seed</label>
+          <input id="screen-seed" name="seed" type="number" min="0" max="4294967295" step="1" value="42" required>
+          <button class="button dark">Run simulation</button>
+          <p class="status" role="status"></p>
+          <p class="tip">Try another seed to see whether the top two hold up across draws.</p>
+        </form>
+        <div class="results" id="screen-results">
+          <h3>What tracks latency?</h3>
+          <p>Spearman rank correlation, sorted by absolute magnitude. The sign shows direction.</p>
+          <div class="output"></div>
+        </div>
+      </div>
+      <div class="lesson-notes">
+        <details>
+          <summary>Inspect the model and input ranges</summary>
+          <p>The baseline adds a 12 ms fixed cost to the fetch, process, wait and write stages. Read the <a href="assets/model.mjs">simulation source</a> and <a href="assets/sensitivity.mjs">rank and Sobol calculations</a>.</p>
+          <div id="input-table"></div>
+        </details>
+        <details>
+          <summary>Check your shortlist</summary>
+          <p>With the supplied ranges, cache hit rate and payload size dominate. Higher hit rates reduce time spent on cache misses, while bigger payloads cost more to process. Spearman’s ρ describes monotonic association. Adding the scores cannot tell you how much variance the two inputs explain.</p>
+          <p>Put the smaller drivers aside for this baseline investigation. Keep the assumptions with your shortlist so you can revisit it when conditions change.</p>
+        </details>
+      </div>
+    </section>
+
+    <section id="assumptions" class="lesson shell" aria-labelledby="assumptions-title">
+      <header class="lesson-header">
+        <p class="kicker"><span></span> 02 / Assumptions &amp; interactions</p>
+        <h2 id="assumptions-title">Break the ranking</h2>
+        <p>Can your shortlist survive a wider network range or a queue that saturates? Run each scenario and compare who comes first.</p>
+      </header>
+      <div class="experiment">
+        <form id="assumptions-form" class="controls">
+          <h3>Choose a scenario</h3>
+          <fieldset>
+            <legend>Pipeline conditions</legend>
+            <label class="choice"><input type="radio" name="scenario" value="baseline" checked><span><strong>Baseline</strong><small>Network 8–12 ms · queue penalty off</small></span></label>
+            <label class="choice"><input type="radio" name="scenario" value="network"><span><strong>Wide network</strong><small>Network 2–65 ms · queue penalty off</small></span></label>
+            <label class="choice"><input type="radio" name="scenario" value="queue"><span><strong>Queue saturation</strong><small>Network 8–12 ms · queue penalty on</small></span></label>
+          </fieldset>
+          <label for="sobol-count">Sample pairs</label>
+          <select id="sobol-count" name="count"><option>2048</option><option selected>8192</option><option>32768</option></select>
+          <button class="button dark">Run sensitivity analysis</button>
+          <p class="status" role="status"></p>
+          <p class="tip">Try all three using the same sample size. A fixed seed reuses the same random draws across scenarios.</p>
+        </form>
+        <div class="results" id="assumptions-results">
+          <h3>Who drives the variance?</h3>
+          <p>Compare the rank screen with first-order and total-order Sobol estimates for the same scenario.</p>
+          <div class="output"><p class="empty">Run a scenario to compare the rankings.</p></div>
+        </div>
+      </div>
+      <div class="lesson-notes">
+        <details>
+          <summary>Understand the queue rule and Sobol estimates</summary>
+          <p>The queue adds 155 ms when arrival rate reaches 750 jobs/s and worker capacity is at most 800 jobs/s. Each condition covers one quarter of its input range. With independent inputs, the two hold together in about one run in sixteen. The abrupt penalty is an illustrative stand-in for a saturation regime.</p>
+          <p>First-order sensitivity estimates the variance explained by an input on its own. Total-order sensitivity also includes every interaction involving that input. Two inputs can share an interaction, so total-order estimates can sum to more than one. The estimates use independent uniform inputs and two sample matrices that exchange one column at a time. Small negative first-order values can occur from sampling noise.</p>
+        </details>
+        <details>
+          <summary>Check what changed</summary>
+          <p>Widening network RTT increases its contribution while its coefficient in the latency formula stays at 1. Measure the actual RTT range before investing in network work.</p>
+          <p>Under saturation, arrival rate and capacity dominate the Sobol total-order chart, even with modest rank correlations. Their first-order estimates are much smaller because the large delay depends on both. Cache hit rate still matters for typical runs. Investigate the queue when the latency tail is the problem.</p>
+        </details>
+      </div>
+    </section>
+
+    <section id="logs" class="lesson shell" aria-labelledby="logs-title">
+      <header class="lesson-header">
+        <p class="kicker"><span></span> 03 / Predictive attribution</p>
+        <h2 id="logs-title">Work from logs</h2>
+        <p>Shuffle each feature on its own, then shuffle the two cache counters together. How much predictive power does the model lose?</p>
+      </header>
+      <div class="experiment">
+        <form id="logs-form" class="controls">
+          <h3>Run a held-out test</h3>
+          <p>Use a small random forest to predict latency from 15 features in the synthetic logs.</p>
+          <fieldset>
+            <legend>What to shuffle</legend>
+            <label class="choice"><input type="radio" name="grouping" value="individual" checked><span><strong>Individual features</strong><small>Shuffle one column at a time</small></span></label>
+            <label class="choice"><input type="radio" name="grouping" value="grouped"><span><strong>Group the cache counters</strong><small>Shuffle both using the same row order</small></span></label>
+          </fieldset>
+          <label for="shuffle-count">Shuffles per feature or group</label>
+          <select id="shuffle-count" name="count"><option>3</option><option selected>5</option><option>10</option></select>
+          <button class="button dark">Run permutation importance</button>
+          <button type="button" class="button outline-button" id="csv">Download 10,000 runs (.csv)</button>
+          <p class="status" role="status"></p>
+          <p class="status csv-status" role="status"></p>
+        </form>
+        <div class="results" id="logs-results">
+          <h3>What does the predictor rely on?</h3>
+          <p>Measure how much held-out mean absolute error (MAE) rises after shuffling each feature or group.</p>
+          <div class="output"><p class="empty">Fit the model and shuffle features to see the change in error.</p></div>
+        </div>
+      </div>
+      <div class="lesson-notes">
+        <details>
+          <summary>Inspect the dataset and evaluation</summary>
+          <p>These synthetic logs include measurement noise, blanks in two columns and an irrelevant deploy-age column. Edge miss rate and origin fetch rate are noisy proxies for the same unlogged cache behaviour. Twelve other columns describe pipeline settings or operating conditions.</p>
+          <p>The browser shuffles rows once for a fixed 8,000/2,000 train/test split. It imputes missing entries with training medians, fits 24 bootstrap regression trees on the training rows, then measures error on the same held-out rows before and after each shuffle. The shuffle standard deviation quantifies variation across shuffle draws on this split. See the <a href="assets/logs.mjs">data generator, forest and permutation code</a>.</p>
+        </details>
+        <details>
+          <summary>Check the inference you can make</summary>
+          <p>Compare both shuffle modes. When you shuffle just one cache counter, its partner can still carry similar information. Shuffling them together preserves their relationship with each other and disrupts their joint relationship with latency.</p>
+          <p>Importance describes the model’s reliance on its inputs. To test an intervention, replay the same burst workload and compare current worker capacity with increased capacity. Randomise the order across repeated runs, hold payload and cache policy steady, and compare p95 latency alongside resource cost.</p>
+        </details>
+      </div>
+    </section>
+
+    <section class="field-note shell" aria-labelledby="brief-title">
+      <div>
+        <p class="kicker"><span></span> Your decision</p>
+        <h2 id="brief-title">What would you test first?</h2>
+        <p>Name a change, the evidence behind it, and what would make you reconsider. Include the workload you would hold fixed and the latency metric you would compare.</p>
+      </div>
+      <div>
+        <label for="brief">Investigation note</label>
+        <textarea id="brief" rows="5" placeholder="I would test… because…"></textarea>
+        <div class="note-actions"><small id="note-status">Saved on this browser when storage is available.</small><button id="download-note" type="button" class="button outline-button">Download note</button></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="shell">
+    <div><strong>Sensitivity Analysis Lab</strong><p>The pipeline and log data are synthetic.</p></div>
+    <nav aria-label="Related labs">
+      <a href="https://snowch.github.io/monte-carlo-lab/">Monte Carlo Lab</a>
+      <a href="https://snowch.github.io/scientific-method-lab/">Scientific Method Lab</a>
+      <a href="https://snowch.github.io/sizing/">Sizing &amp; TCO Lab</a>
+      <a href="https://snowch.github.io/benchmarking-lab/">Benchmarking Lab</a>
+    </nav>
+  </footer>
+</body>
+</html>
