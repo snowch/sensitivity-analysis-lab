@@ -40,7 +40,7 @@ function stats(items) {
 function bars(rows, series, { min, max, ticks }) {
   const position = value => (value - min) / (max - min) * 100;
   const zero = position(0);
-  const row = item => `<li class="bar-row" style="--zero:${zero}%">
+  const row = item => `<li class="bar-row" style="--zero-at:${zero}%">
     <strong>${item.label}</strong>
     ${series.map(({ key, label, show, color }) => {
       const value = item[key];
@@ -72,49 +72,51 @@ function sobolChart(indices) {
 }
 
 function renderRanges({ baseline, wide }) {
-  const find = scores => {
-    const index = scores.findIndex(row => row.id === "network");
-    return `#${index + 1} (ρ ${signed(scores[index].rho)})`;
-  };
+  const byId = scores => new Map(scores.map((row, index) => [row.id, { ...row, place: index + 1 }]));
+  const narrowRanks = byId(baseline.scores);
+  const wideRanks = byId(wide.scores);
+  const networkRow = (label, { place, rho }) =>
+    `<tr><th scope="row">${label}</th><td>${place}</td><td>${signed(rho)}</td></tr>`;
   return `
-    ${stats([["Network rank · 8–12 ms", find(baseline.scores)], ["Network rank · 2–65 ms", find(wide.scores)]])}
-    <details class="more"><summary>Show 8–12 ms ranking</summary>${rankChart(baseline.scores)}</details>
-    <details class="more" open><summary>Show 2–65 ms ranking</summary>${rankChart(wide.scores)}</details>`;
+    <div class="table-wrap"><table>
+      <thead><tr><th scope="col">RTT range</th><th scope="col">Rank</th><th scope="col">Spearman score</th></tr></thead>
+      <tbody>${networkRow("8–12 ms", narrowRanks.get("network"))}${networkRow("2–65 ms", wideRanks.get("network"))}</tbody>
+    </table></div>
+    <details class="more"><summary>See all 13 inputs in both scenarios</summary>
+      <div class="table-wrap"><table>
+        <thead><tr><th scope="col">Input</th><th scope="col">8–12 ms score (rank)</th><th scope="col">2–65 ms score (rank)</th></tr></thead>
+        <tbody>${baseline.scores.map(({ id, label, rho }, index) => {
+          const wide = wideRanks.get(id);
+          return `<tr><th scope="row">${label}</th><td>${signed(rho)} (${index + 1})</td><td>${signed(wide.rho)} (${wide.place})</td></tr>`;
+        }).join("")}</tbody>
+      </table></div>
+    </details>`;
 }
 
 function renderScreen(result, { seed, count }) {
   return `
-    ${stats([["Median latency", `${format(result.median, 1)} ms`], ["95th percentile", `${format(result.p95, 1)} ms`]])}
-    <p class="run-label">${formatCount(count)} simulated runs · seed ${seed}</p>
-    ${rankChart(result.scores)}
-    <p class="chart-note">Bars left of zero track lower latency. Bars right of zero track higher latency.</p>`;
+    <p class="run-label">${formatCount(count)} simulated jobs · seed ${seed}</p>
+    ${rankChart(result.scores)}`;
 }
 
-const scenarios = {
-  baseline: "Baseline",
-  queue: "Queue saturation",
-};
+const scenarios = { baseline: "Baseline", queue: "Queue saturation" };
 const scenarioRuns = new Map();
 function renderAssumptions({ rank, indices }, { scenario, count }) {
-  scenarioRuns.set(scenario, { screen: rank.scores[0].label, total: indices[0].label, count });
-  const screenLead = rank.scores[0];
-  const totalLead = indices[0];
-  const ranked = new Map(rank.scores.map((input, i) => [input.id, { ...input, place: i + 1 }]));
+  const p95 = `${format(rank.p95, 1)} ms`;
+  const queue = `${format(rank.queueRate * 100, 1)}%`;
+  scenarioRuns.set(scenario, { p95, queue, count });
+  const rankOf = id => rank.scores.findIndex(input => input.id === id) + 1;
   return `
     <p class="run-label">${scenarios[scenario]} · ${formatCount(count)} sample pairs · seed 42</p>
-    ${stats([["Top Spearman driver", screenLead.label], ["Top total-order driver", totalLead.label]])}
-    ${scenario === "queue" ? `<p class="chart-note">Queue penalty in ${format(rank.queueRate * 100, 1)}% of simulated runs · p95 latency ${format(rank.p95, 1)} ms.</p>` : ""}
+    ${stats([["p95 latency", p95], ["Jobs with the extra queue delay", queue]])}
     ${sobolChart(indices)}
-    <p class="chart-note">${totalLead.label} ranks ${ranked.get(totalLead.id).place} of 13 by |ρ| (ρ = ${signed(ranked.get(totalLead.id).rho)}).</p>
-    <details class="more"><summary>Compare the full Spearman ranking</summary>
-      ${rankChart(rank.scores)}
-    </details>
-    ${scenarioRuns.size > 1 ? `<details class="more" open><summary>Compare scenario leaders</summary>
-      <div class="table-wrap"><table><thead><tr><th scope="col">Scenario</th><th scope="col">Pairs</th><th scope="col">Spearman</th><th scope="col">Total-order</th></tr></thead>
-      <tbody>${Object.keys(scenarios).filter(id => scenarioRuns.has(id)).map(id => {
+    <p class="chart-note"><strong>Spearman rank.</strong> Arrival rate ${rankOf("arrival")} of 13. Worker capacity ${rankOf("capacity")} of 13.</p>
+    ${scenarioRuns.size > 1 ? `<div class="result-table"><h3>Latency across scenarios</h3>
+      <div class="table-wrap"><table><thead><tr><th scope="col">Scenario</th><th scope="col">Sample pairs</th><th scope="col">p95 latency</th><th scope="col">Queue delay</th></tr></thead>
+      <tbody>${Object.keys(scenarios).map(id => {
         const entry = scenarioRuns.get(id);
-        return `<tr><th scope="row">${scenarios[id]}</th><td>${formatCount(entry.count)}</td><td>${entry.screen}</td><td>${entry.total}</td></tr>`;
-      }).join("")}</tbody></table></div></details>` : ""}`;
+        return `<tr><th scope="row">${scenarios[id]}</th><td>${formatCount(entry.count)}</td><td>${entry.p95}</td><td>${entry.queue}</td></tr>`;
+      }).join("")}</tbody></table></div></div>` : ""}`;
 }
 
 const logRuns = new Map();
@@ -126,16 +128,16 @@ function renderLogs(result, { grouped, count }) {
   return `
     <p class="run-label">${grouped ? "Cache counters grouped" : "Individual features"} · ${count} shuffles · ${formatCount(test)} test rows</p>
     ${stats([["Forest test MAE", `${format(baseline)} ms`], ["Median-only test MAE", `${format(naive)} ms`]])}
-    ${bars(scores, [{ key: "delta", label: "Mean Δ MAE ± shuffle SD (ms)", show: (value, item) => `${signed(value)} ± ${format(item.sd)}`, color: "teal" }], { min, max })}
-    ${logRuns.size === 2 ? `<details class="more" open><summary>Compare the cache shuffles</summary><div class="table-wrap"><table>
-      <thead><tr><th scope="col">Shuffled columns</th><th scope="col">Shuffles</th><th scope="col">Δ MAE (ms)</th></tr></thead>
+    ${bars(scores, [{ key: "delta", label: "Increase in MAE ± shuffle spread (ms)", show: (value, item) => `${signed(value)} ± ${format(item.sd)}`, color: "teal" }], { min, max })}
+    ${logRuns.size === 2 ? `<div class="result-table"><h3>Cache counter comparison</h3><div class="table-wrap"><table>
+      <thead><tr><th scope="col">Shuffled columns</th><th scope="col">Shuffles</th><th scope="col">Increase in MAE (ms)</th></tr></thead>
       <tbody>${[[false, "edge_miss_pct"], [false, "origin_fetch_pct"], [true, "cache_proxies"]].map(([mode, id]) => {
         const run = logRuns.get(mode);
         const row = run.scores.find(item => item.id === id);
         return `<tr><th scope="row">${row.label}</th><td>${run.count}</td><td>${signed(row.delta)} ± ${format(row.sd)}</td></tr>`;
       }).join("")}</tbody>
-    </table></div></details>` : ""}
-    <p class="chart-note">A large positive change means that the model loses predictive accuracy. Small or negative changes can occur from weak signals or shuffle variation.</p>`;
+    </table></div></div>` : ""}
+    <p class="chart-note">Positive values show how much prediction error rose. The number after ± shows how much the change varied across shuffles.</p>`;
 }
 
 function connect(formId, resultId, task, getOptions, render) {
@@ -145,19 +147,24 @@ function connect(formId, resultId, task, getOptions, render) {
   const status = form.querySelector(".status");
   const controls = Array.from(form.elements).filter(control => control.type !== "button");
   const submit = form.querySelector("button:not([type])");
-  form.addEventListener("change", () => {
-    status.textContent = "Run again to apply your changes.";
+  let hasResult = false;
+  form.addEventListener("input", () => {
+    delete status.dataset.state;
+    status.textContent = hasResult ? "Previous result shown. Run again with these settings." : "";
   });
   form.addEventListener("submit", async event => {
     event.preventDefault();
     const options = getOptions(new FormData(form));
     for (const control of controls) control.disabled = true;
     output.setAttribute("aria-busy", "true");
-    status.textContent = task === "logs" ? "Evaluating the forest on held-out rows…" : "Running the experiment…";
+    delete status.dataset.state;
+    status.textContent = task === "logs" ? "Evaluating predictions on the test rows…" : "Running…";
     try {
       output.innerHTML = render(await run(task, options), options);
-      status.textContent = "Results updated.";
+      hasResult = true;
+      status.textContent = "Results ready.";
     } catch (error) {
+      status.dataset.state = "error";
       status.textContent = error.message;
     } finally {
       for (const control of controls) control.disabled = false;
@@ -198,11 +205,13 @@ function connectCsv(id, status, task, filename) {
   button.addEventListener("click", async () => {
     const message = document.querySelector(status);
     button.disabled = true;
+    delete message.dataset.state;
     message.textContent = "Preparing the CSV…";
     try {
       download(filename, await run(task), "text/csv");
       message.textContent = "CSV ready.";
     } catch (error) {
+      message.dataset.state = "error";
       message.textContent = error.message;
     } finally {
       button.disabled = false;
@@ -252,7 +261,7 @@ function renderPractice(result, { method, colder, grouped }) {
     case "logs": {
       const min = Math.min(0, ...result.scores.map(score => score.delta));
       const max = Math.max(0.01, ...result.scores.map(score => score.delta));
-      const series = [{ key: "delta", label: "Mean Δ MAE ($)", show: signed, color: "teal" }];
+      const series = [{ key: "delta", label: "Average increase in test MAE ($)", show: signed, color: "teal" }];
       return `<p class="run-label">Recorded runs · ${grouped ? "weather signals grouped" : "individual features"} · ${result.test} test rows · 5 shuffles</p>
         ${stats([["Forest test MAE", money(result.baseline)], ["Median-only test MAE", money(result.naive)]])}
         ${bars(result.scores, series, { min, max })}`;

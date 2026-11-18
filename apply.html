@@ -4,10 +4,11 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Learn sensitivity analysis and predictive attribution through worked examples and hands-on practice.">
-  <meta name="theme-color" content="#101e2f">
+  <meta name="theme-color" content="#fdfdff">
   <title>Field guide · Sensitivity Analysis Lab</title>
   <link rel="icon" href="data:,">
-  <link rel="stylesheet" href="assets/lab.css">
+  <link rel="stylesheet" href="assets/lab.css?v=2">
+  <script type="module" src="assets/theme.mjs"></script>
 
 </head>
 <body>
@@ -15,13 +16,35 @@
   <header class="site-header">
     <div class="shell header-row">
       <a class="brand" href="./"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>Sensitivity Analysis Lab</a>
-      <nav aria-label="Site"><a href="./#course">Course outline</a><a href="https://snowch.github.io/labs/">All labs</a></nav>
+      <nav aria-label="Site"><a href="./#course">Course outline</a><a href="https://snowch.github.io/labs/">All labs</a><button type="button" class="theme-toggle" hidden>Dark theme</button></nav>
     </div>
   </header>
-  <main id="main">
+  <div class="course-layout">
+    <aside class="course-sidebar">
+      <nav aria-label="Lessons">
+        <a class="contents-link" href="./#course">Course contents</a>
+        <ol class="sidebar-lessons">
+          <li><a href="rank.html">Rank the knobs</a></li>
+          <li><a href="ranges.html">Change the assumptions</a></li>
+          <li><a href="interactions.html">Find hidden interactions</a></li>
+          <li><a href="logs.html">Work from logs</a></li>
+        </ol>
+        <ul class="sidebar-links">
+          <li><a href="practice.html">Independent practice</a></li>
+          <li><a href="apply.html" aria-current="page">Field guide</a></li>
+        </ul>
+        <p>Worked follow-ups</p>
+        <ul class="sidebar-links">
+          <li><a href="spearman-calculation.html">Calculate a Spearman score</a></li>
+          <li><a href="sobol-calculation.html">Calculate Sobol indices</a></li>
+          <li><a href="predictive-attribution.html">Plan a fair test on real logs</a></li>
+        </ul>
+      </nav>
+    </aside>
+  <main id="main" tabindex="-1">
     <article class="lesson shell" aria-labelledby="guide-title">
       <header class="lesson-header">
-        <p class="kicker"><span></span> Field guide</p>
+        <p class="kicker">Field guide</p>
         <h1 id="guide-title">Apply it to your own decision</h1>
         <p>Choose one real question where several uncertain factors compete for your attention. Start small enough that you can check the result by hand.</p>
       </header>
@@ -30,10 +53,10 @@
         <p>Write one sentence with an action, an outcome, and the point at which you would act. For example, “I’ll change routes if the chance of arriving after 9:00 drops below 1 in 10.” List what you can control, what you can only measure, and the people or conditions the result should cover.</p>
         <h2>2. Match your evidence to your question</h2>
         <dl class="terms">
-          <dt>You have a formula and want a shortlist</dt><dd>List inputs, units and plausible ranges. Draw values, record outcomes, and compare Spearman correlations. Check the scatter for curves or distinct regimes. Repeat with plausible alternative ranges.</dd>
+          <dt>You have a formula and want a shortlist</dt><dd>List inputs, units and plausible ranges. Draw values, record outcomes, and compare Spearman correlations. Plot the input against the output and look for curves or separate clusters. Repeat with plausible alternative ranges.</dd>
           <dt>You have a formula and suspect interactions</dt><dd>Simulate the output that matters to you. If independent input distributions are defensible, compare first- and total-order Sobol indices. Inspect a small grid of joint conditions and explain which regime makes the interaction matter.</dd>
-          <dt>You have logs and want to understand a predictor</dt><dd>Define the target and a meaningful error score. Reserve held-out data and beat a simple baseline. Shuffle each predictor, then group substitutes when their joint contribution matters. State what population and score the result covers.</dd>
-          <dt>You need to know whether a particular change helps</dt><dd>Compare matched scenarios in a model. Validate with a controlled test where possible. Choose the workload, metric, target and guardrails before looking at results.</dd>
+          <dt>You have logs and want to understand a predictor</dt><dd>Define the target and a meaningful error score. Set aside examples for testing and check that your predictor beats a simple baseline on those examples. Shuffle each predictor, then group substitutes when their joint contribution matters. State which people, places or time periods the test data represent, and name the error measure.</dd>
+          <dt>You need to know whether a particular change helps</dt><dd>Compare matched scenarios in a model. Validate with a controlled test where possible. Choose the conditions, what to measure, your target and any cost or safety limits before you look at results.</dd>
         </dl>
         <h2>3. Try a different setting</h2>
         <div class="table-wrap"><table>
@@ -47,13 +70,14 @@
         <h2>4. Keep a record someone else can check</h2>
         <p>Record your decision rule, data period, input ranges and sources, method, and one result with units. Name the assumption that most threatens your conclusion. Describe the next measurement or test and what result would reverse your decision.</p>
         <details class="method-note"><summary>Use the analysis code on a small model</summary>
-          <p>If you use JavaScript, run <code>node assets/energy-example.mjs</code> from the source repository. The example shows how to pass labelled inputs, a sampler and an outcome function to the same rank and Sobol routines used in the course. Replace the formula and ranges with your own, and keep the independent-input assumption in view.</p>
+          <p>If you have Node.js, copy or clone the source repository and run <code>node assets/energy-example.mjs</code> in its root. In your local copy, replace the input names and ranges in <code>factors</code> and the formula in <code>evaluate</code>. Run again and find the rank and Sobol tables in the terminal. The example samples all inputs independently. Use it when that assumption fits your question.</p>
           <p><a href="assets/energy-example.mjs">Open the example script</a> · <a href="assets/energy.mjs">Read the full practice model</a></p>
         </details>
       </div>
       <nav class="lesson-actions" aria-label="Course sequence"><a href="practice.html">Previous · Independent practice</a><a class="button dark" href="./#course">Course outline</a></nav>
     </article>
   </main>
+  </div>
   <footer class="shell"><a href="https://github.com/snowch/sensitivity-analysis-lab">Source on GitHub</a><p>All models and data in this course are illustrative.</p></footer>
 </body>
 </html>

@@ -4,10 +4,11 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Learn sensitivity analysis and predictive attribution through worked examples and hands-on practice.">
-  <meta name="theme-color" content="#101e2f">
+  <meta name="theme-color" content="#fdfdff">
   <title>Cutting Through the Noise · Sensitivity Analysis Lab</title>
   <link rel="icon" href="data:,">
-  <link rel="stylesheet" href="assets/lab.css">
+  <link rel="stylesheet" href="assets/lab.css?v=2">
+  <script type="module" src="assets/theme.mjs"></script>
 
 </head>
 <body>
@@ -15,21 +16,31 @@
   <header class="site-header">
     <div class="shell header-row">
       <a class="brand" href="./"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>Sensitivity Analysis Lab</a>
-      <nav aria-label="Site"><a href="./#course">Course outline</a><a href="https://snowch.github.io/labs/">All labs</a></nav>
+      <nav aria-label="Site"><a href="./#course">Course outline</a><a href="https://snowch.github.io/labs/">All labs</a><button type="button" class="theme-toggle" hidden>Dark theme</button></nav>
     </div>
   </header>
-  <main id="main">
+  <main id="main" tabindex="-1">
     <section id="start" class="home shell" aria-labelledby="title">
-      <p class="kicker"><span></span> Sensitivity analysis &amp; attribution</p>
-      <h1 id="title">Cutting Through the Noise</h1>
-      <p class="home-lead">A late delivery or a high electricity bill can have several plausible explanations. Learn to identify which inputs drive the outcome, question an uncertain ranking and decide what’s worth testing. Start with a data pipeline, then try a household budget.</p>
-      <div class="home-start">
-        <a class="button dark" href="rank.html">Start lesson 1</a>
-        <span>Four lessons and independent practice · allow about 60–90 minutes</span>
+      <div class="hero">
+        <div>
+          <h1 id="title">Cutting Through<br class="hero-break"> the Noise</h1>
+          <p class="home-lead">Find which inputs drive an outcome, test what your ranking depends on, and decide what to investigate. Start with a data pipeline, then apply the methods to a household budget.</p>
+          <p class="hero-time">Four lessons and independent practice · 60–90 minutes</p>
+          <div class="home-start">
+            <a class="button dark" href="rank.html">Start lesson 1</a>
+            <a href="#before-title">Before you start</a>
+          </div>
+        </div>
+        <figure class="hero-figure" aria-labelledby="preview-title">
+          <figcaption id="preview-title">What tracks pipeline latency?<small>Spearman scores from the prepared model</small></figcaption>
+          <div class="preview-row"><span>Cache hit rate</span><strong>−0.84</strong><span class="preview-track" aria-hidden="true"><i class="preview-negative"></i></span></div>
+          <div class="preview-row"><span>Payload size</span><strong>+0.51</strong><span class="preview-track" aria-hidden="true"><i class="preview-positive"></i></span></div>
+          <div class="preview-axis" aria-hidden="true"><span>−1</span><span>0</span><span>+1</span></div>
+        </figure>
       </div>
       <section class="before" aria-labelledby="before-title">
         <h2 id="before-title">Before you start</h2>
-        <p>Bring basic comfort reading a table and comparing numbers. The course teaches rank correlation, variance and prediction error as you need them. Everything runs in your browser.</p>
+        <p>You’ll read tables and compare numbers. The lessons introduce rank correlation, variance and prediction error as you need them. The experiments run in your browser.</p>
         <details>
           <summary>Quick refresher on measurements</summary>
           <dl class="terms">
@@ -46,9 +57,15 @@
           <li><a href="ranges.html">Change the assumptions</a><span>See how plausible input ranges can change your shortlist.</span></li>
           <li><a href="interactions.html">Find hidden interactions</a><span>Use first- and total-order Sobol indices to untangle a queue delay.</span></li>
           <li><a href="logs.html">Work from logs</a><span>Measure what a predictor relies on with permutation importance.</span></li>
-          <li><a href="practice.html">Independent practice</a><span>Choose and run analyses to decide how to manage a household electricity budget.</span></li>
+          <li><a href="practice.html">Independent practice</a><span>Use the analyses to make a recommendation about a household electricity budget.</span></li>
         </ol>
-        <p>Each lesson has a worked example, an experiment and a reasoning check. Open the method notes for calculations and limitations. The <a href="apply.html">field guide</a> helps you carry the process to a question of your own.</p>
+        <h3>Worked follow-ups</h3>
+        <ul class="follow-ups">
+          <li><a href="spearman-calculation.html">Calculate a Spearman score by hand</a></li>
+          <li><a href="sobol-calculation.html">Calculate Sobol indices for two switches</a></li>
+          <li><a href="predictive-attribution.html">Plan a fair test on real logs</a></li>
+        </ul>
+        <p class="field-guide-link">Bring a question of your own to the <a href="apply.html">field guide</a>.</p>
       </section>
     </section>
     <script type="module">

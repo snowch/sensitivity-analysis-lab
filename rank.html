@@ -4,55 +4,77 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Learn sensitivity analysis and predictive attribution through worked examples and hands-on practice.">
-  <meta name="theme-color" content="#101e2f">
+  <meta name="theme-color" content="#fdfdff">
   <title>Rank the knobs · Sensitivity Analysis Lab</title>
   <link rel="icon" href="data:,">
-  <link rel="stylesheet" href="assets/lab.css">
-  <script type="module" src="assets/lab.mjs"></script>
+  <link rel="stylesheet" href="assets/lab.css?v=2">
+  <script type="module" src="assets/theme.mjs"></script>
+  <script type="module" src="assets/lab.mjs?v=2"></script>
 </head>
 <body>
   <a class="skip" href="#main">Skip to content</a>
   <header class="site-header">
     <div class="shell header-row">
       <a class="brand" href="./"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>Sensitivity Analysis Lab</a>
-      <nav aria-label="Site"><a href="./#course">Course outline</a><a href="https://snowch.github.io/labs/">All labs</a></nav>
+      <nav aria-label="Site"><a href="./#course">Course outline</a><a href="https://snowch.github.io/labs/">All labs</a><button type="button" class="theme-toggle" hidden>Dark theme</button></nav>
     </div>
   </header>
-  <main id="main">
+  <div class="course-layout">
+    <aside class="course-sidebar">
+      <nav aria-label="Lessons">
+        <a class="contents-link" href="./#course">Course contents</a>
+        <ol class="sidebar-lessons">
+          <li><a href="rank.html" aria-current="page">Rank the knobs</a></li>
+          <li><a href="ranges.html">Change the assumptions</a></li>
+          <li><a href="interactions.html">Find hidden interactions</a></li>
+          <li><a href="logs.html">Work from logs</a></li>
+        </ol>
+        <ul class="sidebar-links">
+          <li><a href="practice.html">Independent practice</a></li>
+          <li><a href="apply.html">Field guide</a></li>
+        </ul>
+        <p>Worked follow-ups</p>
+        <ul class="sidebar-links">
+          <li><a href="spearman-calculation.html">Calculate a Spearman score</a></li>
+          <li><a href="sobol-calculation.html">Calculate Sobol indices</a></li>
+          <li><a href="predictive-attribution.html">Plan a fair test on real logs</a></li>
+        </ul>
+      </nav>
+    </aside>
+  <main id="main" tabindex="-1">
     <noscript><p class="shell notice">Enable JavaScript to run the exercises and save notes.</p></noscript>
     <section id="rank" class="lesson shell" aria-labelledby="rank-title">
       <header class="lesson-header">
-        <p class="kicker"><span></span> Lesson 1 of 4</p>
+        <p class="kicker">Lesson 1 of 4</p>
         <h1 id="rank-title">Rank the knobs</h1>
-        <p>How can you make a first shortlist when 13 inputs could matter?</p>
+        <p>Use a simulated pipeline to decide which two of its 13 inputs you would investigate first.</p>
       </header>
       <div class="teaching">
         <div>
-          <h2>Draw possible runs and compare their ranks</h2>
-          <p>Start with a formula for end-to-end latency and a plausible range for each input. A <strong>Monte Carlo simulation</strong> repeatedly draws values from those ranges, runs the formula, and records the result. Here every value within a range is equally likely, and each input is sampled independently.</p>
-          <p><strong>Spearman rank correlation</strong> orders the runs twice, once by the input and once by latency. Similar order gives a score near +1, reverse order gives a score near −1, and little consistent ordering gives a score near zero. Look at the magnitude to shortlist inputs and the sign to read the direction.</p>
+          <p>A pipeline fetches, processes and writes data. Its <strong>latency</strong> is the time one job takes to finish. A cache can serve a stored copy and save time. The <strong>cache hit rate</strong> is the percentage of requests served this way. <strong>Payload size</strong> is the amount of data in a job.</p>
+          <p>A <strong>Monte Carlo simulation</strong> draws values from assumed input ranges and calculates latency for each draw. The model samples each input independently, so drawing one value leaves the other inputs’ chances unchanged. Within each range, equal-width intervals are equally likely.</p>
+          <p><strong>Spearman rank correlation</strong> sorts the jobs by one input and again by latency. A score near +1 means larger inputs usually go with longer jobs. A score near −1 means larger inputs usually go with shorter jobs. A score near zero means there’s little consistent ordering in either direction.</p>
         </div>
         <figure class="worked">
-          <figcaption>Worked example · only cache hit rate varies</figcaption>
+          <figcaption>Example with only cache hit rate changing</figcaption>
           <table>
             <thead><tr><th scope="col">Cache hit rate</th><th scope="col">Latency</th></tr></thead>
             <tbody><tr><td>70%</td><td>150 ms</td></tr><tr><td>80%</td><td>135 ms</td></tr><tr><td>90%</td><td>120 ms</td></tr></tbody>
           </table>
-          <p>The cache rates run from lowest to highest while latencies go from highest to lowest. The ranks reverse exactly, so Spearman’s ρ is −1.</p>
+          <p>Rank 1 is the smallest value. The cache hit ranks are 1, 2, 3 and the latency ranks in those rows are 3, 2, 1. The orders reverse exactly, so the Spearman score is −1.</p>
         </figure>
       </div>
       <div class="instructions">
-        <h2>Try it on all 13 inputs</h2>
+        <h2>Which two inputs would you investigate?</h2>
         <ol>
-          <li>Predict which way latency moves as payload size increases.</li>
-          <li>Run the defaults. Name the two largest bars and read their signs.</li>
-          <li>Change the seed under simulation settings and rerun. Did your shortlist change?</li>
+          <li>Select <strong>Run simulation</strong> with the prepared settings. In <strong>Spearman scores</strong>, find the two longest bars and read their signs. A bar’s length shows how closely the orders agree or reverse.</li>
+          <li>Open <strong>Simulation settings</strong>, change <strong>Random seed</strong> from 42 to 19, and select <strong>Run simulation</strong> again. A seed sets the sequence of draws. Check whether your shortlist changes with a different sample.</li>
         </ol>
       </div>
       <div class="experiment">
         <form id="screen-form" class="controls">
-          <h2>Configure the simulation</h2>
-          <p>Each run draws 13 independent inputs from the assumed ranges.</p>
+          <h2>Simulation</h2>
+          <p>The first run uses 8,192 simulated jobs and seed 42.</p>
           <button class="button dark" disabled>Run simulation</button>
           <p class="status" role="status"></p>
           <details class="settings">
@@ -61,51 +83,43 @@
             <select id="screen-count" name="count"><option>2048</option><option selected>8192</option><option>32768</option></select>
             <label for="screen-seed">Random seed</label>
             <input id="screen-seed" name="seed" type="number" min="0" max="4294967295" step="1" value="42" required>
-            <p class="tip">A seed fixes the sequence of draws. Reusing it reproduces the run.</p>
+            <p class="tip">Repeat the same seed and run count to reproduce a result.</p>
           </details>
         </form>
         <div class="results" id="screen-results">
-          <h2>What tracks latency?</h2>
-          <p>Spearman rank correlation, sorted by absolute magnitude. The sign shows direction.</p>
-          <div class="output"><p class="empty">Run the simulation to see how the inputs rank.</p></div>
+          <h2>Spearman scores</h2>
+          <p>Inputs appear in order of bar length. Left of zero means shorter latency as the input rises.</p>
+          <div class="output"><p class="empty">The ranking appears here after the simulation runs.</p></div>
         </div>
       </div>
+      <section class="interpretation" aria-labelledby="rank-read">
+        <h2 id="rank-read">Read the result</h2>
+        <p>With seed 42, cache hit rate leads at −0.84 and payload size follows at +0.51. In this model, cache hits avoid slower fetches and larger jobs take longer to process. Seed 19 draws a new sample from the same ranges, so compare the shortlist before interpreting smaller score changes.</p>
+        <p>A small score can conceal a strong effect that changes direction. For example, fuel use can rise both below and above an efficient speed. Plot the input against the output before you rule it out.</p>
+      </section>
       <form class="knowledge-check">
         <h2>Check your reasoning</h2>
         <fieldset>
-          <legend>A feature has Spearman ρ = −0.84. What can you say?</legend>
-          <label><input type="radio" name="answer" value="0" required data-feedback="Correct. The negative sign gives the direction, and the magnitude indicates a strong rank relationship.">Higher values usually go with lower latency.</label>
-          <label><input type="radio" name="answer" value="1" required data-feedback="Read −0.84 as a rank correlation. Lesson 3 uses Sobol indices to estimate shares of variance.">The feature explains 84% of latency variance.</label>
-          <label><input type="radio" name="answer" value="2" required data-feedback="The score has no units. Look at a controlled model change to estimate milliseconds saved.">Raising the feature by one unit saves 0.84 ms.</label>
+          <legend>Cache hit rate has a Spearman score of −0.84 in the prepared run. What does the score tell you?</legend>
+          <label><input type="radio" name="answer" value="0" required data-feedback="Correct. The negative sign links higher cache hit rates with shorter jobs. A score close to −1 indicates that this ordering is common in the model.">Higher values usually go with lower latency.</label>
+          <label><input type="radio" name="answer" value="1" required data-feedback="This score compares orderings. Lesson 3 introduces Sobol indices for estimating how much of the spread an input explains.">Cache hit rate explains 84% of the spread in latency.</label>
+          <label><input type="radio" name="answer" value="2" required data-feedback="The score has no units. To estimate a saving in milliseconds, compare latency before and after a specific change in the model.">Raising cache hit rate by one percentage point saves 0.84 ms.</label>
         </fieldset>
         <button class="button outline-button" disabled>Check answer</button>
         <p class="check-feedback" role="status"></p>
       </form>
       <div class="lesson-notes">
-        <details>
-          <summary>Calculate Spearman’s ρ by hand</summary>
-          <p>Imagine four jobs, sorted by payload size. Their payload ranks are 1, 2, 3, 4. Their latency ranks, in that same row order, are 1, 3, 2, 4. The rank differences are 0, −1, 1, 0, so the squared differences sum to 2. With no ties, the shortcut is 1 − 6 × 2 ÷ (4 × (4² − 1)) = <strong>0.8</strong>.</p>
-          <p>The general calculation is Pearson correlation on the ranks. Tied values get the average of the positions they share. Ranking drops information about distances. A 2 ms miss and a 200 ms miss can occupy adjacent positions.</p>
-        </details>
-        <details>
-          <summary>When a small score can hide a big effect</summary>
-          <p>Imagine fuel use is lowest at a moderate speed and rises both below and above it. With speeds spread symmetrically around that optimum, opposite slopes can cancel in Spearman’s ρ. Plot the input against the output before dropping a weakly ranked factor. Look for bends, thresholds and separate groups.</p>
-          <p>Spearman is useful for a first screen across many inputs. Use distribution or variance estimates when the decision concerns the spread or tail, and matched runs when you need the effect of a specified change.</p>
-        </details>
-        <details>
-          <summary>Inspect the model and input ranges</summary>
-          <p>The baseline adds a 12 ms fixed cost to the fetch, process, wait and write stages. Read the <a href="assets/model.mjs">simulation source</a> and <a href="assets/sensitivity.mjs">rank and Sobol calculations</a>.</p>
+        <p><a href="spearman-calculation.html">Worked lesson · Calculate a Spearman score by hand</a></p>
+        <details class="reference">
+          <summary>Pipeline formula and all 13 input ranges</summary>
+          <p>The model adds 12 ms of fixed time to the fetch, process, queue and write times. The <a href="assets/model.mjs">simulation source</a> shows the formula for each stage.</p>
           <div id="input-table"></div>
-        </details>
-        <details>
-          <summary>Read the baseline result</summary>
-          <p>With the supplied ranges, cache hit rate and payload size dominate. Higher hit rates reduce time spent on cache misses, while bigger payloads cost more to process. Spearman’s ρ describes monotonic association. Adding the scores cannot tell you how much variance the two inputs explain.</p>
-          <p>Put the smaller drivers aside for this baseline investigation. Keep the assumptions with your shortlist so you can revisit it when conditions change.</p>
         </details>
       </div>
       <nav class="lesson-actions" aria-label="Course sequence"><a href="./#start">Before you start</a><a class="button dark" href="ranges.html">Next · Change the assumptions</a></nav>
     </section>
   </main>
+  </div>
   <footer class="shell"><a href="https://github.com/snowch/sensitivity-analysis-lab">Source on GitHub</a><p>All models and data in this course are illustrative.</p></footer>
 </body>
 </html>

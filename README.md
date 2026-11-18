@@ -13,7 +13,7 @@ Learn to screen many inputs, challenge what you assumed, recognise interactions,
 | [Independent practice](https://snowch.github.io/sensitivity-analysis-lab/practice.html) | Choose methods, test interventions against a budget criterion, and check a written recommendation against a rubric |
 | [Field guide](https://snowch.github.io/sensitivity-analysis-lab/apply.html) | Frame and investigate a question of your own |
 
-The models and datasets are illustrative. Read the worked calculations and assumptions in each lesson. No programming or statistics course is required.
+The course includes separate worked follow-ups on Spearman scores, Sobol indices and testing predictors on real logs. The models and datasets are illustrative. Read the worked calculations and assumptions in each lesson. No programming or statistics course is required.
 
 ## Run locally
 

@@ -4,24 +4,47 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Learn sensitivity analysis and predictive attribution through worked examples and hands-on practice.">
-  <meta name="theme-color" content="#101e2f">
+  <meta name="theme-color" content="#fdfdff">
   <title>Pipeline note · Sensitivity Analysis Lab</title>
   <link rel="icon" href="data:,">
-  <link rel="stylesheet" href="assets/lab.css">
-  <script type="module" src="assets/lab.mjs"></script>
+  <link rel="stylesheet" href="assets/lab.css?v=2">
+  <script type="module" src="assets/theme.mjs"></script>
+  <script type="module" src="assets/lab.mjs?v=2"></script>
 </head>
 <body>
   <a class="skip" href="#main">Skip to content</a>
   <header class="site-header">
     <div class="shell header-row">
       <a class="brand" href="./"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>Sensitivity Analysis Lab</a>
-      <nav aria-label="Site"><a href="./#course">Course outline</a><a href="https://snowch.github.io/labs/">All labs</a></nav>
+      <nav aria-label="Site"><a href="./#course">Course outline</a><a href="https://snowch.github.io/labs/">All labs</a><button type="button" class="theme-toggle" hidden>Dark theme</button></nav>
     </div>
   </header>
-  <main id="main">
+  <div class="course-layout">
+    <aside class="course-sidebar">
+      <nav aria-label="Lessons">
+        <a class="contents-link" href="./#course">Course contents</a>
+        <ol class="sidebar-lessons">
+          <li><a href="rank.html">Rank the knobs</a></li>
+          <li><a href="ranges.html">Change the assumptions</a></li>
+          <li><a href="interactions.html">Find hidden interactions</a></li>
+          <li><a href="logs.html">Work from logs</a></li>
+        </ol>
+        <ul class="sidebar-links">
+          <li><a href="practice.html">Independent practice</a></li>
+          <li><a href="apply.html">Field guide</a></li>
+        </ul>
+        <p>Worked follow-ups</p>
+        <ul class="sidebar-links">
+          <li><a href="spearman-calculation.html">Calculate a Spearman score</a></li>
+          <li><a href="sobol-calculation.html">Calculate Sobol indices</a></li>
+          <li><a href="predictive-attribution.html">Plan a fair test on real logs</a></li>
+        </ul>
+      </nav>
+    </aside>
+  <main id="main" tabindex="-1">
     <noscript><p class="shell notice">Enable JavaScript to run the exercises and save notes.</p></noscript>
     <section class="lesson shell" aria-labelledby="pipeline-note-title">
-      <header class="lesson-header"><h1 id="pipeline-note-title">Your pipeline test plan</h1><p>Keep your notes on the pipeline separate from your independent practice.</p></header>
+      <header class="lesson-header"><h1 id="pipeline-note-title">Your pipeline test plan</h1><p>Use this space to record what you would change in the pipeline, what you would hold steady and what result would justify acting.</p></header>
       <div id="decision" class="practice-note">
         <label for="brief">Investigation note</label>
         <textarea id="brief" rows="7" placeholder="I would change… and measure…"></textarea>
@@ -30,6 +53,7 @@
       <nav class="lesson-actions" aria-label="Course sequence"><a href="logs.html">Work from logs</a><a class="button dark" href="practice.html">Independent practice</a></nav>
     </section>
   </main>
+  </div>
   <footer class="shell"><a href="https://github.com/snowch/sensitivity-analysis-lab">Source on GitHub</a><p>All models and data in this course are illustrative.</p></footer>
 </body>
 </html>
