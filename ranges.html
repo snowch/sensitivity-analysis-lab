@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Learn sensitivity analysis and predictive attribution through worked examples and hands-on practice.">
+  <meta name="theme-color" content="#101e2f">
+  <title>Change the assumptions · Sensitivity Analysis Lab</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="assets/lab.css">
+  <script type="module" src="assets/lab.mjs"></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="shell header-row">
+      <a class="brand" href="./"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>Sensitivity Analysis Lab</a>
+      <nav aria-label="Site"><a href="./#course">Course outline</a><a href="https://snowch.github.io/labs/">All labs</a></nav>
+    </div>
+  </header>
+  <main id="main">
+    <section id="ranges" class="lesson shell" aria-labelledby="ranges-title">
+      <header class="lesson-header">
+        <p class="kicker"><span></span> Lesson 2 of 4</p>
+        <h1 id="ranges-title">Change the assumptions</h1>
+        <p>Ask which conditions your ranking describes before using it to prioritise work.</p>
+      </header>
+      <div class="teaching">
+        <div>
+          <h2>Sensitivity depends on the range</h2>
+          <p>Each extra millisecond of network round-trip time adds one millisecond to output latency. Across an 8–12 ms range, the network contribution can change by 4 ms. Across a 2–65 ms range, it can change by 63 ms. The same formula now faces a much wider set of possible conditions.</p>
+          <p>Pick ranges from the population your decision concerns. A local deployment and a global rollout may each need their own scenario. Reuse the random draws and change just one assumption so you can explain why the answer moved.</p>
+        </div>
+        <figure class="worked">
+          <figcaption>Worked example · the daily commute</figcaption>
+          <p>A train runs every 10 minutes at rush hour and every 30 minutes in the evening. If you arrive at a random time, the wait spans 0–10 or 0–30 minutes. The evening wait can dominate variation even though a minute of waiting costs the same in both cases.</p>
+        </figure>
+      </div>
+      <div class="instructions">
+        <h2>Test the ranking’s sensitivity</h2>
+        <ol>
+          <li>Predict where network RTT will rank when its range widens.</li>
+          <li>Compare the score and rank across the two scenarios. The same draws drive both simulations.</li>
+          <li>Write down which deployment each range could describe and what evidence would justify using it.</li>
+        </ol>
+      </div>
+      <div class="experiment">
+        <form id="ranges-form" class="controls">
+          <h2>Network scenarios</h2>
+          <p>Compare 8–12 ms with 2–65 ms over 8,192 matched draws. All other inputs use the same values in both runs.</p>
+          <button class="button dark">Compare ranges</button>
+          <p class="status" role="status"></p>
+        </form>
+        <div class="results" id="ranges-results">
+          <h2>What changes rank?</h2>
+          <div class="output"><p class="empty">Run the comparison to see both rankings.</p></div>
+        </div>
+      </div>
+      <form class="knowledge-check">
+        <h2>Check your reasoning</h2>
+        <fieldset>
+          <legend>RTT ranks first under the wide range. What should you do before acting?</legend>
+          <label><input type="radio" name="answer" required data-feedback="That ranking describes the wide scenario. Check which range fits the deployment you care about.">Use the wide range for every deployment.</label>
+          <label><input type="radio" name="answer" required data-feedback="Correct. Measure RTT for a representative workload and deployment. Sensitivity depends on how much the input can vary in that setting.">Measure RTT under the conditions you plan to operate in.</label>
+          <label><input type="radio" name="answer" required data-feedback="A ranking is based on variation across scenarios. Compare controlled model runs to estimate a specific saving.">Treat the rank as an estimate of milliseconds saved.</label>
+        </fieldset>
+        <button class="button outline-button">Check answer</button>
+        <p class="check-feedback" role="status"></p>
+      </form>
+      <div class="lesson-notes">
+        <details>
+          <summary>How ranges, distributions and dependencies change the result</summary>
+          <p>A uniform draw gives equal probability to equal-width intervals. Its variance is the squared range width divided by 12. For this additive network term, widening the range from 4 to 63 ms multiplies its own variance by about 248. Its <em>share</em> of total variance also depends on every other input.</p>
+          <p>Ranges alone leave the shape open. A triangular distribution might fit an expert estimate with a clear most likely value, and empirical resampling can retain common operating clusters. If arrival rate and capacity rise together, independent draws can invent high-load, low-capacity combinations. Consider modelling the paired observations or separating operating regimes before applying independent-input Sobol indices.</p>
+          <p>Record where each range or distribution came from. For weak assumptions, compare plausible scenarios and check whether the decision survives. A ranking reversal identifies a measurement worth collecting.</p>
+        </details>
+      </div>
+      <nav class="lesson-actions" aria-label="Course sequence"><a href="rank.html">Previous · Rank the knobs</a><a class="button dark" href="interactions.html">Next · Find hidden interactions</a></nav>
+    </section>
+  </main>
+  <footer class="shell"><a href="https://github.com/snowch/sensitivity-analysis-lab">Source on GitHub</a><p>All models and data in this course are illustrative.</p></footer>
+</body>
+</html>

@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Learn sensitivity analysis and predictive attribution through worked examples and hands-on practice.">
+  <meta name="theme-color" content="#101e2f">
+  <title>Independent practice · Sensitivity Analysis Lab</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="assets/lab.css">
+  <script type="module" src="assets/lab.mjs"></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="shell header-row">
+      <a class="brand" href="./"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>Sensitivity Analysis Lab</a>
+      <nav aria-label="Site"><a href="./#course">Course outline</a><a href="https://snowch.github.io/labs/">All labs</a></nav>
+    </div>
+  </header>
+  <main id="main">
+    <section class="lesson shell" aria-labelledby="practice-title">
+      <header class="lesson-header">
+        <p class="kicker"><span></span> Independent practice</p>
+        <h1 id="practice-title">Stay within a household electricity budget</h1>
+        <p>A household wants its monthly bill to exceed $200 in at most 5% of months. It has time to try one change. Decide what to test, and explain where your evidence comes from.</p>
+      </header>
+      <details class="method-note">
+        <summary>Inspect the bill model and the recorded runs</summary>
+        <p>The model uses a $12 standing charge. Electricity use is other consumption plus 3 kWh per dryer cycle plus 18 kWh per cold day multiplied by the home’s heat-loss factor. Multiply total kWh by the electricity rate and add $12.</p>
+        <p>All model inputs are independent uniform draws for this exercise. The logs come from a separate synthetic sample of 3,000 months with noisy bills and two noisy measurements of cold conditions. The colder-season case changes the simulator’s cold-day range. Both shuffle modes use a model trained on the same log sample from usual conditions.</p>
+        <div class="table-wrap"><table>
+          <thead><tr><th scope="col">Input</th><th scope="col">Usual conditions</th><th scope="col">Colder season</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Cold days</th><td>0–22 days</td><td>12–26 days</td></tr>
+            <tr><th scope="row">Heat-loss multiplier</th><td>0.7–1.5</td><td>0.7–1.5</td></tr>
+            <tr><th scope="row">Electricity rate</th><td>$0.22–$0.36/kWh</td><td>$0.22–$0.36/kWh</td></tr>
+            <tr><th scope="row">Other electricity use</th><td>160–250 kWh</td><td>160–250 kWh</td></tr>
+            <tr><th scope="row">Dryer cycles</th><td>4–30 cycles</td><td>4–30 cycles</td></tr>
+          </tbody>
+        </table></div>
+        <p>Cold days and cycles are treated as continuous estimates for simplicity. The model compares monthly bills and omits any upfront cost of making a change.</p>
+        <button class="button outline-button" type="button" id="energy-csv">Download 3,000 recorded runs</button>
+        <p class="status" id="energy-csv-status" role="status"></p>
+      </details>
+      <div class="instructions">
+        <h2>Write a recommendation based on evidence</h2>
+        <ol>
+          <li>Use the bill model to shortlist drivers. Check whether your shortlist survives the colder-season assumption. Inspect interactions where they could change your interpretation.</li>
+          <li>Use the recorded runs to see what the predictor relies on. Decide how to handle the two cold-weather signals, and state what this evidence can support.</li>
+          <li>Compare at least two interventions against the 5% limit. Check your preferred option in both scenarios, then propose a pilot and a result that would change your mind.</li>
+        </ol>
+      </div>
+      <div class="experiment">
+        <form id="practice-form" class="controls">
+          <h2>Choose an analysis</h2>
+          <label for="method">Method</label>
+          <select id="method" name="method" required>
+            <option value="" selected disabled>Select a method</option>
+            <option value="rank">Spearman rank screen</option>
+            <option value="sobol">First- and total-order Sobol</option>
+            <option value="logs">Permutation importance</option>
+            <option value="change">Compare interventions</option>
+          </select>
+          <div id="practice-scenario" class="practice-setting" hidden>
+            <label for="season">Model scenario</label>
+            <select id="season" name="season"><option value="usual">Usual conditions</option><option value="colder">Colder season</option></select>
+          </div>
+          <div id="practice-group" class="practice-setting" hidden>
+            <label for="grouping">Shuffle</label>
+            <select id="grouping" name="grouping"><option value="individual">One feature at a time</option><option value="grouped">Cold-weather signals together</option></select>
+          </div>
+          <div id="practice-change" class="practice-setting" hidden>
+            <label for="change">Intervention</label>
+            <select id="change" name="change">
+              <option value="drafts">Reduce heat loss by 30%</option>
+              <option value="dryer">Halve dryer cycles</option>
+              <option value="timers">Cut other use by 25 kWh</option>
+            </select>
+          </div>
+          <button class="button dark">Run analysis</button>
+          <p class="status" role="status"></p>
+        </form>
+        <div id="practice-results" class="results">
+          <h2>Evidence for your decision</h2>
+          <div class="output"><p class="empty">Choose an analysis and run it. Record the results you need in your note below.</p></div>
+        </div>
+      </div>
+      <section id="decision" class="practice-note" aria-labelledby="note-heading">
+        <h2 id="note-heading">Make your case</h2>
+        <label for="energy-brief">Investigation note</label>
+        <textarea id="energy-brief" rows="7" placeholder="My recommendation and what I would measure…"></textarea>
+        <div class="note-actions"><small id="note-status">Saved in this browser when storage is available.</small><button id="download-note" type="button" class="button outline-button">Download note</button></div>
+        <p><a href="pipeline-notes.html">Open your earlier pipeline note</a></p>
+      </section>
+      <details class="method-note">
+        <summary>Check your recommendation against the rubric</summary>
+        <ol>
+          <li><strong>Model.</strong> Name the leading input under each range and explain why the ranking moved. Give a plausible interaction in the bill formula. State where real ranges could come from and what dependence would invalidate the independent-input analysis.</li>
+          <li><strong>Logs.</strong> Compare the model’s test error with the simple baseline. Compare individual and grouped shuffles. Explain what these scores measure and what evidence you’d need to estimate the effect of an intervention.</li>
+          <li><strong>Decision.</strong> Give an exceedance percentage for at least two alternatives and state which meet the target under each scenario. Propose a fair test, specify what changes and what you’d hold steady, and account for upfront costs before a real purchase.</li>
+        </ol>
+      </details>
+      <details class="method-note">
+        <summary>Compare your work with a worked recommendation</summary>
+        <p>Cold days lead the usual Spearman ranking. The narrower 12–26 day range cuts their variation and the electricity rate takes first place. Heating demand multiplies cold days by the heat-loss factor, so a change in heat loss matters more during colder months. In the logs, test MAE improves over a median-only prediction. The two cold-weather signals share information, so shuffling them together costs more predictive accuracy than shuffling either alone.</p>
+        <p>In the usual model, about 15% of baseline months exceed $200. Reducing heat loss by 30% takes this to about 3.5%, while halving dryer cycles leaves about 12% over budget. In the colder case, even the heat-loss option leaves about 14% over budget. I’d test and measure the achievable heat-loss reduction before committing to the usual-case plan, and budget separately for a colder season.</p>
+        <p>For a pilot, compare heating electricity per cold day over comparable periods before and after a small, reversible change. Hold thermostat settings and occupancy as steady as possible and record weather, comfort and major load changes. I’d revise the estimate if the measured reduction were substantially below 30% or the benefit disappeared after adjusting for weather.</p>
+      </details>
+      <nav class="lesson-actions" aria-label="Course sequence"><a href="logs.html">Previous · Work from logs</a><a class="button dark" href="apply.html">Next · Apply it to your own decision</a></nav>
+    </section>
+  </main>
+  <footer class="shell"><a href="https://github.com/snowch/sensitivity-analysis-lab">Source on GitHub</a><p>All models and data in this course are illustrative.</p></footer>
+</body>
+</html>

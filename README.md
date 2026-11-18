@@ -1,16 +1,19 @@
 # Cutting Through the Noise: Sensitivity Analysis & Attribution
 
-[Open the Sensitivity Analysis Lab](https://snowch.github.io/sensitivity-analysis-lab/)
+[Start the course](https://snowch.github.io/sensitivity-analysis-lab/)
 
-When a system slows down, you need a way to choose which inputs are worth investigating. Use one pipeline to screen candidate drivers, challenge your ranking, and design a controlled test. Start with the introduction and prerequisites, then follow the three browser lessons in order. Allow about 20 minutes. Bring basic comfort reading tables and charts. The lab teaches the statistics it uses and requires no coding.
+Learn to screen many inputs, challenge what you assumed, recognise interactions, and distinguish predictive evidence from the effect of a change. The course teaches each method on a data pipeline, then asks you to apply the techniques to a household electricity budget. Allow about 60–90 minutes including independent practice. You can spread the lessons across sessions.
 
-| Investigation | Try it |
+| Lesson | What you’ll practise |
 | --- | --- |
-| **Rank the knobs** · 5 min | Screen 13 inputs with Monte Carlo simulation and a signed Spearman chart. |
-| **Break the ranking** · 7 min | Widen one input range and switch on a queue interaction. Compare first-order and total-order Sobol indices. |
-| **Work from logs** · 8 min | Predict latency from 10,000 synthetic runs. Compare individual and grouped permutation importance on held-out data. Download the same runs as CSV. |
+| [Rank the knobs](https://snowch.github.io/sensitivity-analysis-lab/rank.html) | Monte Carlo sampling and Spearman rank correlation |
+| [Change the assumptions](https://snowch.github.io/sensitivity-analysis-lab/ranges.html) | Range sensitivity, distributions and dependence |
+| [Find hidden interactions](https://snowch.github.io/sensitivity-analysis-lab/interactions.html) | First- and total-order Sobol indices |
+| [Work from logs](https://snowch.github.io/sensitivity-analysis-lab/logs.html) | Held-out evaluation and individual or grouped permutation importance |
+| [Independent practice](https://snowch.github.io/sensitivity-analysis-lab/practice.html) | Choose methods, test interventions against a budget criterion, and check a written recommendation against a rubric |
+| [Field guide](https://snowch.github.io/sensitivity-analysis-lab/apply.html) | Frame and investigate a question of your own |
 
-The pipeline inputs, queue rule and log observations are synthetic. Inspect the assumed ranges and experiment source in the lab. Each lesson introduces the method with a worked example, gives you a short investigation, and provides feedback on a reasoning question.
+The models and datasets are illustrative. Read the worked calculations and assumptions in each lesson. No programming or statistics course is required.
 
 ## Run locally
 
@@ -20,10 +23,12 @@ From the repository root, serve the files with Python and open [localhost:8000](
 python3 -m http.server 8000
 ```
 
-The three modules use JavaScript and a Web Worker. No package installation or external runtime is needed. To generate the exact CSV used by the lab from a terminal with Node.js installed:
+The browser uses JavaScript and a Web Worker. Node.js is optional for running a small, adaptable [analysis example](assets/energy-example.mjs) and generating the same CSVs used by the lab.
 
 ```sh
+node assets/energy-example.mjs
 node --input-type=module -e 'import {makeLogs, toCsv} from "./assets/logs.mjs"; process.stdout.write(toCsv(makeLogs()))' > pipeline-runs.csv
+node --input-type=module -e 'import {energyCsv} from "./assets/energy.mjs"; process.stdout.write(energyCsv())' > household-energy-runs.csv
 ```
 
 ## Related labs

@@ -7,11 +7,13 @@ const features = [
   { id: "origin_fetch_pct", label: "Origin fetch rate" },
   { id: "deploy_age_h", label: "Deploy age" },
 ];
-const telemetry = [12, 13];
+const telemetry = {
+  id: "cache_proxies", label: "Cache telemetry pair", columns: [12, 13],
+};
 const dataSeed = 824;
 const rowCount = 10000;
 
-function normal(random) {
+export function normal(random) {
   return Math.sqrt(-2 * Math.log(1 - random())) * Math.cos(2 * Math.PI * random());
 }
 
@@ -33,14 +35,14 @@ export function makeLogs() {
     // Two noisy, occasionally missing proxies for a cache setting absent from the logs.
     return {
       x: measurements.map((value, j) =>
-        telemetry.includes(j) && random() < 0.04 ? null : rounded(value)),
+        telemetry.columns.includes(j) && random() < 0.04 ? null : rounded(value)),
       y: rounded(latency(knobs, true) + normal(random) * 3),
     };
   });
 }
 
-export function toCsv(rows) {
-  const header = [...features.map(feature => feature.id), "latency_ms"];
+export function toCsv(rows, columns = features, target = "latency_ms") {
+  const header = [...columns.map(feature => feature.id), target];
   return [header.join(","), ...rows.map(({ x, y }) => [...x, y].join(","))].join("\n") + "\n";
 }
 
@@ -58,7 +60,7 @@ function prepare(rows) {
   const cut = Math.floor(order.length * 0.8);
   const train = order.slice(0, cut).map(index => rows[index]);
   const test = order.slice(cut).map(index => rows[index]);
-  const medians = features.map((_, column) => {
+  const medians = rows[0].x.map((_, column) => {
     const values = train.map(({ x }) => x[column]).filter(value => value !== null).sort((a, b) => a - b);
     const middle = Math.floor(values.length / 2);
     return (values[middle] + values[Math.floor((values.length - 1) / 2)]) / 2;
@@ -73,7 +75,7 @@ function growTree(rows, random, depth = 0) {
 
   let best;
   // Search exact cuts in five randomly selected features using squared-error reduction.
-  for (const feature of shuffledIndices(features.length, random).slice(0, 5)) {
+  for (const feature of shuffledIndices(rows[0].x.length, random).slice(0, 5)) {
     const sorted = [...rows].sort((a, b) => a.x[feature] - b.x[feature]);
     const total = average * rows.length;
     let left = 0;
@@ -109,23 +111,23 @@ function fitForest(train) {
   });
 }
 
-export function fitLogs() {
-  const { train, test } = prepare(makeLogs());
+export function fitLogs(rows = makeLogs()) {
+  const { train, test } = prepare(rows);
   const forest = fitForest(train);
   const predict = x => mean(forest.map(tree => predictTree(tree, x)));
   const baseline = mean(test.map(({ x, y }) => Math.abs(y - predict(x))));
   const medianPredictor = train.map(({ y }) => y).sort((a, b) => a - b);
   const midpoint = Math.floor(medianPredictor.length / 2);
-  const median = (medianPredictor[midpoint - 1] + medianPredictor[midpoint]) / 2;
+  const median = (medianPredictor[Math.floor((medianPredictor.length - 1) / 2)] + medianPredictor[midpoint]) / 2;
   const naive = mean(test.map(({ y }) => Math.abs(y - median)));
   return { predict, test, baseline, naive };
 }
 
-export function permutation(fitted, { count = 5, grouped = false }) {
+export function permutation(fitted, { count = 5, grouped = false, columns = features, pair = telemetry } = {}) {
   const { test, predict, baseline, naive } = fitted;
-  const groups = features.flatMap((feature, i) => {
-    if (!grouped || !telemetry.includes(i)) return [{ ...feature, columns: [i] }];
-    if (i === telemetry[0]) return [{ id: "cache_proxies", label: "Cache telemetry pair", columns: telemetry }];
+  const groups = columns.flatMap((feature, i) => {
+    if (!grouped || !pair.columns.includes(i)) return [{ ...feature, columns: [i] }];
+    if (i === pair.columns[0]) return [pair];
     return [];
   });
 

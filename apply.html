@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Learn sensitivity analysis and predictive attribution through worked examples and hands-on practice.">
+  <meta name="theme-color" content="#101e2f">
+  <title>Field guide · Sensitivity Analysis Lab</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="assets/lab.css">
+
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="shell header-row">
+      <a class="brand" href="./"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>Sensitivity Analysis Lab</a>
+      <nav aria-label="Site"><a href="./#course">Course outline</a><a href="https://snowch.github.io/labs/">All labs</a></nav>
+    </div>
+  </header>
+  <main id="main">
+    <article class="lesson shell" aria-labelledby="guide-title">
+      <header class="lesson-header">
+        <p class="kicker"><span></span> Field guide</p>
+        <h1 id="guide-title">Apply it to your own decision</h1>
+        <p>Choose one real question where several uncertain factors compete for your attention. Start small enough that you can check the result by hand.</p>
+      </header>
+      <div class="guide">
+        <h2>1. Write the decision before picking a method</h2>
+        <p>Write one sentence with an action, an outcome, and the point at which you would act. For example, “I’ll change routes if the chance of arriving after 9:00 drops below 1 in 10.” List what you can control, what you can only measure, and the people or conditions the result should cover.</p>
+        <h2>2. Match your evidence to your question</h2>
+        <dl class="terms">
+          <dt>You have a formula and want a shortlist</dt><dd>List inputs, units and plausible ranges. Draw values, record outcomes, and compare Spearman correlations. Check the scatter for curves or distinct regimes. Repeat with plausible alternative ranges.</dd>
+          <dt>You have a formula and suspect interactions</dt><dd>Simulate the output that matters to you. If independent input distributions are defensible, compare first- and total-order Sobol indices. Inspect a small grid of joint conditions and explain which regime makes the interaction matter.</dd>
+          <dt>You have logs and want to understand a predictor</dt><dd>Define the target and a meaningful error score. Reserve held-out data and beat a simple baseline. Shuffle each predictor, then group substitutes when their joint contribution matters. State what population and score the result covers.</dd>
+          <dt>You need to know whether a particular change helps</dt><dd>Compare matched scenarios in a model. Validate with a controlled test where possible. Choose the workload, metric, target and guardrails before looking at results.</dd>
+        </dl>
+        <h2>3. Try a different setting</h2>
+        <div class="table-wrap"><table>
+          <thead><tr><th scope="col">Decision</th><th scope="col">A first investigation</th><th scope="col">What could change the answer</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Plan a commute</th><td>Simulate walking, waiting, and riding. Compare the chance of a late arrival under two routes.</td><td>Evening train intervals and missed connections. Try weekday and weekend scenarios separately.</td></tr>
+            <tr><th scope="row">Staff a community event</th><td>Model arrivals, registrations per volunteer, and the risk of a wait over 10 minutes.</td><td>A rush interacts with low staffing. Check the busy interval even if the daily average looks fine.</td></tr>
+            <tr><th scope="row">Understand delivery delays</th><td>Fit a predictor on past deliveries, test on later weeks, and shuffle the fields on the test set.</td><td>Route and distance can carry overlapping information. Try a joint shuffle and compare to a simple baseline.</td></tr>
+          </tbody>
+        </table></div>
+        <h2>4. Keep a record someone else can check</h2>
+        <p>Record your decision rule, data period, input ranges and sources, method, and one result with units. Name the assumption that most threatens your conclusion. Describe the next measurement or test and what result would reverse your decision.</p>
+        <details class="method-note"><summary>Use the analysis code on a small model</summary>
+          <p>If you use JavaScript, run <code>node assets/energy-example.mjs</code> from the source repository. The example shows how to pass labelled inputs, a sampler and an outcome function to the same rank and Sobol routines used in the course. Replace the formula and ranges with your own, and keep the independent-input assumption in view.</p>
+          <p><a href="assets/energy-example.mjs">Open the example script</a> · <a href="assets/energy.mjs">Read the full practice model</a></p>
+        </details>
+      </div>
+      <nav class="lesson-actions" aria-label="Course sequence"><a href="practice.html">Previous · Independent practice</a><a class="button dark" href="./#course">Course outline</a></nav>
+    </article>
+  </main>
+  <footer class="shell"><a href="https://github.com/snowch/sensitivity-analysis-lab">Source on GitHub</a><p>All models and data in this course are illustrative.</p></footer>
+</body>
+</html>

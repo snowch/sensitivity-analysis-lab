@@ -1,3 +1,4 @@
+import { analyzeEnergy, energyCsv } from "./energy.mjs";
 import { fitLogs, makeLogs, permutation, toCsv } from "./logs.mjs";
 import { screen, sobol } from "./sensitivity.mjs";
 
@@ -8,6 +9,15 @@ self.onmessage = ({ data: { id, task, options } }) => {
     switch (task) {
       case "screen":
         result = screen(options);
+        break;
+      case "ranges":
+        result = { baseline: screen(options), wide: screen({ ...options, wideNetwork: true }) };
+        break;
+      case "practice":
+        result = analyzeEnergy(options);
+        break;
+      case "energy-csv":
+        result = energyCsv();
         break;
       case "assumptions":
         result = { rank: screen(options), indices: sobol(options) };
