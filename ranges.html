@@ -19,6 +19,7 @@
     </div>
   </header>
   <main id="main">
+    <noscript><p class="shell notice">Enable JavaScript to run the exercises and save notes.</p></noscript>
     <section id="ranges" class="lesson shell" aria-labelledby="ranges-title">
       <header class="lesson-header">
         <p class="kicker"><span></span> Lesson 2 of 4</p>
@@ -48,7 +49,7 @@
         <form id="ranges-form" class="controls">
           <h2>Network scenarios</h2>
           <p>Compare 8–12 ms with 2–65 ms over 8,192 matched draws. All other inputs use the same values in both runs.</p>
-          <button class="button dark">Compare ranges</button>
+          <button class="button dark" disabled>Compare ranges</button>
           <p class="status" role="status"></p>
         </form>
         <div class="results" id="ranges-results">
@@ -64,7 +65,7 @@
           <label><input type="radio" name="answer" required data-feedback="Correct. Measure RTT for a representative workload and deployment. Sensitivity depends on how much the input can vary in that setting.">Measure RTT under the conditions you plan to operate in.</label>
           <label><input type="radio" name="answer" required data-feedback="A ranking is based on variation across scenarios. Compare controlled model runs to estimate a specific saving.">Treat the rank as an estimate of milliseconds saved.</label>
         </fieldset>
-        <button class="button outline-button">Check answer</button>
+        <button class="button outline-button" disabled>Check answer</button>
         <p class="check-feedback" role="status"></p>
       </form>
       <div class="lesson-notes">

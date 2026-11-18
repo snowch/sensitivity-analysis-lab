@@ -19,6 +19,7 @@
     </div>
   </header>
   <main id="main">
+    <noscript><p class="shell notice">Enable JavaScript to run the exercises and save notes.</p></noscript>
     <section class="lesson shell" aria-labelledby="practice-title">
       <header class="lesson-header">
         <p class="kicker"><span></span> Independent practice</p>
@@ -40,7 +41,7 @@
           </tbody>
         </table></div>
         <p>Cold days and cycles are treated as continuous estimates for simplicity. The model compares monthly bills and omits any upfront cost of making a change.</p>
-        <button class="button outline-button" type="button" id="energy-csv">Download 3,000 recorded runs</button>
+        <button class="button outline-button" type="button" id="energy-csv" disabled>Download 3,000 recorded runs</button>
         <p class="status" id="energy-csv-status" role="status"></p>
       </details>
       <div class="instructions">
@@ -78,7 +79,7 @@
               <option value="timers">Cut other use by 25 kWh</option>
             </select>
           </div>
-          <button class="button dark">Run analysis</button>
+          <button class="button dark" disabled>Run analysis</button>
           <p class="status" role="status"></p>
         </form>
         <div id="practice-results" class="results">
@@ -90,7 +91,7 @@
         <h2 id="note-heading">Make your case</h2>
         <label for="energy-brief">Investigation note</label>
         <textarea id="energy-brief" rows="7" placeholder="My recommendation and what I would measure…"></textarea>
-        <div class="note-actions"><small id="note-status">Saved in this browser when storage is available.</small><button id="download-note" type="button" class="button outline-button">Download note</button></div>
+        <div class="note-actions"><small id="note-status">Saved in this browser when storage is available.</small><button id="download-note" type="button" disabled class="button outline-button">Download note</button></div>
         <p><a href="pipeline-notes.html">Open your earlier pipeline note</a></p>
       </section>
       <details class="method-note">

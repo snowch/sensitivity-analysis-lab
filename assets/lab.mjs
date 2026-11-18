@@ -144,6 +144,7 @@ function connect(formId, resultId, task, getOptions, render) {
   const output = document.querySelector(`#${resultId} .output`);
   const status = form.querySelector(".status");
   const controls = Array.from(form.elements).filter(control => control.type !== "button");
+  const submit = form.querySelector("button:not([type])");
   form.addEventListener("change", () => {
     status.textContent = "Run again to apply your changes.";
   });
@@ -163,6 +164,7 @@ function connect(formId, resultId, task, getOptions, render) {
       output.removeAttribute("aria-busy");
     }
   });
+  submit.disabled = false;
 }
 
 connect("screen-form", "screen-results", "screen", data =>
@@ -206,6 +208,7 @@ function connectCsv(id, status, task, filename) {
       button.disabled = false;
     }
   });
+  button.disabled = false;
 }
 
 connectCsv("csv", ".csv-status", "csv", "pipeline-runs.csv");
@@ -289,4 +292,5 @@ for (const check of document.querySelectorAll(".knowledge-check")) {
     const choice = check.querySelector("input:checked");
     feedback.textContent = choice.dataset.feedback;
   });
+  check.querySelector("button").disabled = false;
 }
