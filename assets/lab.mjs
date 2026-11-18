@@ -37,7 +37,7 @@ function stats(items) {
     `<div><dt>${label}</dt><dd>${value}</dd></div>`).join("")}</dl>`;
 }
 
-function bars(rows, series, { min, max }) {
+function bars(rows, series, { min, max, ticks }) {
   const position = value => (value - min) / (max - min) * 100;
   const zero = position(0);
   const row = item => `<li class="bar-row" style="--zero:${zero}%">
@@ -50,6 +50,7 @@ function bars(rows, series, { min, max }) {
   </li>`;
   return `<div class="chart ${series.length > 1 ? "paired" : ""}">
     <ul class="legend">${series.map(({ label, color }) => `<li><span class="swatch ${color}"></span>${label}</li>`).join("")}</ul>
+    ${ticks ? `<div class="chart-axis" aria-hidden="true"><div><span>${ticks[0]}</span><span>${ticks[1]}</span><span>${ticks[2]}</span></div></div>` : ""}
     <ul class="bar-list">${rows.slice(0, 6).map(row).join("")}</ul>
     ${rows.length > 6 ? `<details class="more"><summary>Show remaining ${rows.length - 6} inputs</summary><ul class="bar-list">${rows.slice(6).map(row).join("")}</ul></details>` : ""}
   </div>`;
@@ -59,8 +60,8 @@ function renderScreen(result, { seed, count }) {
   return `
     ${stats([["Median latency", `${format(result.median, 1)} ms`], ["95th percentile", `${format(result.p95, 1)} ms`]])}
     <p class="run-label">${formatCount(count)} simulated runs · seed ${seed}</p>
-    ${bars(result.scores, [{ key: "rho", label: "Spearman ρ", show: signed, color: "teal" }], { min: -1, max: 1 })}
-    <p class="chart-note">Orange bars point to lower latency as the input increases.</p>`;
+    ${bars(result.scores, [{ key: "rho", label: "Spearman ρ", show: signed, color: "teal" }], { min: -1, max: 1, ticks: ["−1", "0", "+1"] })}
+    <p class="chart-note">Bars left of zero track lower latency. Bars right of zero track higher latency.</p>`;
 }
 
 const scenarios = {
@@ -86,7 +87,7 @@ function renderAssumptions({ rank, indices }, { scenario, count }) {
     ], { min, max })}
     <p class="chart-note">${totalLead.label} ranks ${ranked.get(totalLead.id).place} of 13 by |ρ| (ρ = ${signed(ranked.get(totalLead.id).rho)}).</p>
     <details class="more"><summary>Compare the full Spearman ranking</summary>
-      ${bars(rank.scores, [{ key: "rho", label: "Spearman ρ", show: signed, color: "teal" }], { min: -1, max: 1 })}
+      ${bars(rank.scores, [{ key: "rho", label: "Spearman ρ", show: signed, color: "teal" }], { min: -1, max: 1, ticks: ["−1", "0", "+1"] })}
     </details>
     ${scenarioRuns.size > 1 ? `<details class="more" open><summary>Compare scenario leaders</summary>
       <div class="table-wrap"><table><thead><tr><th scope="col">Scenario</th><th scope="col">Pairs</th><th scope="col">Spearman</th><th scope="col">Total-order</th></tr></thead>
@@ -122,9 +123,7 @@ function connect(formId, resultId, task, getOptions, render) {
   const output = document.querySelector(`#${resultId} .output`);
   const status = form.querySelector(".status");
   const controls = Array.from(form.elements).filter(control => control.type !== "button");
-  let dirty = false;
   form.addEventListener("change", () => {
-    dirty = true;
     status.textContent = "Run again to apply your changes.";
   });
   form.addEventListener("submit", async event => {
@@ -135,8 +134,7 @@ function connect(formId, resultId, task, getOptions, render) {
     status.textContent = task === "logs" ? "Evaluating the forest on held-out rows…" : "Running the experiment…";
     try {
       output.innerHTML = render(await run(task, options), options);
-      status.textContent = dirty || task !== "screen" ? "Results updated." : "";
-      dirty = false;
+      status.textContent = "Results updated.";
     } catch (error) {
       status.textContent = error.message;
     } finally {
@@ -144,10 +142,9 @@ function connect(formId, resultId, task, getOptions, render) {
       output.removeAttribute("aria-busy");
     }
   });
-  return form;
 }
 
-const screenForm = connect("screen-form", "screen-results", "screen", data =>
+connect("screen-form", "screen-results", "screen", data =>
   ({ seed: Number(data.get("seed")), count: Number(data.get("count")) }), renderScreen);
 connect("assumptions-form", "assumptions-results", "assumptions", data => {
   const scenario = data.get("scenario");
@@ -207,4 +204,12 @@ note.addEventListener("input", () => {
 noteButton.addEventListener("click", () => download("pipeline-investigation.md",
   `# Pipeline investigation\n\n${note.value.trim()}\n`, "text/markdown"));
 
-screenForm.requestSubmit();
+for (const check of document.querySelectorAll(".knowledge-check")) {
+  const feedback = check.querySelector(".check-feedback");
+  check.addEventListener("change", () => { feedback.textContent = ""; });
+  check.addEventListener("submit", event => {
+    event.preventDefault();
+    const choice = check.querySelector("input:checked");
+    feedback.textContent = choice.dataset.feedback;
+  });
+}
