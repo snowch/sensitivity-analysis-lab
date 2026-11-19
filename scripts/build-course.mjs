@@ -8,6 +8,7 @@ import { application } from "../course/application.mjs";
 import { extensions } from "../course/extensions.mjs";
 import { sources, sourceGroups, sourceLink } from "../course/references.mjs";
 import { reportGuide, reportTemplate } from "../course/report.mjs";
+import { methodMap } from "../course/method-map.mjs";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const target = resolve(root, process.argv[2] ?? "_site");
@@ -187,6 +188,8 @@ const outline=units.map(([title,links])=>`<section class="unit"><h3>${html(title
 </ol></section>`).join("\n");
 const links=references.map(([id,title])=>`<li><a href="${pageName(id)}">${html(title)}</a></li>`).join("\n");
 await writeFile(join(target,"index.html"),home.replace("<!-- course-units -->",outline).replace("<!-- course-references -->",links));
+await writeFile(join(target,"method-map.html"), frame("method-map", "How the methods fit together", methodMap)
+  .replace("</head>", '  <link rel="stylesheet" href="assets/method-map.css?v=1">\n</head>'));
 await writeFile(join(target,"references.html"),frame("references","Bibliography",`<article class="lesson shell">
   <header class="lesson-header"><h1>Bibliography</h1><p>Use the descriptions to find a paper or guide for the method you want to check. Lesson pages also link to their sources.</p></header>
   ${sourceGroups.map(([title, keys]) => `<section class="reading"><h2>${html(title)}</h2><dl class="terms">${keys.map(key=>`<dt>${sourceLink(key)}</dt><dd>${html(sources[key][2])}</dd>`).join("\n")}</dl></section>`).join("\n")}

@@ -1,0 +1,226 @@
+.method-map {
+  --connector: var(--edge);
+  --stem: .85rem;
+  --record-gap: 1.45rem;
+  container-type: inline-size;
+  margin-block-start: var(--section-gap);
+  padding: clamp(.85rem, 3.2vw, 2rem);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: linear-gradient(155deg, var(--soft), var(--paper) 62%);
+}
+
+.map-caption {
+  margin-block-end: 1.35rem;
+}
+
+.map-caption h2 {
+  font-size: clamp(1.16rem, 2.5vw, 1.4rem);
+  text-wrap: pretty;
+}
+
+.map-node {
+  --station: var(--series-3);
+  position: relative;
+  min-width: 0;
+  padding: .85rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--panel);
+}
+
+.map-node h3 {
+  color: var(--ink);
+  font-size: 1.07rem;
+  line-height: 1.25;
+  text-wrap: pretty;
+}
+
+.map-node h3 a {
+  color: var(--station);
+  text-decoration-thickness: 1px;
+}
+
+.map-node h3 a:hover {
+  text-decoration-thickness: 2px;
+}
+
+.map-node p {
+  margin-block-start: .35rem;
+  color: var(--muted);
+  font-size: .94rem;
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+
+.map-model, .map-decision {
+  max-width: 28rem;
+  margin-inline: auto;
+  text-align: center;
+  border-color: color-mix(in srgb, var(--station) 45%, var(--line));
+  background: color-mix(in srgb, var(--station) 7%, var(--panel));
+}
+
+.map-model:target {
+  outline: 2px solid var(--station);
+  outline-offset: 4px;
+}
+
+.map-uncertainty, .map-decision { --station: var(--series-1); }
+
+.map-sensitivity {
+  --station: var(--accent);
+  border-color: color-mix(in srgb, var(--station) 50%, var(--line));
+  background: color-mix(in srgb, var(--station) 8%, var(--panel));
+}
+
+.map-fan, .map-join {
+  position: relative;
+  inline-size: 66.6667%;
+  block-size: var(--stem);
+  margin-inline: auto;
+}
+
+.map-fan { border-block-end: 1px solid var(--connector); }
+.map-join { border-block-start: 1px dashed var(--connector); }
+
+.map-fan::before, .map-join::before {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 50%;
+  border-inline-start: 1px solid var(--connector);
+}
+
+.map-join::before { border-inline-start-style: dashed; }
+
+.map-branches, .map-observed {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.map-branches > li {
+  position: relative;
+  display: grid;
+  padding: var(--stem) .43rem;
+}
+
+.map-branches > li::before, .map-branches > li::after {
+  content: "";
+  position: absolute;
+  block-size: var(--stem);
+  inset-inline-start: 50%;
+  border-inline-start: 1px solid var(--connector);
+}
+
+.map-branches > li::before { inset-block-start: 0; }
+.map-branches > li::after { inset-block-end: 0; border-inline-start-style: dashed; }
+
+.map-bridge {
+  margin: .4rem auto .65rem;
+  color: var(--muted);
+  font-size: .85rem;
+  text-align: center;
+}
+
+.map-bridge::after {
+  content: "";
+  display: block;
+  inline-size: .42rem;
+  block-size: .42rem;
+  margin: .28rem auto 0;
+  border-inline-end: 1px solid var(--connector);
+  border-block-end: 1px solid var(--connector);
+  transform: rotate(45deg);
+}
+
+.map-observed { gap: var(--record-gap); }
+
+.map-observed > li:not(:last-child)::before,
+.map-observed > li:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  inset-block-start: 50%;
+  border-block-start: 1px solid var(--connector);
+}
+
+.map-observed > li:not(:last-child)::before {
+  inset-inline-start: 100%;
+  inline-size: calc(var(--record-gap) - 4px);
+}
+
+.map-observed > li:not(:last-child)::after {
+  inset-inline-start: calc(100% + var(--record-gap) - 10px);
+  inline-size: .36rem;
+  block-size: .36rem;
+  border-inline-end: 1px solid var(--connector);
+  transform: translateY(-50%) rotate(45deg);
+}
+
+.map-model-link {
+  margin-block-start: 1.1rem;
+  padding-inline-start: .8rem;
+  border-inline-start: 1px dashed var(--connector);
+  color: var(--muted);
+  font-size: .9rem;
+}
+
+.map-note {
+  color: var(--muted);
+}
+
+@container (max-width: 39rem) {
+  .map-branches, .map-observed { grid-template-columns: 1fr; }
+
+  .map-branches {
+    margin-inline: .25rem;
+    padding: .2rem var(--stem);
+    border-inline-start: 1px solid var(--connector);
+    border-inline-end: 1px dashed var(--connector);
+  }
+
+  .map-branches > li { padding: .33rem 0; }
+
+  .map-branches > li::before, .map-branches > li::after {
+    block-size: 0;
+    inline-size: var(--stem);
+    inset-block: 50% auto;
+    border-inline-start: 0;
+  }
+
+  .map-branches > li::before {
+    inset-inline-start: calc(-1 * var(--stem));
+    border-block-start: 1px solid var(--connector);
+  }
+
+  .map-branches > li::after {
+    inset-inline: auto calc(-1 * var(--stem));
+    border-block-start: 1px dashed var(--connector);
+  }
+
+  .map-fan, .map-join { inline-size: calc(50% - .25rem); }
+  .map-fan { margin-inline: .25rem auto; }
+  .map-fan::before { inset-inline: auto 0; }
+  .map-join { margin-inline: auto .25rem; }
+  .map-join::before { inset-inline-start: 0; }
+
+  .map-observed > li:not(:last-child)::before {
+    inset-block-start: 100%;
+    inset-inline-start: 50%;
+    inline-size: 0;
+    block-size: calc(var(--record-gap) - 4px);
+    border-block-start: 0;
+    border-inline-start: 1px solid var(--connector);
+  }
+
+  .map-observed > li:not(:last-child)::after {
+    inset-block-start: calc(100% + var(--record-gap) - 10px);
+    inset-inline-start: 50%;
+    border-block-start: 0;
+    border-block-end: 1px solid var(--connector);
+    transform: translateX(-50%) rotate(45deg);
+  }
+}

@@ -13,14 +13,12 @@ export const foundations = {
     <p>Suppose you must choose a route to class. Average journey time might matter on a free afternoon. If class starts at 9 am, you might care more about the chance of arriving late.</p>
     <p>A <strong>model</strong> uses inputs to calculate an outcome. Route and departure time are choices. Weather and traffic are conditions you face. A <strong>parameter</strong>, such as how many minutes the model adds per kilometre, sets how its calculation works.</p>
     <p>The <strong>output</strong> is what the model produces, such as journey time. A summary of that output, such as the chance of missing a deadline, can help you decide. <strong>Sensitivity analysis</strong> asks how much the result changes when you change an input or assumption. First choose the result you care about.</p>
-    <details><summary>How this relates to other methods</summary>
-      <ul>
-        <li><strong>Uncertainty analysis</strong> describes what journey times are plausible and, when evidence supports it, how likely they are. The experiment below shows a simple case.</li>
-        <li><strong>Scenario analysis</strong> compares conditions, such as weekday and weekend traffic. You can compare them even if their chances are unknown. <a href="ranges.html">Change the assumptions</a></li>
-        <li><strong>Optimisation</strong> searches for the best available choice under a stated goal and constraints. <a href="tuning.html">Spend an ML tuning budget</a></li>
-        <li><strong>Predictive attribution</strong> asks which inputs a fitted model relies on to make predictions. <a href="logs.html">Work from logs</a></li>
-      </ul>
-    </details>`,
+    <div class="lesson-resources">
+      <a class="resource-link" href="method-map.html">
+        <span>See how the methods fit together<small>Five ways to analyse the same journey</small></span>
+        <span class="resource-arrow" aria-hidden="true"></span>
+      </a>
+    </div>`,
     example: `<p>Suppose two equally likely trips take 10 and 30 minutes. Compare four ways to describe those times.</p>
     <ul>
       <li><strong>Mean.</strong> Add the times and divide by two. (10 + 30) ÷ 2 = 20 minutes.</li>
