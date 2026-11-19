@@ -169,7 +169,7 @@ for (const file of existing) {
   if (file==="index.html") continue;
   const id=file.slice(0,-5);
   let page=(await readFile(join(root,file),"utf8")).replace(/lab\.css\?v=\d+/,"lab.css?v=9").replace("lab.mjs?v=2","lab.mjs?v=4");
-  page=page.replace("</head>", '  <script type="module" src="assets/scroll-tables.mjs"></script>\n</head>');
+  page=page.replace("</head>", '  <script type="module" src="assets/scroll-tables.mjs?v=2"></script>\n</head>');
   page=page.replace(/<aside class="course-sidebar">[\s\S]*?<\/aside>/,sidebar(id));
   const index=route.findIndex(row=>row[0]===id);
   if(index>=0) {
@@ -189,7 +189,7 @@ const outline=units.map(([title,links])=>`<section class="unit"><h3>${html(title
 const links=references.map(([id,title])=>`<li><a href="${pageName(id)}">${html(title)}</a></li>`).join("\n");
 await writeFile(join(target,"index.html"),home.replace("<!-- course-units -->",outline).replace("<!-- course-references -->",links));
 await writeFile(join(target,"method-map.html"), frame("method-map", "How the methods fit together", methodMap)
-  .replace("</head>", '  <link rel="stylesheet" href="assets/method-map.css?v=1">\n</head>'));
+  .replace("</head>", '  <link rel="stylesheet" href="assets/method-map.css?v=2">\n</head>'));
 await writeFile(join(target,"references.html"),frame("references","Bibliography",`<article class="lesson shell">
   <header class="lesson-header"><h1>Bibliography</h1><p>Use the descriptions to find a paper or guide for the method you want to check. Lesson pages also link to their sources.</p></header>
   ${sourceGroups.map(([title, keys]) => `<section class="reading"><h2>${html(title)}</h2><dl class="terms">${keys.map(key=>`<dt>${sourceLink(key)}</dt><dd>${html(sources[key][2])}</dd>`).join("\n")}</dl></section>`).join("\n")}

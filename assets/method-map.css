@@ -19,6 +19,23 @@
   text-wrap: pretty;
 }
 
+.map-scroll-hint {
+  display: none;
+  margin-block-start: .35rem;
+  color: var(--muted);
+  font-size: .9rem;
+}
+
+.map-viewport {
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+}
+
+.map-track {
+  min-inline-size: 39rem;
+  padding: .35rem;
+}
+
 .map-node {
   --station: var(--series-3);
   position: relative;
@@ -172,55 +189,7 @@
   color: var(--muted);
 }
 
-@container (max-width: 39rem) {
-  .map-branches, .map-observed { grid-template-columns: 1fr; }
-
-  .map-branches {
-    margin-inline: .25rem;
-    padding: .2rem var(--stem);
-    border-inline-start: 1px solid var(--connector);
-    border-inline-end: 1px dashed var(--connector);
-  }
-
-  .map-branches > li { padding: .33rem 0; }
-
-  .map-branches > li::before, .map-branches > li::after {
-    block-size: 0;
-    inline-size: var(--stem);
-    inset-block: 50% auto;
-    border-inline-start: 0;
-  }
-
-  .map-branches > li::before {
-    inset-inline-start: calc(-1 * var(--stem));
-    border-block-start: 1px solid var(--connector);
-  }
-
-  .map-branches > li::after {
-    inset-inline: auto calc(-1 * var(--stem));
-    border-block-start: 1px dashed var(--connector);
-  }
-
-  .map-fan, .map-join { inline-size: calc(50% - .25rem); }
-  .map-fan { margin-inline: .25rem auto; }
-  .map-fan::before { inset-inline: auto 0; }
-  .map-join { margin-inline: auto .25rem; }
-  .map-join::before { inset-inline-start: 0; }
-
-  .map-observed > li:not(:last-child)::before {
-    inset-block-start: 100%;
-    inset-inline-start: 50%;
-    inline-size: 0;
-    block-size: calc(var(--record-gap) - 4px);
-    border-block-start: 0;
-    border-inline-start: 1px solid var(--connector);
-  }
-
-  .map-observed > li:not(:last-child)::after {
-    inset-block-start: calc(100% + var(--record-gap) - 10px);
-    inset-inline-start: 50%;
-    border-block-start: 0;
-    border-block-end: 1px solid var(--connector);
-    transform: translateX(-50%) rotate(45deg);
-  }
+@container (width < 39rem) {
+  .map-scroll-hint { display: block; }
+  .map-model, .map-decision { max-inline-size: min(28rem, calc(100cqi - .75rem)); }
 }
