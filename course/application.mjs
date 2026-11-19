@@ -3,9 +3,18 @@ import { number, select, seed, count } from "./foundations.mjs";
 export const application = {
   reliability: {
     goal: "Tell whether you need more simulation runs or better evidence about the model.",
-    concept: `<p><strong>Simulation error</strong> is the change caused by using a finite numerical design. Repeat the whole design with different seeds to see that spread. Read the 10th and 90th percentiles in <strong>Run-to-run spread</strong> to estimate the range that contains the middle 80% of repeated estimates. The plot shows the individual estimates, their mean and the exact share. The second table gives an approximate 95% interval for the mean estimate across repetitions. This interval reflects sampling uncertainty. A persistently biased estimate can miss the exact share.</p><details><summary>How to estimate sampling uncertainty</summary><p>The interval uses mean ± 2.093 × sample standard deviation ÷ √20. Another approach is a bootstrap, which builds new samples by drawing the original observations again with replacement. For this Sobol design, draw whole groups of four linked evaluations so the comparisons stay paired.</p></details><p>Look for a narrower spread as the number of sample pairs grows.</p>
-    <p>In <a href="logs.html">Work from logs</a>, repeated shuffles show how much scores vary when the same test data and fitted model are used. Changes in credible input ranges, missing measurements, and alternative model structures affect the conclusion beyond simulation error. Increasing sample size cannot correct a misleading equation or input population.</p>`,
-    example: `<p>Suppose five whole designs give pair estimates −0.04, −0.01, 0.00, 0.02 and 0.03 for an additive model. They average 0.00. A true independent-input pair index is nonnegative. Keep the signed estimates to see how far the calculation can move in either direction. Replacing the two negatives with zero would raise the mean to 0.01.</p>`,
+    concept: `<h2>Repeat the calculation with new samples</h2>
+    <p><strong>Simulation error</strong> comes from using a finite sample. Repeat the whole design with different seeds to see how estimates vary. Look for a narrower spread as the number of sample pairs grows.</p>
+    <ul>
+      <li><strong>Run-to-run spread.</strong> The 10th and 90th percentiles estimate where the middle 80% of estimates land. The plot shows individual estimates, their mean and the exact share.</li>
+      <li><strong>Interval for the mean.</strong> The second table gives an approximate 95% interval for the mean across repetitions. A biased method can still miss the exact share.</li>
+    </ul>
+    <details><summary>How to estimate sampling uncertainty</summary><p>The interval uses mean ± 2.093 × sample standard deviation ÷ √20. Another approach is a bootstrap, which builds new samples by drawing the original observations again with replacement. For this Sobol design, draw whole groups of four linked evaluations so the comparisons stay paired.</p></details>
+    <h2>Check whether the model fits the question</h2>
+    <p>Changing the input ranges or model equations can change the conclusion even with a large sample. Check assumptions against relevant measurements and try alternative model structures.</p>
+    <p>Repeated shuffles in <a href="logs.html">Work from logs</a> show another source of variation. Each shuffle uses the same test data and fitted model.</p>`,
+    example: `<p>Suppose five designs estimate the same pair share as −0.04, −0.01, 0.00, 0.02 and 0.03. Their mean is 0.00.</p>
+    <p>A true independent-input pair index is nonnegative. Keep the signed estimates to see how far the calculation can move in either direction. Replacing the two negatives with zero would raise the mean to 0.01.</p>`,
     setup: "The page repeats 20 independently seeded designs at each of three budgets. Each design estimates a pair index for a known model. The smaller budget is one quarter of the middle budget. The larger budget is four times the middle budget. The plot spaces the three budgets equally.",
     fields: [select("model","Reference model","add",[["add","Additive: exact pair index 0"],["product","Product: exact pair index 1/7"]]),count("Middle budget (pairs per design)",256,[64,256,1024]),seed],
     predict: "What should happen to the cloud of estimates as the number of pairs rises?",
@@ -16,9 +25,18 @@ export const application = {
   },
   stochastic: {
     goal: "Separate variability within one input setting from changes in the typical outcome across settings.",
-    concept: `<p>A deterministic model always gives the same output at the same inputs. A <strong>stochastic simulator</strong> can produce different outputs because it makes its own random draws. Choose the output you care about, such as the mean at a fixed input or the chance of going over a limit. A <strong>replicate</strong> is another run at the same input. Average the replicate outputs to estimate the mean. For the chance of crossing a limit, count the replicates that go over and divide by the total.</p>
-    <p>The <strong>law of total variance</strong> adds the average within-input variance to the variance of the true conditional means. With a finite number of replicates, the variance of the estimated group means includes residual noise. For independent replicate noise with common variance, divide the within-input variance by the number of replicates. Subtract that amount from the variance across the group means to estimate the input contribution. With a small, noisy sample, that estimate can be negative.</p>`,
-    example: `<p>The model’s mean output is 10X for X uniform on 0–1, so the input contribution is 100 ÷ 12 ≈ 8.33 points². Extra noise with standard deviation 4 adds variance 16. Total output variance is about 24.33. With four repetitions per input, each group mean still has noise variance 16 ÷ 4 = 4. Across groups, the expected variance of those means is 8.33 + 4 = 12.33.</p>`,
+    concept: `<h2>Run the simulator again at the same input</h2>
+    <p>A deterministic model always gives the same output at the same inputs. A <strong>stochastic simulator</strong> can give different outputs because it makes its own random draws.</p>
+    <p>A <strong>replicate</strong> is another run at the same input. Average the replicates to estimate the mean. To estimate the chance of crossing a limit, count the replicates that go over and divide by the total.</p>
+    <h2>Separate two sources of variation</h2>
+    <p>The <strong>law of total variance</strong> adds the average variance within one input setting to the variance of the true means across settings.</p>
+    <p>With a finite number of replicates, the estimated means still contain noise. If replicate noise is independent and has the same variance at each setting, divide the within-input variance by the number of replicates. Subtract that amount from the variance across estimated means. This estimates the input contribution, and a small, noisy sample can make it negative.</p>`,
+    example: `<p>The model averages 10X at input X. Draw X uniformly from 0 to 1.</p>
+    <ul>
+      <li><strong>Across inputs.</strong> The variance of 10X is 100 ÷ 12 ≈ 8.33 points².</li>
+      <li><strong>Within each input.</strong> Random noise with standard deviation 4 adds 4² = 16 points². Total output variance is about 24.33 points².</li>
+      <li><strong>With four replicates.</strong> Each estimated mean still has noise variance 16 ÷ 4 = 4 points². Across settings, these means have expected variance 8.33 + 4 = 12.33 points².</li>
+    </ul>`,
     setup: "The page draws 96 inputs and simulates independent, bell-shaped noise centred on 10X. Keeping the seed fixed reuses the 96 inputs when you change the number of replicates. It repeats the original noise draws and adds more at each input.",
     fields: [number("noise","Noise standard deviation (points)",4,0,12,1),select("repeats","Replicates per input",4,[2,4,16,64],true),seed],
     predict: "Which quantity should move toward 8.33 when replicates increase: within-input variance or variance of group means?",
@@ -29,10 +47,18 @@ export const application = {
   },
   decisions: {
     goal: "Compare interventions by the decision criterion and test whether extra information could change the action.",
-    concept: `<p>An importance score can show which input contributes to variation. A decision also depends on what you can change, how much change is realistic, and its price. Compare options under <strong>matched conditions</strong> by using the same simulated jobs for every option. The cost in this lab is price per job plus the loss when a job is late multiplied by the chance of being late.</p>
-    <p>A <strong>break-even price</strong> is the largest extra price that leaves expected cost unchanged. For rare failure prevention, multiply the reduction in late-job probability by the loss per late job. A negative break-even price means the option raises late risk in that model and would need compensation to tie on expected cost. Also check p95 and the risk limit separately when the decision requires both.</p>
-    <p><strong>Value of information</strong> compares the best expected decision with and without learning something before acting. Spending to learn changes what you know. Spending to prevent a failure changes the system. The value of a perfect signal is an upper bound for a real measurement of that same uncertainty, under the same loss and available actions.</p>`,
-    example: `<p>On a mild day a loss is $0. On a severe day it is $60. Mitigation costs $18 and prevents the loss. With severe probability 0.25, waiting costs 0.25 × $60 = $15 on average, lower than $18. A perfect forecast lets you mitigate only on severe days, costing 0.25 × $18 = $4.50. The value of perfect information is $15 − $4.50 = $10.50. It follows from the decision and costs, not from a sensitivity rank.</p>`,
+    concept: `<h2>Compare changes you can make</h2>
+    <p>An importance score describes variation. A decision also depends on what you can change, how much you can change it and what that costs. Use <strong>matched conditions</strong> by comparing every option on the same simulated jobs.</p>
+    <p>Expected cost here is the price per job plus the chance of being late times the loss per late job. Check p95 and the chance of exceeding a deadline separately when the decision requires both.</p>
+    <p>The <strong>break-even price</strong> is the largest extra price that leaves expected cost unchanged. Multiply the reduction in late-job probability by the loss per late job. A negative result means the option raises late risk and would need compensation to tie.</p>
+    <h2>Decide whether extra information is worth buying</h2>
+    <p><strong>Value of information</strong> compares the best expected result before and after learning something that could change your action. Under the same costs and options, a perfect signal puts an upper bound on the value of a real measurement of the same uncertainty.</p>`,
+    example: `<p>A severe day costs $60 in losses. A mild day costs $0. You can pay $18 to prevent the loss. One in four days is severe.</p>
+    <ol>
+      <li><strong>Without a forecast.</strong> Waiting costs 0.25 × $60 = $15 on average. This is cheaper than paying $18 every day.</li>
+      <li><strong>With a perfect forecast.</strong> Pay $18 only on severe days. That costs 0.25 × $18 = $4.50 on average.</li>
+      <li><strong>Value of the forecast.</strong> Subtract the two costs. Perfect information saves $15 − $4.50 = $10.50 per day in this example.</li>
+    </ol>`,
     setup: "The page simulates 8,192 jobs and uses them for all three options. Ordinary delay is uniform from 0 to 10 minutes, and an independent failure adds 18 minutes about 2% of the time. The two paid options cut ordinary delay by 65% or prevent the rare failure. Under the alternative structure, prevention also adds six minutes of checking to every job. The <strong>Perfect signal example</strong> table is a separate decision about mild and severe days. Chances are shown as fractions, so 0.25 means 25%.",
     fields: [number("threshold","Late-job limit (minutes)",14,3,25),number("premium","Price of either option per job ($)",.12,0,10,.01),number("loss","Loss per late job ($)",15,1,200),select("structure","Model structure","simple",[["simple","Prevention removes jump only"],["spill","Prevention also adds a 6-minute check"]]),number("risk","Chance of a severe day (0–1)",.25,0,1,.05),seed],
     predict: "At the 14-minute limit, which option will reduce the late-job risk? Which looks better by p95?",
@@ -43,10 +69,25 @@ export const application = {
   },
   capstone: {
     goal: "Choose and defend an analysis for a community event, then document the evidence that could overturn your recommendation.",
-    concept: `<p>A community group can staff registration with its current team or schedule one extra volunteer. It wants to avoid long waits while spending only where a change makes a credible difference. You choose what counts as a long wait and what improvement justifies the extra shift.</p>
-    <p>The teaching model estimates a wait from the queue left at the end of a 30-minute arrival window. The <strong>burst share</strong> is the fraction of all guests who arrive within that window. Multiply it by total guests to get the number of arrivals. Subtract team size × service rate, where service rate is people served by <em>one</em> volunteer in 30 minutes. If the leftover queue is positive, divide by the team’s service capacity and multiply by 30 minutes. Under the spread model, effective burst share is 65% of the input burst share plus 35% of 0.4. These are two simplifying assumptions about the same event. The result estimates how long it takes to clear that queue. Use observations to check how well it represents actual waits.</p>
-    <p>The prepared sampler uses independent uniform input ranges. You can give guest count a triangular distribution that peaks one quarter of the way across its range, or make a busier event tend to have a larger burst share by linking their percentiles on 80% of draws. Justify the distribution and dependence from evidence or label them as what-if assumptions. Classical Sobol indices are available for independent inputs.</p>`,
-    example: `<p>With 160 guests, a burst share of 0.75, and two volunteers each serving 30 people per 30 minutes, 120 people arrive and capacity is 60. The backlog proxy is 60 ÷ 60 × 30 = 30 minutes. With three volunteers it is 30 ÷ 90 × 30 = 10 minutes. For a strict “above 10” rule, the second option meets the threshold on this example. The decision is about the whole range of plausible events.</p>`,
+    concept: `<h2>Decide what would justify another shift</h2>
+    <p>A community group can keep its current registration team or schedule one extra volunteer. Choose what counts as a long wait and how much improvement would justify the extra cost.</p>
+    <h2>Estimate the time to clear the queue</h2>
+    <p>The model estimates the backlog at the end of a 30-minute arrival window.</p>
+    <ol>
+      <li><strong>Count arrivals.</strong> Multiply total guests by the <strong>burst share</strong>, the fraction who arrive in that window.</li>
+      <li><strong>Find the backlog.</strong> Team capacity is team size × the number of people one volunteer can serve in 30 minutes. Subtract capacity from arrivals, using zero if capacity is larger.</li>
+      <li><strong>Estimate the wait.</strong> Divide the backlog by team capacity and multiply by 30 minutes. Check actual arrival and wait records before relying on this approximation.</li>
+    </ol>
+    <h2>Choose the arrival and sampling assumptions</h2>
+    <p><strong>Full burst share</strong> uses the input burst share directly. <strong>Spread arrival assumption</strong> moves it 35% of the way towards 0.4. Compare both to see whether the staffing decision depends on how concentrated arrivals are.</p>
+    <p>The starting ranges are independent and uniform. You can choose a triangular guest count with a peak a quarter of the way across its range. You can also make busier events tend to have a larger burst share by linking the two percentiles on 80% of draws.</p>
+    <p>Use evidence for these choices or label them as what-if assumptions. Use classical Sobol indices with independent inputs.</p>`,
+    example: `<p>Suppose 160 guests attend and 75% arrive in the first half hour. That is 160 × 0.75 = 120 arrivals. Each volunteer can serve 30 people in that time.</p>
+    <ul>
+      <li><strong>Two volunteers.</strong> Capacity is 60 people and the backlog is 60. Clearing it takes 60 ÷ 60 × 30 = 30 minutes.</li>
+      <li><strong>Three volunteers.</strong> Capacity is 90 and the backlog is 30. Clearing it takes 30 ÷ 90 × 30 = 10 minutes.</li>
+    </ul>
+    <p>Only the two-person team goes over 10 minutes in this example. Now check the options across a range of plausible events.</p>`,
     setup: "The page prepares two volunteers, a 10-minute limit and a $25 cost for one extra shift. It compares the two teams on the same simulated events. The sensitivity table covers the current team. It uses either wait time in minutes or a value of 1 when the wait exceeds the limit and 0 otherwise. The result tables show chances as fractions, so 0.10 means 10%.",
     fields: [
       number("guestsLow","Guests · lower bound",60,5,400),number("guestsHigh","Guests · upper bound",160,10,500),
@@ -63,10 +104,12 @@ export const application = {
     ],
     predict: "What should the group change and what minimum improvement would justify it? Choose before you run.",
     steps: [
-      "In <strong>Report draft</strong>, write the action and result that would justify a shift. One rule is to pay $25 if a third volunteer reduces the chance of waiting over 10 minutes from above 10% to 10% or less. Explain where the input ranges come from. You can use that rule with the prepared settings or choose your own <strong>Decision summary</strong> and <strong>Wait limit (minutes)</strong>.",
-      "Select <strong>Run experiment</strong>. In <strong>Chosen decision summary</strong>, compare <strong>Current team</strong> and <strong>One extra volunteer</strong> with your rule. In <strong>Global rank screen on current staffing</strong>, find the input with the largest absolute <strong>Spearman ρ</strong> for the starting method.",
-      "Set <strong>Arrival model</strong> to <strong>Spread arrival assumption</strong> and run again. Compare the two teams’ decision results with the preceding run. Next, set <strong>Arrival model</strong> back to <strong>Full burst share</strong>, set <strong>People per volunteer per 30 min · lower</strong> to 12 and run. Does either assumption change your staffing recommendation?",
-      "Set the lower service bound back to 20. Select <strong>1 if wait is above the limit</strong> in <strong>Per-event sensitivity output</strong> and <strong>First- and total-order Sobol</strong> in <strong>Sensitivity method</strong>. Run with 1,024 pairs and seed 42. Set <strong>Samples or Sobol base pairs</strong> to 4,096 and run again at seed 42. Compare the two <strong>Total order</strong> rankings. With 4,096 pairs still selected, set <strong>Random seed</strong> to 19 and run once more. Does the leading input stay the same across both seeds? Record the budgets, seeds and rankings in your report.",
+      "<strong>Set a decision rule.</strong> In <strong>Report draft</strong>, write what would justify the extra shift. For example, pay $25 if a third volunteer takes the chance of waiting over 10 minutes from above 10% to 10% or less. Set <strong>Decision summary</strong> and <strong>Wait limit (minutes)</strong> to match your rule. Record the source of your input ranges.",
+      "<strong>Run a starting comparison.</strong> Select <strong>Run experiment</strong>. Compare the teams in <strong>Chosen decision summary</strong>. Find the largest absolute <strong>Spearman ρ</strong> in <strong>Global rank screen on current staffing</strong>.",
+      "<strong>Try another arrival model.</strong> Switch <strong>Arrival model</strong> to <strong>Spread arrival assumption</strong> and run again. Compare both teams’ decision results with the first run.",
+      "<strong>Try a different range.</strong> Restore <strong>Full burst share</strong> and set <strong>People per volunteer per 30 min · lower</strong> to 12. Run again. Did the arrival model or the lower bound change your choice?",
+      "<strong>Check sample size.</strong> Restore the lower bound to 20. Set <strong>Per-event sensitivity output</strong> to <strong>1 if wait is above the limit</strong> and <strong>Sensitivity method</strong> to <strong>First- and total-order Sobol</strong>. Run with 1,024 pairs and seed 42. Set <strong>Samples or Sobol base pairs</strong> to 4,096 and run again. Compare the two <strong>Total order</strong> rankings.",
+      "<strong>Check the seed.</strong> Keep 4,096 pairs. Set <strong>Random seed</strong> to 19, then run again. Does the leading input stay the same? Record the budgets, seeds and rankings in the report.",
     ],
     task: "Use <strong>Assess the report</strong> to check your assumptions and evidence. Finish <strong>Report draft</strong> with your recommendation and a measurement that could change it. Select <strong>Download report</strong> below the checklist to take a copy.",
     report: true,

@@ -49,17 +49,44 @@
       </header>
       <div class="guide">
         <h2>Test the predictor on realistic unseen examples</h2>
-        <p>Suppose you want to predict next week’s delivery times. Fit the model on earlier weeks and reserve later deliveries for testing. If the question is how well the model works for new drivers, put all records for any one driver in the same set. Use some drivers for training and different drivers for testing. Fit any rules for filling missing values on training rows only.</p>
-        <p>Compare the model’s error with a simple baseline, such as always predicting the training median. If late deliveries matter most, check errors on those cases as well as the mean absolute error (MAE) across all test deliveries. MAE averages how far each prediction is from the measured time.</p>
+        <ul>
+          <li><strong>Predict future deliveries.</strong> Train on earlier weeks and reserve later deliveries for testing.</li>
+          <li><strong>Predict for new drivers.</strong> Train on some drivers and test on different drivers. Keep every record from the same driver together.</li>
+        </ul>
+        <p>Fit any rules for filling missing values on the training rows only.</p>
+        <p>Compare the model’s error with a simple baseline, such as always predicting the training median. The mean absolute error (MAE) averages how far each prediction is from the measured time. If late deliveries matter most, check errors on those cases too.</p>
         <h2>Shuffle the signal you want to investigate</h2>
         <p>Distance and delivery zone can carry overlapping information. Shuffle them separately to see how much the fitted model relies on each. Shuffle them as a pair to see how much the model relies on their shared information. Use the same row order for both columns so their values stay aligned.</p>
         <p>Even a paired shuffle can put a distance and zone beside an implausible route. Check whether the invented combinations make sense. Repeat the shuffle to see whether the conclusion depends on the particular row order.</p>
         <h2>Choose the meaning of importance</h2>
-        <p>Permutation importance measures the change in test error when a fitted predictor loses alignment with a signal. The value depends on the fitted model, data, loss and shuffle rule. Sobol indices decompose output variance under an input distribution, usually with independent inputs. Shapley effects allocate global variance under a specified joint distribution.</p>
-        <p>A predictive Shapley explanation can allocate the difference between one prediction and a reference prediction, such as the average across all deliveries. Take a 20-minute reference. In an illustrative calculation, using distance alone gives 26 minutes, using zone alone gives 24 minutes, and using both gives 32 minutes. Distance adds 6 first or 8 after zone, so its credit is (6 + 8) ÷ 2 = 7 minutes. Zone gets (4 + 6) ÷ 2 = 5 minutes. The credits add to the 12-minute difference. A different reference population or rule for filling unknown features can change those credits. To estimate what changing the route would do, run a controlled comparison or use a defensible causal design.</p>
+        <dl class="terms">
+          <dt>Permutation importance</dt>
+          <dd>How much does test error change when a signal is shuffled? The result depends on the fitted model, the data, the error measure and the shuffle rule.</dd>
+          <dt>Sobol indices</dt>
+          <dd>How much output variance comes from individual inputs and their interactions? The classical calculation assumes independent inputs.</dd>
+          <dt>Shapley effects</dt>
+          <dd>How can we allocate the output variance across inputs while preserving their joint distribution?</dd>
+          <dt>Predictive Shapley explanations</dt>
+          <dd>How much does each input contribute to one prediction’s difference from a reference, such as the average across all deliveries?</dd>
+        </dl>
+        <div class="worked">
+          <h3>Explain a 32-minute prediction</h3>
+          <p>In this illustrative calculation, the reference is 20 minutes. Using distance alone gives 26 minutes. Using zone alone gives 24. Using both gives 32.</p>
+          <ul>
+            <li><strong>Distance.</strong> It adds 26 − 20 = 6 minutes on its own, or 32 − 24 = 8 after zone. Its credit is (6 + 8) ÷ 2 = 7 minutes.</li>
+            <li><strong>Zone.</strong> It adds 24 − 20 = 4 minutes on its own, or 32 − 26 = 6 after distance. Its credit is (4 + 6) ÷ 2 = 5 minutes.</li>
+          </ul>
+          <p>The credits sum to the 12-minute difference. Changing the reference group or the way you handle unknown values can change the credits.</p>
+        </div>
+        <p>To estimate the effect of changing the route, run a controlled comparison or use a defensible causal design.</p>
         <p><a href="https://proceedings.neurips.cc/paper/2017/hash/8a20a8621978632d76c43dfd28b67767-Abstract.html">Lundberg &amp; Lee on interpreting model predictions</a></p>
         <h2>Write a test plan before departure</h2>
-        <p>Suppose your predictor can use distance, delivery zone, and the recorded arrival timestamp. You want a prediction before the van leaves. On paper, list which inputs are available before departure. Pick two to shuffle together. Then write a simple test to see whether changing the route reduces delays.</p>
+        <p>Your available data are distance, delivery zone and the recorded arrival time. You want a prediction before the van leaves.</p>
+        <ol>
+          <li>List the inputs available before departure.</li>
+          <li>Pick two inputs to shuffle together.</li>
+          <li>Write a simple test of whether changing the route reduces delays.</li>
+        </ol>
         <details class="reference"><summary>Example test plan</summary><p>Exclude the recorded arrival timestamp because it becomes available after the prediction. Compare individual and paired shuffles of distance and zone on later deliveries. To test a route change, compare comparable deliveries with the current and alternative routes and measure late arrivals and driver time.</p></details>
       </div>
       <nav class="lesson-actions" aria-label="Course sequence"><a href="./#course">Course outline</a><a class="button dark" href="logs.html">Back to Work from logs</a></nav>

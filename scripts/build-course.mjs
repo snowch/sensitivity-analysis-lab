@@ -32,8 +32,10 @@ function sidebar(current) {
           <ol class="sidebar-links" start="${start}">${links.map(entry).join("\n")}</ol>
         </details>`;
       }).join("\n")}
-      <p>References and notes</p>
-      <ul class="sidebar-links">${references.map(entry).join("\n")}</ul>
+      <details class="sidebar-unit"${references.some(([id])=>id===current) ? " open" : ""}>
+        <summary>References and notes</summary>
+        <ul class="sidebar-links">${references.map(entry).join("\n")}</ul>
+      </details>
     </nav>
   </aside>`;
 }
@@ -86,8 +88,8 @@ function renderLesson([id,title],lesson) {
     : `<details class="answer"><summary>Reveal the worked explanation</summary><p>${lesson.answer}</p></details>`;
   return frame(id,title,`<article class="lesson shell">
     <header class="lesson-header"><p class="kicker">Lesson ${index} of ${route.length}</p><h1>${html(title)}</h1><p>${lesson.goal}</p></header>
-    <div class="reading">${lesson.concept}</div>
-    <section class="reading"><h2>Worked example</h2>${lesson.example}</section>
+    <section class="reading">${lesson.concept}</section>
+    <section class="reading worked-example"><h2>Worked example</h2>${lesson.example}</section>
     <section class="lesson-experiment">
       <h2>Experiment</h2>
       <p id="prediction-prompt" class="experiment-question">${lesson.predict}</p>
@@ -142,7 +144,7 @@ const existing = (await readdir(root)).filter(name=>name.endsWith(".html"));
 for (const file of existing) {
   if (file==="index.html") continue;
   const id=file.slice(0,-5);
-  let page=(await readFile(join(root,file),"utf8")).replace("lab.css?v=2","lab.css?v=5").replace("lab.mjs?v=2","lab.mjs?v=4");
+  let page=(await readFile(join(root,file),"utf8")).replace(/lab\.css\?v=\d+/,"lab.css?v=6").replace("lab.mjs?v=2","lab.mjs?v=4");
   page=page.replace("</head>", '  <script type="module" src="assets/scroll-tables.mjs"></script>\n</head>');
   page=page.replace(/<aside class="course-sidebar">[\s\S]*?<\/aside>/,sidebar(id));
   const index=route.findIndex(row=>row[0]===id);

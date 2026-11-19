@@ -55,7 +55,11 @@
           <tbody><tr><th scope="row">Off</th><td>0</td><td>0</td><td>0</td></tr><tr><th scope="row">On</th><td>0</td><td>1</td><td>0.5</td></tr></tbody>
         </table></div>
         <h2>Compare the two sources of spread</h2>
-        <p>All four outputs average to 0.25. Their variance is the average squared distance from that mean, or 0.1875. The two averages for A alone, 0 and 0.5, are equally likely. Each sits 0.25 from their mean, so their variance is 0.25² = 0.0625. Divide 0.0625 by 0.1875 to get A’s first-order index of <strong>1/3</strong>. B has the same index.</p>
+        <ol>
+          <li><strong>All outputs.</strong> The mean is 0.25. Their variance is the average squared distance from that mean, or 0.1875.</li>
+          <li><strong>A alone.</strong> The two group averages for A, 0 and 0.5, are equally likely. Each sits 0.25 from the mean. The variance of those averages is 0.25² = 0.0625.</li>
+          <li><strong>First-order index.</strong> Divide 0.0625 by 0.1875 to get <strong>1/3</strong>. B has the same index.</li>
+        </ol>
         <p>The two first-order effects account for 2/3 of the variance. The remaining 1/3 belongs to their interaction. A’s total-order index includes its own 1/3 and the interaction’s 1/3, giving <strong>2/3</strong>. Each switch’s total includes that same interaction.</p>
         <h2>Recalculate when the output counts switches</h2>
         <p>On paper, use a new rule where the output counts how many switches are on. Write the four outputs, group them by A’s state, and calculate A’s first- and total-order indices. Write what happens to the gap between the two indices, then reveal the answer to check your work.</p>

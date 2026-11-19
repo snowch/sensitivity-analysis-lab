@@ -8,10 +8,26 @@ export const count = (label, value, choices) => select("count", label, value, ch
 export const foundations = {
   questions: {
     goal: "Choose a measure that helps you decide which route to take.",
-    concept: `<p>Suppose you must choose a route to a class. You control the route and departure time. Weather and traffic are external conditions. A <strong>model</strong> is a rule for producing an outcome from those inputs. Its <strong>parameters</strong>, such as a travel-time penalty per kilometre, specify how the rule behaves. Its <strong>output</strong> could be minutes, a late-arrival indicator (1 if late, 0 otherwise), or cost.</p>
-    <p><strong>Sensitivity analysis</strong> asks which changes to inputs or assumptions change an output. <strong>Uncertainty analysis</strong> estimates the spread or risks of the output under those assumptions. <strong>Scenario analysis</strong> compares named sets of conditions, such as weekday and weekend. A comparison of named scenarios does not require estimates of how often they occur. Use evidence about their frequency if the decision needs a probability across scenarios. <strong>Optimisation</strong> searches for a feasible decision that best satisfies a stated objective. <strong>Predictive attribution</strong> asks which inputs help a model make predictions on a given set of examples.</p>
-    <p>Traffic varies across journeys. You may also have limited knowledge about roadworks next month. More observations can improve what you know, while individual journeys still vary. Ask which output, model and input conditions a claim of importance refers to.</p>`,
-    example: `<p>Two equally likely trips take 10 and 30 minutes. The mean is (10 + 30) ÷ 2 = 20 minutes. At a 25-minute limit, one of two trips goes over. The chance of exceeding the limit is 1 ÷ 2 = 0.5, or 50%. This is the <strong>exceedance probability</strong>. The p95 is the smallest observed time with at least 95% of the outcomes at or below it, here 30 minutes. Variance averages squared distances from the mean: (100 + 100) ÷ 2 = 100 min². The mean gives the long-run average time. The exceedance probability tells you how often a trip misses this deadline.</p>`,
+    concept: `<h2>What matters about the journey?</h2>
+    <p>Suppose you must choose a route to class. Average journey time might matter on a free afternoon. If class starts at 9 am, you might care more about the chance of arriving late.</p>
+    <p>A <strong>model</strong> uses inputs to calculate an outcome. Route and departure time are choices. Weather and traffic are conditions you face. A <strong>parameter</strong>, such as how many minutes the model adds per kilometre, sets how its calculation works.</p>
+    <p>The <strong>output</strong> is what the model produces, such as journey time. A summary of that output, such as the chance of missing a deadline, can help you decide. <strong>Sensitivity analysis</strong> asks how much the result changes when you change an input or assumption. First choose the result you care about.</p>
+    <details><summary>How this relates to other methods</summary>
+      <ul>
+        <li><strong>Uncertainty analysis</strong> describes what journey times are plausible and, when evidence supports it, how likely they are. The experiment below shows a simple case.</li>
+        <li><strong>Scenario analysis</strong> compares conditions, such as weekday and weekend traffic. You can compare them even if their chances are unknown. <a href="ranges.html">Change the assumptions</a></li>
+        <li><strong>Optimisation</strong> searches for the best available choice under a stated goal and constraints. <a href="tuning.html">Spend an ML tuning budget</a></li>
+        <li><strong>Predictive attribution</strong> asks which inputs a fitted model relies on to make predictions. <a href="logs.html">Work from logs</a></li>
+      </ul>
+    </details>`,
+    example: `<p>Suppose two equally likely trips take 10 and 30 minutes. Compare four ways to describe those times.</p>
+    <ul>
+      <li><strong>Mean.</strong> Add the times and divide by two. (10 + 30) ÷ 2 = 20 minutes.</li>
+      <li><strong>Chance of going over 25 minutes.</strong> One trip takes more than 25 minutes. The chance is 1 ÷ 2 = 50%. This is the <em>exceedance probability</em>.</li>
+      <li><strong>95th percentile (p95).</strong> Find the smallest observed time with at least 95% of trips at or below it. Here that time is 30 minutes.</li>
+      <li><strong>Variance.</strong> Both trips are 10 minutes from the mean. Square those distances and average them. (100 + 100) ÷ 2 = 100 min².</li>
+    </ul>
+    <p>Use the mean to compare long-run journey times. Use the chance of going over the limit to compare missed deadlines.</p>`,
     setup: "The page prepares five equally likely trips for each service. The time limit starts at 25 minutes. Once you run, the plot shows the five times for each service and the limit.",
     fields: [select("scenario", "Variable service", "bursts", [["bursts","Occasional long trip"],["moderate","Moderate spread"]]),number("threshold","Time limit (minutes)",25,1,70),summary("Exceedance probability")],
     predict: "Can two services with the same mean journey time have different chances of missing a deadline?",
@@ -21,9 +37,19 @@ export const foundations = {
   },
   local: {
     goal: "Change one input, calculate the effect, and attach the right units.",
-    concept: `<p>A taxi fare has a fixed charge and a distance charge. Distance is the input we change, and the rate per kilometre and the starting charge stay the same. The starting distance is the <strong>reference point</strong>. A finite change is the new output minus the reference output. Divide it by the input change to get an average <strong>slope</strong> over the step.</p>
-    <p><strong>Elasticity</strong> in this exercise means the percentage change in cost divided by the percentage change in distance, both measured from the starting values. A value of 0.5 means a 10% distance increase gives a 5% cost increase for that comparison. A negative sign means the input and output move in opposite directions. Relative changes require nonzero references.</p>`,
-    example: `<p>At a fixed fare of $4 and $2 per km, travelling 4 km costs $12. At 5 km it costs $14. The cost rises $2 over 1 km, or $2/km. Distance rises by 1 ÷ 4 = 25%; cost rises by 2 ÷ 12 ≈ 16.7%. Elasticity is 16.7 ÷ 25 ≈ 0.667. In metres the slope is $0.002/m and the percentages stay the same. The $4 fixed charge is part of the starting fare. Adding a kilometre leaves that charge unchanged.</p>`,
+    concept: `<h2>Measure the change from a starting point</h2>
+    <p>A taxi fare has a fixed charge and a distance charge. In this example, distance changes while both prices stay fixed. The starting distance is the <strong>reference point</strong>.</p>
+    <p>Subtract the reference fare from the new fare to get the change in cost. Divide that change by the extra distance to get the <strong>slope</strong> over the step.</p>
+    <h2>Compare percentage changes</h2>
+    <p><strong>Elasticity</strong> divides the percentage change in cost by the percentage change in distance. Measure each percentage from its starting value. An elasticity of 0.5 means a 10% increase in distance gives a 5% increase in cost for that comparison.</p>
+    <p>A negative sign means the input and output move in opposite directions. A percentage change requires a nonzero starting value.</p>`,
+    example: `<p>The taxi costs $4 to start and $2 per kilometre. At 4 km the fare is $12. At 5 km it is $14.</p>
+    <ol>
+      <li><strong>Slope.</strong> The extra kilometre adds $14 − $12 = $2. That is $2/km, or $0.002/m.</li>
+      <li><strong>Percentage changes.</strong> Distance rises by 1 ÷ 4 = 25%. The fare rises by 2 ÷ 12 ≈ 16.7%.</li>
+      <li><strong>Elasticity.</strong> Divide 16.7% by 25% to get about 0.667. The percentages stay the same in metres.</li>
+    </ol>
+    <p>The $4 starting charge makes up part of the reference fare. It stays the same as you add distance.</p>`,
     setup: "The page prepares a $4 fixed fare and adds rate times distance. Changing the displayed unit converts both distances and the reported slope. Enter <strong>Starting distance (km)</strong> and <strong>Increase (km)</strong> in kilometres, even when the table shows metres.",
     fields: [number("distance","Starting distance (km)",4,1,20),number("rate","Rate ($/km)",2,.1,5,.1),number("step","Increase (km)",1,.1,5,.1),select("units","Display distance in","km",[["km","Kilometres"],["m","Metres"]])],
     predict: "Which result changes when you display metres: cost change, slope, or elasticity?",
@@ -33,9 +59,17 @@ export const foundations = {
   },
   curves: {
     goal: "See how the same input can have a different effect at a new baseline or step.",
-    concept: `<p>The response curve shows what the model predicts as one input varies. The straight line joining two points is a <strong>secant</strong>. Its slope is the output change divided by the input change. On a smooth curve, shrinking the step brings this slope closer to that of the tangent, the line that points in the curve’s direction at the starting point. That local slope is a <strong>derivative</strong>; you can explore it by shrinking the step without using calculus.</p>
-    <p>A response may saturate as more input brings smaller gains, jump at a threshold, or change direction. A single local slope can miss all three. A secant that crosses a jump includes the whole jump in its slope. At the jump itself, the curve has no finite derivative.</p>`,
-    example: `<p>For output equal to input squared, at input 2 the output is 4. At input 3 it is 9. The slope is (9 − 4) ÷ 1 = 5. For a step of 0.1, the new output is 2.1² = 4.41 and the slope is 0.41 ÷ 0.1 = 4.1, closer to the tangent slope of 4 at input 2.</p>`,
+    concept: `<h2>Read the slope between two points</h2>
+    <p>A response curve shows what the model predicts as one input varies. The straight line joining two points is a <strong>secant</strong>. Its slope is the change in output divided by the change in input.</p>
+    <p>On a smooth curve, a smaller step brings that line closer to the <strong>tangent</strong>, which points in the curve’s direction at the start of the step. The slope at that point is called a <strong>derivative</strong>.</p>
+    <h2>Look beyond one slope</h2>
+    <p>A response can level off, jump at a threshold or turn around. A slope measured over one step may miss these changes. A secant across a jump includes the whole jump. At the jump itself, there is no finite derivative.</p>`,
+    example: `<p>Square the input to get the output. Start at input 2, where the output is 4.</p>
+    <ul>
+      <li><strong>Step of 1.</strong> At input 3 the output is 9. The slope is (9 − 4) ÷ 1 = 5.</li>
+      <li><strong>Step of 0.1.</strong> At input 2.1 the output is 4.41. The slope is (4.41 − 4) ÷ 0.1 = 4.1.</li>
+    </ul>
+    <p>The smaller step gives a slope closer to the tangent slope of 4 at input 2.</p>`,
     setup: "The plot shows the selected illustrative response and a line between the two points used in the calculation.",
     fields: [select("shape","Response shape","curve",[["curve","Square: x²"],["saturation","Saturation: 10x ÷ (2+x)"],["threshold","Jump: add 5 at x=5"],["valley","Valley: (x−5)²"]]),number("baseline","Start input",2,0,8,.1),number("step","Step",1,.1,2,.1)],
     predict: "For the square response, will shrinking the step make the reported slope smaller or larger?",
@@ -45,9 +79,16 @@ export const foundations = {
   },
   tornado: {
     goal: "Use one-at-a-time changes to compare selected ranges around a reference.",
-    concept: `<p>A <strong>tornado plot</strong> shows the outputs at the low and high settings of one input while the other inputs stay at their starting values. The largest span appears first. A <strong>spider plot</strong> traces several intermediate movements for each input. The spider plot puts −100% at each input’s low setting, 0% at its starting point and +100% at its high setting.</p>
-    <p>Use both plots to see what happens around a starting point. The ranking depends on the model and the ranges you choose. The separate low and high columns retain direction, and the spider curves can show turns the endpoints conceal. Neither plot explores combinations away from the reference.</p>`,
-    example: `<p>At 60 jobs/hour, capacity 70 jobs/hour and fixed delay 8 min, the model gives 8 + 0.05 × 60 = 11 min. With demand at 80, the overload is 10 and adds 0.2 × 10² = 20 min. The result is 8 + 4 + 20 = 32 min. Demand at 40 gives 10 min, so its endpoint span is 22 min.</p>`,
+    concept: `<h2>Compare endpoints and the path between them</h2>
+    <p>A <strong>tornado plot</strong> shows the outcomes at each input’s low and high settings. Change one input at a time with all other inputs at their starting values. The widest gap between endpoints appears first.</p>
+    <p>A <strong>spider plot</strong> shows what happens between those endpoints. Each input’s curve runs from −100% at its low setting, through 0% at its starting point, to +100% at its high setting. The curve can reveal a turn the endpoints conceal.</p>
+    <p>Both plots depend on the starting point and ranges you choose. You also need other tests if you want to see what happens when several inputs change together.</p>`,
+    example: `<p>Hold capacity at 70 jobs/hour and fixed delay at 8 minutes. Start with demand at 60 jobs/hour, where delay is 8 + 0.05 × 60 = 11 minutes.</p>
+    <ul>
+      <li><strong>Demand of 40.</strong> Delay is 8 + 0.05 × 40 = 10 minutes.</li>
+      <li><strong>Demand of 80.</strong> Demand exceeds capacity by 10 jobs/hour. That adds 0.2 × 10² = 20 minutes, so delay is 8 + 4 + 20 = 32 minutes.</li>
+    </ul>
+    <p>The endpoint span is 32 − 10 = 22 minutes.</p>`,
     setup: "The model adds fixed delay, 0.05 minutes per job/hour of demand and an overload penalty of 0.2 times the squared excess over capacity. Capacity starts at 70 jobs/hour. The page varies the fixed delay between 4 and 12 minutes. A half-range of 20 makes the starting demand of 60 vary from 40 to 80 jobs/hour. Fixed delay starts at 8 minutes.",
     fields: [number("baseline","Reference demand (jobs/hour)",60,35,90),number("width","Demand half-range (jobs/hour)",20,2,30),number("rateWidth","Capacity half-range (jobs/hour)",10,2,30)],
     predict: "Which input will lead under the prepared ranges? What if demand barely changes?",
@@ -57,10 +98,23 @@ export const foundations = {
   },
   inputs: {
     goal: "Choose which values and pairs of inputs the model should use.",
-    concept: `<p>A distribution describes how likely different values are. The three example distributions here all stay inside the same range. A <strong>uniform</strong> distribution gives equal chances to equal-width intervals. A <strong>triangular</strong> distribution rises to a most likely value and falls to zero at the endpoints. The <strong>right-weighted</strong> option makes high values more likely than low ones. A sample of representative observed rows is another option when you have data.</p>
-    <p>Record the source of bounds and typical values: a measured period, a physical limit, expert judgement, or a what-if assumption. Demand varies across hours. You may also be unsure how it will vary next month. Treat alternative credible models as scenarios and report which ones change your conclusion.</p>
-    <p>Inputs are <strong>independent</strong> if knowing one does not change the distribution of the other. <strong>Correlation</strong> describes one kind of association. A percentile marks a position in a distribution, such as halfway up at the 50th percentile. The linked design here gives capacity the same percentile as demand 80% of the time. It leaves both inputs’ separate distributions intact and changes which pairs appear. For a real service, compare the rule with paired measurements. Check whether capacity rises immediately with demand or responds after a delay.</p>`,
-    example: `<p>For uniform demand from 40 to 100, one third of the range is above 80. Independently, one third of capacity is below 60. Their joint chance is (1/3) × (1/3) = 1/9. Sharing the same percentile rules out this combination on linked draws, so the 20% unlinked draws contribute 0.2 ÷ 9 ≈ 2.2%.</p>`,
+    concept: `<h2>Choose which values are likely</h2>
+    <p>A distribution describes how likely different values are. The three distributions here use the same range but give different parts of it different weight.</p>
+    <ul>
+      <li><strong>Uniform.</strong> Equal-width intervals have equal chances.</li>
+      <li><strong>Triangular.</strong> Values near the peak are more common. The weights fall to zero at either end.</li>
+      <li><strong>Right-weighted.</strong> High values are more common than low ones.</li>
+    </ul>
+    <p>Record where the bounds and typical values came from. You can use representative observations, a physical limit, expert judgement or a stated what-if assumption. Demand varies hour to hour. If you are also unsure how it will vary next month, compare plausible scenarios and report which ones change your conclusion.</p>
+    <h2>Check which pairs can occur</h2>
+    <p>Inputs are <strong>independent</strong> if knowing one leaves the other’s distribution unchanged. <strong>Correlation</strong> describes one kind of association.</p>
+    <p>A percentile marks a position in a distribution. For example, the 50th percentile marks its halfway point. The linked design here gives capacity the same percentile as demand 80% of the time. Each input keeps its own distribution, but different pairs appear.</p>
+    <p>For a real service, check the rule with paired measurements. For example, does capacity rise immediately with demand or respond after a delay?</p>`,
+    example: `<p>Demand and capacity are each uniform from 40 to 100 jobs/hour. What’s the chance demand is above 80 while capacity is below 60?</p>
+    <ul>
+      <li><strong>Independent draws.</strong> Each condition occurs in one third of its range. Both happen with probability (1/3) × (1/3) = 1/9.</li>
+      <li><strong>Linked draws.</strong> The two conditions cannot happen at the same percentile. Only the 20% of pairs drawn independently can meet both, so the chance is 0.2 × (1/9) ≈ 2.2%.</li>
+    </ul>`,
     setup: "The page draws 3,000 pairs. Demand and capacity range from 40 to 100 jobs/hour. The triangle peaks at 55. The scatter shows the first 200 pairs and highlights demand above 80 with capacity below 60.",
     fields: [select("shape","Demand distribution","uniform",[["uniform","Uniform"],["triangle","Triangular, peak at 55"],["right","Weighted toward high demand"]]),select("dependence","How capacity follows demand","independent",[["independent","Independent percentiles"],["linked","Share demand percentile 80% of the time"]]),seed],
     predict: "Will linking the percentiles change demand’s mean, the rate of mismatched pairs, or both?",
@@ -71,10 +125,17 @@ export const foundations = {
   },
   designs: {
     goal: "Compare sampling designs at the same model-evaluation budget.",
-    concept: `<p>A sample is a limited set of input combinations. Independent random sampling can cluster by chance. A <strong>Latin hypercube</strong> splits each input axis into equal-probability bins, draws one point in each bin per axis, and pairs the bins using a shuffled order. This spreads individual axes and can still leave gaps in their combinations.</p>
-    <p>A <strong>low-discrepancy design</strong> places points to spread coverage across combinations of inputs. This page uses a Halton sequence that places the axes on different repeating patterns. It shifts each axis by a random amount and wraps values at 1. Changing the seed changes the shifts.</p><details><summary>How Halton places points</summary><p>On the first axis, write the indices 1, 2 and 3 in binary as 1, 10 and 11. Reverse the digits and put them after the binary point. The positions are 0.1, 0.01 and 0.11 in binary, or 1/2, 1/4 and 3/4. The other axis does the same in base 3.</p></details>
-    <p>A <strong>seed</strong> is a number that reproduces the same random choices when the other settings stay fixed. More model evaluations generally cost more time. Check a conclusion across larger designs and independent repetitions rather than trusting one lucky run.</p>`,
-    example: `<p>If X and Z are independent and uniform from 0 to 1, their means are both 0.5. Therefore the exact mean of X × Z is 0.5 × 0.5 = 0.25. A four-point design with products 0.04, 0.16, 0.36 and 0.64 estimates (0.04 + 0.16 + 0.36 + 0.64) ÷ 4 = 0.30, an absolute error of 0.05.</p>`,
+    concept: `<h2>Decide where to place the sample points</h2>
+    <p>A sample is a limited set of input combinations. Each design uses its points differently.</p>
+    <ul>
+      <li><strong>Independent random sampling.</strong> Draw each point separately. Some areas can cluster by chance.</li>
+      <li><strong>Latin hypercube.</strong> Divide each axis into equal-probability bins. Draw one value per bin and pair values across axes in a shuffled order. This spreads each axis out, though the combinations can still leave gaps.</li>
+      <li><strong>Low-discrepancy design.</strong> Use a pattern that aims to cover combinations evenly. This lesson uses a Halton sequence, then shifts each axis by a random amount and wraps values at 1.</li>
+    </ul>
+    <p>A <strong>seed</strong> reproduces the same random draws, shuffles or shifts when the other settings stay fixed. Compare larger designs and several seeds to check whether a conclusion is stable.</p>
+    <details><summary>How Halton places points</summary><p>On the first axis, write the indices 1, 2 and 3 in binary as 1, 10 and 11. Reverse the digits and put them after the binary point. The positions are 0.1, 0.01 and 0.11 in binary, or 1/2, 1/4 and 3/4. The other axis does the same in base 3.</p></details>`,
+    example: `<p>Draw X and Z independently and uniformly from 0 to 1. Each has mean 0.5, so the exact mean of X × Z is 0.5 × 0.5 = 0.25.</p>
+    <p>Suppose four sample points produce 0.04, 0.16, 0.36 and 0.64. The sample estimate is (0.04 + 0.16 + 0.36 + 0.64) ÷ 4 = 0.30. Its absolute error is |0.30 − 0.25| = 0.05.</p>`,
     setup: "The page starts with 32 points per design. It displays the design for the selected seed, then draws 11 more per method for the average error. One point costs one model evaluation.",
     fields: [count("Points per design",32,[8,16,32,64,128,256]),seed],
     predict: "Which design will look least clustered? Will its estimate always be closest to 0.25?",

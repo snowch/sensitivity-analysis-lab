@@ -51,7 +51,10 @@
       </header>
       <div class="teaching">
         <div>
-          <p>On the first run, the page generates 10,000 synthetic pipeline records. It trains a <strong>random forest</strong> on 8,000 rows and tests it on the other 2,000. The forest averages predictions from decision trees. Each tree groups similar rows to make a prediction. The next shuffle in this visit reuses the fitted forest and test rows. The <strong>mean absolute error (MAE)</strong> is the average distance between predicted and recorded latency, in milliseconds.</p>
+          <h2>Test on jobs the model hasn’t seen</h2>
+          <p>On the first run, the page generates 10,000 synthetic pipeline records. It trains a <strong>random forest</strong> on 8,000 rows and tests it on the other 2,000. New shuffles during this visit reuse the fitted forest and test rows.</p>
+          <p>A forest averages predictions from decision trees, which split data into groups. The <strong>mean absolute error (MAE)</strong> is the average distance between predicted and recorded latency, in milliseconds.</p>
+          <h2>Shuffle one signal and measure the error again</h2>
           <p><strong>Permutation importance</strong> shuffles the values in a test column and predicts again with the same model. Recorded latencies and the other columns stay in place. An increase in MAE shows how much accuracy the model loses when the shuffled values stop matching their jobs.</p>
         </div>
         <figure class="worked">
@@ -97,7 +100,8 @@
       </div>
       <section class="interpretation" aria-labelledby="logs-read">
         <h2 id="logs-read">Read the result</h2>
-        <p>An edge cache stores copies close to users. <strong>Edge miss rate</strong> records requests that had no usable copy there. <strong>Origin fetch rate</strong> records requests that had to reach the original source. The synthetic generator makes both noisy measures of the same cache behaviour. Shuffling one leaves the other available. Moving both together keeps the pair aligned with each other while breaking their link to the original jobs.</p>
+        <p>An edge cache stores copies close to users. <strong>Edge miss rate</strong> is the share of requests with no usable copy there. <strong>Origin fetch rate</strong> is the share that had to reach the original source.</p>
+        <p>The synthetic data make both noisy measures of the same cache behaviour. Shuffling one leaves the other available. Moving both together keeps them aligned with each other while breaking their link to the original jobs.</p>
         <p>The chart describes which signals help this predictor on these test rows. To test whether a change helps the pipeline, compare the same workload under two settings, such as current and increased worker capacity. Decide in advance which latency and cost measurements would justify the change.</p>
       </section>
       <form class="knowledge-check">

@@ -51,9 +51,17 @@
       </header>
       <div class="teaching">
         <div>
-          <p>A pipeline fetches, processes and writes data. Here a job is one item of work that passes through those stages. Its <strong>latency</strong> is the time it takes to finish. A <strong>cache</strong> serves a stored copy without fetching the data again. The <strong>cache hit rate</strong> is the percentage of requests served from that copy. <strong>Payload size</strong> is the amount of data in a job.</p>
+          <h2>Simulate pipeline jobs</h2>
+          <p>A pipeline fetches, processes and writes data. A job is one item of work that goes through those stages. Its <strong>latency</strong> is the time it takes to finish. <strong>Payload size</strong> is the amount of data in a job.</p>
+          <p>A <strong>cache</strong> can serve a stored copy and save time. The <strong>cache hit rate</strong> is the percentage of requests served this way.</p>
           <p>A <strong>Monte Carlo simulation</strong> draws values from assumed input ranges and calculates latency for each draw. The model samples each input independently, so drawing one value leaves the other inputs’ chances unchanged. Within each range, equal-width intervals are equally likely.</p>
-          <p><strong>Spearman rank correlation</strong> sorts the jobs by one input and again by latency. A score near +1 means larger inputs usually go with longer jobs. A score near −1 means larger inputs usually go with shorter jobs. A score near zero means there is little consistent ordering in either direction. An input can still matter if its effect changes direction.</p>
+          <h2>Read the direction of the relationship</h2>
+          <p><strong>Spearman rank correlation</strong> sorts the jobs by one input and again by latency. Compare the two orders.</p>
+          <ul>
+            <li><strong>Near +1.</strong> Higher input values tend to go with longer jobs.</li>
+            <li><strong>Near −1.</strong> Higher input values tend to go with shorter jobs.</li>
+            <li><strong>Near zero.</strong> There is little consistent ordering. Check for an effect that changes direction before ruling out the input.</li>
+          </ul>
         </div>
         <figure class="worked">
           <figcaption>Example with only cache hit rate changing</figcaption>

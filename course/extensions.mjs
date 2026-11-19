@@ -3,9 +3,17 @@ import { number, select, seed, when } from "./foundations.mjs";
 export const extensions = {
   benchmark: {
     goal: "Choose benchmark conditions by asking where the comparison could change.",
-    concept: `<p>A benchmark compares systems under a defined workload. You might compare how long each takes to respond while handling a set number of requests per second. A sensitivity experiment helps choose which conditions to vary. If the effect of load depends on payload size, include combinations. A single average setting can hide where one system overtakes another.</p>
-    <p>Define the response as each system’s latency or as <strong>B minus A</strong> for the comparison. The same condition can matter for absolute latency and cancel in a matched difference. Use matched inputs and vary the order in a real test. For example, run A first in half the pairs and B first in the other half. Measure run-to-run noise and describe the test machine, cache state, workloads and repetitions. A fixed factor is defensible only for the question and range of conditions you tested.</p>`,
-    example: `<p>At load 2 (20 requests per second) and payload 2 MB, A’s base time is 20 + 1.4 × 2 + 2 × 2 + 0.7 × 2 × 2 = 29.6 ms. B’s is 32 + 1.1 × 2 + 2 + 0.23 × 2 × 2 = 37.12 ms. B minus A is +7.52 ms, so A is quicker at that condition. Any shared delay cancels in the matched difference.</p>`,
+    concept: `<h2>Find conditions where the comparison changes</h2>
+    <p>A benchmark compares systems under a defined workload. Here the workload depends on requests per second and payload size. Sample combinations of both if load affects small and large requests differently. One average workload can hide where the systems trade places.</p>
+    <h2>Make a fair comparison</h2>
+    <p>You can study each system’s response time or compare <strong>B minus A</strong>. A delay can affect both systems equally and cancel in their difference.</p>
+    <p>In a real test, give both systems the same workloads. Vary the test order, for example by running A first in half the pairs. Repeat runs to measure noise. Record the test machine, cache state and workloads so others can tell which conditions you checked.</p>`,
+    example: `<p>Set load to 2 (20 requests per second) and payload to 2 MB.</p>
+    <ul>
+      <li><strong>A’s base time.</strong> 20 + 1.4 × 2 + 2 × 2 + 0.7 × 2 × 2 = 29.6 ms.</li>
+      <li><strong>B’s base time.</strong> 32 + 1.1 × 2 + 2 + 0.23 × 2 × 2 = 37.12 ms.</li>
+    </ul>
+    <p>B minus A is +7.52 ms. A is quicker here. A delay added to both times cancels when you subtract.</p>`,
     setup: "The two timing formulas are illustrative. For each selected workload, the page calculates 64 pairs of response times. Each pair adds the same random delay to both systems. The table contains averages. In a real benchmark, repeat under independent or carefully matched conditions and report measurement error.",
     fields:[select("mode","Workload design","single",[["single","One low-load, small-payload setting"],["grid","Cross load and payload"]]),when(number("load","High load (tens of requests/s)",8,3,20),"mode","grid"),when(number("payload","Large payload (MB)",8,3,20),"mode","grid"),seed],
     predict:"Would the result at low load and small payload justify keeping either condition fixed?",
@@ -16,9 +24,22 @@ export const extensions = {
   },
   tuning: {
     goal:"Use sensitivity to plan where to search and optimisation to choose a feasible setting.",
-    concept:`<p>A <strong>hyperparameter</strong> is a setting you choose before fitting a machine learning model. For example, the learning rate sets how big a step the model takes each time it adjusts. A <strong>validation set</strong> contains examples held back from model fitting and used to compare settings. <strong>Validation loss</strong> measures prediction error on those examples. Lower is better here. An optimisation chooses the best feasible configuration under a stated objective and budget. A sensitivity study helps decide what to vary in that search. You might hold one setting fixed if it barely changes loss across the range you tested. Check whether that holds at other settings or on other data.</p>
-    <p>Separate training, validation and a final test set. Use validation to choose settings and reserve untouched test data for the selected configuration. When comparing two tuning procedures, evaluate their chosen models on the same untouched test examples. For repeated comparisons, repeat both procedures on each split. Otherwise a procedure can appear better because it fit quirks in the validation data. Repeat with different data splits or training seeds when results vary across them.</p>`,
-    example:`<p>Suppose validation loss is 0.36 at learning rate 0.001 and 0.24 at 0.01 with size 3; the improvement is 0.12. At size 7 the same moves give 0.39 and 0.38, an improvement of only 0.01. This evidence suggests a dependence of the learning-rate effect on size. If a candidate with loss 0.24 takes 34 seconds and the limit is 30 seconds, the optimum must be chosen among feasible trials.</p>`,
+    concept:`<h2>Choose which settings to vary</h2>
+    <p>A <strong>hyperparameter</strong> is a setting you choose before fitting a machine learning model. For example, the learning rate sets how far the model adjusts at each training step.</p>
+    <p>A sensitivity study helps decide where to spend trials. If a setting barely changes prediction error across the range you tested, you might hold it fixed. Check whether that holds at other settings or on other data. Optimisation then searches for the best configuration that fits the training budget.</p>
+    <h2>Measure performance on fresh examples</h2>
+    <ul>
+      <li><strong>Training set.</strong> Use these examples to fit the model.</li>
+      <li><strong>Validation set.</strong> Compare configurations on examples held back during fitting. <strong>Validation loss</strong> measures prediction error on these examples. Lower is better here.</li>
+      <li><strong>Test set.</strong> Evaluate the chosen configuration on examples held back from both fitting and tuning. If comparing tuning procedures, use the same untouched test examples for both.</li>
+    </ul>
+    <p>A procedure can appear better because it fit quirks in one validation set. When results vary across splits or training seeds, repeat the comparison.</p>`,
+    example:`<p>Increase the learning rate from 0.001 to 0.01. The effect on validation loss depends on model size.</p>
+    <ul>
+      <li><strong>Size 3.</strong> Loss drops from 0.36 to 0.24, an improvement of 0.12.</li>
+      <li><strong>Size 7.</strong> Loss drops from 0.39 to 0.38, an improvement of 0.01.</li>
+    </ul>
+    <p>The effect of the learning rate depends on size in this example. If the 0.24 candidate takes 34 seconds and the budget is 30 seconds, look for the best candidate among trials that fit the budget.</p>`,
     setup:"The page calculates loss from an illustrative formula. It samples base-ten log learning rates between −4 and −1 and a model size index from 1 to 8. The index represents smaller and larger configurations in this example. Moving the log learning rate up by one multiplies the learning rate by ten. For example, −3 means 0.001 and −2 means 0.01. The two dataset settings change which combinations yield lower loss in the formula. The page selects the lowest simulated validation loss among trials that meet the time limit.",
     fields:[select("budget","Trial budget",12,[4,12,32,64],true),select("dataset","Dataset regime","small",[["small","Small sample"],["large","Large sample"]]),number("cost","Training time limit (seconds)",45,16,90),seed],
     predict:"Will the lowest-loss candidate always satisfy the time limit or stay best on another dataset?",

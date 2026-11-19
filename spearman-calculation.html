@@ -55,11 +55,17 @@
           <tbody><tr><td>1</td><td>75</td><td>1</td><td>1</td><td>0</td></tr><tr><td>2</td><td>105</td><td>2</td><td>3</td><td>1</td></tr><tr><td>3</td><td>90</td><td>3</td><td>2</td><td>1</td></tr><tr><td>4</td><td>140</td><td>4</td><td>4</td><td>0</td></tr></tbody>
         </table></div>
         <h2>Turn the differences into a score</h2>
-        <p>For ranks with no ties, multiply the sum of squared differences by 6 and divide by the number of rows multiplied by (the number of rows squared minus 1). Subtract the result from 1.</p>
+        <p>For ranks with no ties, let <em>n</em> be the number of rows. Here n = 4 and the squared differences add to 2.</p>
+        <ol>
+          <li>Multiply the total squared difference by 6.</li>
+          <li>Divide by n × (n² − 1).</li>
+          <li>Subtract the result from 1.</li>
+        </ol>
         <p class="formula">1 − 6 × 2 ÷ [4 × (4² − 1)] = 0.80</p>
-        <p>The positive score shows that larger payloads generally go with longer jobs. It uses order alone, so changing 140 to 400 ms keeps the same ranks and score. If two values tie for second and third place, give both rank 2.5. Calculate <a href="patterns.html">Pearson correlation</a> on the two rank columns when there are ties.</p>
+        <p>The positive score shows that larger payloads generally go with longer jobs. It uses order alone. Changing 140 to 400 ms keeps the same ranks and score.</p>
+        <p>For ties, average the tied ranks. Two values tied for second and third both get 2.5. Calculate <a href="patterns.html">Pearson correlation</a> on the two rank columns to get the Spearman score.</p>
         <h2>Recalculate with reversed latencies</h2>
-        <p>On paper or in a spreadsheet, copy the payload values. Beside them, write 140, 105, 90 and 75 ms in that order. Predict whether the score will be positive or negative. Reuse the calculation above, then reveal the answer to check the sign and value.</p>
+        <p>On paper or in a spreadsheet, copy the payload values. Beside them, write 140, 105, 90 and 75 ms in that order. Predict the sign, calculate the score, then reveal the answer to check both.</p>
         <details class="reference"><summary>Answer for the reversed ranks</summary><p>The latency ranks are 4, 3, 2, 1. The squared differences are 9, 1, 1, 9. The score is 1 − 6 × 20 ÷ 60 = −1, because the orders reverse exactly.</p></details>
       </div>
       <nav class="lesson-actions" aria-label="Course sequence"><a href="./#course">Course outline</a><a class="button dark" href="rank.html">Back to Rank the pipeline inputs</a></nav>

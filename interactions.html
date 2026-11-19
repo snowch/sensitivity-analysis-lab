@@ -51,8 +51,12 @@
       </header>
       <div class="teaching">
         <div>
-          <p>Arrival rate is how many jobs arrive per second. Worker capacity is how many jobs the pipeline can process per second. The model can add 155 ms of queue delay at 750 arrivals per second or more and 800 jobs per second of capacity or less. When the effect of one input depends on the value of another, they <strong>interact</strong>.</p>
-          <p><strong>Variance</strong> measures how far outcomes spread around their average and gives extra weight to large deviations. A <strong>first-order Sobol index</strong> estimates the share of variance explained by an input on its own. Its <strong>total-order index</strong> also includes every interaction involving that input. A score of 0.70 represents roughly 70% of the modelled variance under the chosen input ranges.</p>
+          <h2>Find when the queue penalty applies</h2>
+          <p>Arrival rate is how many jobs arrive per second. Worker capacity is how many jobs the pipeline can process per second.</p>
+          <p>The queue rule adds a 155 ms delay at 750 arrivals per second or more and 800 jobs per second of capacity or less. Arrivals and capacity <strong>interact</strong> because the effect of one depends on the other.</p>
+          <h2>Compare individual and total effects</h2>
+          <p><strong>Variance</strong> measures spread around the average and gives extra weight to large deviations. A <strong>first-order Sobol index</strong> estimates the share of variance explained by an input on its own.</p>
+          <p>The <strong>total-order index</strong> also includes every interaction involving that input. A score of 0.70 represents roughly 70% of the modelled variance under the chosen ranges.</p>
         </div>
         <figure class="worked">
           <figcaption>Example of the queue rule</figcaption>

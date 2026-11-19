@@ -106,13 +106,14 @@ body:has(.home) { background: var(--soft); }
 .before p, .roadmap p { max-width: 70ch; margin-top: 9px; color: var(--muted); }
 .before details { margin-top: 8px; }
 .roadmap { border-top: 1px solid var(--line); padding-top: 23px; }
-.roadmap ol { margin: 11px 0 22px; padding-inline-start: 26px; }
-.roadmap li { padding: 9px 0 9px 4px; }
-.roadmap ol li + li { border-top: 1px solid var(--line); }
+.course-units { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.75rem 3rem; margin-block: 1.75rem 2.25rem; }
+.roadmap ol { margin: .6rem 0 0; padding-inline-start: 1.5rem; }
+.roadmap li { padding: .45rem 0 .45rem .25rem; }
 .roadmap li::marker { color: var(--muted); font-variant-numeric: tabular-nums; }
 .roadmap li a { font-weight: 650; }
-.roadmap li span { display: block; color: var(--muted); font-size: .95rem; }
-.roadmap h3 { font-size: 1.02rem; }
+.roadmap li span { display: block; margin-top: .13rem; color: var(--muted); font-size: .95rem; line-height: 1.5; }
+.roadmap h3 { font-size: 1.15rem; }
+.roadmap .unit { padding-top: .8rem; border-top: 1px solid var(--line); }
 .follow-ups { margin: 4px 0 11px; padding-inline-start: 24px; }
 .follow-ups li { padding-block: 3px; }
 
@@ -128,23 +129,43 @@ body:has(.home) { background: var(--soft); }
 .sidebar-lessons a, .sidebar-links a { display: flex; gap: 8px; padding: 7px 8px; border-left: 2px solid transparent; border-radius: 4px; line-height: 1.35; }
 .sidebar-lessons a::before { content: counter(lesson, decimal-leading-zero); color: var(--muted); font-variant-numeric: tabular-nums; }
 .course-sidebar a[aria-current="page"] { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); font-weight: 700; }
-.course-sidebar p { margin: 0 9px 5px; color: var(--muted); font-size: .79rem; font-weight: 650; }
-.lesson.shell { width: min(942px, calc(100% - 88px)); min-width: 0; margin-block: 34px 50px; }
+.lesson.shell {
+  --prose-width: 44rem;
+  --prose-gap: .9rem;
+  --section-gap: clamp(1.75rem, 3.5vw, 2.5rem);
+  width: min(942px, calc(100% - 88px));
+  min-width: 0;
+  margin-block: 34px 50px;
+}
 .lesson-header { border-bottom: 1px solid var(--line); padding-bottom: 22px; }
 .kicker { color: var(--muted); font-size: .86rem; }
 .lesson h1 { margin: 8px 0 10px; font-size: clamp(2.16rem, 4vw, 3.5rem); letter-spacing: -.05em; }
-.lesson-header > p:last-child { max-width: 67ch; color: var(--muted); font-size: 1.1rem; }
-.lesson h2 { font-size: clamp(1.2rem, 2vw, 1.46rem); letter-spacing: -.015em; }
-.teaching, .guide, .interpretation, .instructions { margin-top: 23px; }
-.teaching p, .guide p, .interpretation p, .instructions li, .interpretation li { max-width: 73ch; }
-.teaching p + p, .guide p, .interpretation p { margin-top: 11px; }
-.worked { max-width: 40rem; margin-top: 21px; padding: 0 0 0 15px; border-left: 3px solid var(--line); }
-.worked figcaption { margin-bottom: 7px; font-size: .95rem; font-weight: 700; }
-.worked p { margin-top: 7px; color: var(--muted); font-size: .91rem; }
+.lesson-header > p:last-child { max-width: var(--prose-width); color: var(--muted); font-size: 1.1rem; }
+.lesson h2 { font-size: clamp(1.3rem, 2vw, 1.6rem); letter-spacing: -.015em; }
+.lesson :is(.reading, .teaching, .guide, .interpretation, .instructions) {
+  max-width: var(--prose-width);
+  font-size: 1.0625rem;
+  line-height: 1.7;
+}
+.teaching, .guide, .interpretation, .instructions { margin-top: var(--section-gap); }
+.lesson :is(.reading, .teaching, .guide, .interpretation) p + p { margin-top: var(--prose-gap); }
+.lesson :is(.reading, .teaching, .guide, .interpretation, .instructions) :is(h2, h3) + :is(p, ol, ul, table, dl) { margin-top: .65rem; }
+.lesson :is(.reading, .teaching, .guide, .interpretation) :is(p, ol, ul, .formula, details) + :is(h2, h3) { margin-top: 1.5rem; }
+.worked { margin-top: 1.4rem; }
+.worked, .worked-example {
+  padding: clamp(1rem, 2.5vw, 1.4rem);
+  border-inline-start: 3px solid var(--edge);
+  border-radius: 0 8px 8px 0;
+  background: var(--soft);
+}
+.worked figcaption { margin-bottom: .6rem; font-size: 1.1rem; font-weight: 700; line-height: 1.3; }
+.worked p { margin-top: .65rem; }
 .worked td.highlight { background: var(--accent-soft); color: var(--accent); font-weight: 700; }
-.instructions { margin-bottom: 13px; }
-.instructions ol, .interpretation ol { margin: 7px 0 0; padding-inline-start: 24px; }
-.instructions li + li, .interpretation li + li { margin-top: 5px; }
+.instructions { margin-bottom: 1.15rem; }
+.lesson :is(.reading, .guide, .teaching, .instructions, .interpretation) :is(ol, ul) { margin-block: .7rem 0; padding-inline-start: 1.45rem; }
+.lesson :is(.reading, .guide, .teaching, .instructions, .interpretation) li + li { margin-top: .55rem; }
+.lesson :is(.reading, .guide, .teaching) :is(ol, ul, .worked) + p { margin-top: var(--prose-gap); }
+.lesson :is(.reading, .guide) details > summary + :is(h3, p, ul, ol) { margin-top: .65rem; }
 .interpretation { padding-block: 17px 1px; border-top: 1px solid var(--line); }
 
 .button { display: inline-flex; align-items: center; justify-content: center; min-height: 43px; padding: 8px 14px; border: 1px solid transparent; border-radius: 6px; font-size: .92rem; font-weight: 650; line-height: 1.25; cursor: pointer; text-decoration: none; text-align: center; }
@@ -206,13 +227,13 @@ legend { margin-bottom: 4px; padding: 0; font-size: .9rem; font-weight: 650; }
 .chart-axis > div { grid-column: 2; display: flex; justify-content: space-between; }
 .table-wrap { overflow-x: auto; margin-top: 8px; }
 table { width: 100%; border-collapse: collapse; font-size: .86rem; text-align: left; font-variant-numeric: tabular-nums; }
-th, td { padding: 5px 8px; border-bottom: 1px solid var(--line); }
+th, td { padding: .4rem .55rem; border-bottom: 1px solid var(--line); }
 thead { background: var(--soft); }
 th[scope="row"] { font-weight: 620; }
 .result-table { margin-top: 13px; }
 .result-table h3 { font-size: .99rem; }
 
-.knowledge-check { margin-top: 20px; padding-block: 15px; border-block: 1px solid var(--line); }
+.knowledge-check { max-width: var(--prose-width); margin-top: var(--section-gap); padding-block: 1rem; border-block: 1px solid var(--line); }
 .knowledge-check fieldset { margin-block: 8px; }
 .knowledge-check label { min-height: 32px; padding-block: 4px; font-size: .94rem; }
 .check-feedback:not(:empty) { margin-top: 8px; padding: 7px 11px; max-width: 73ch; border-left: 2px solid var(--accent); background: var(--accent-soft); }
@@ -223,10 +244,10 @@ summary:hover { text-decoration: underline; text-underline-offset: .2em; }
 .lesson-notes p, .method-note p, .reference p { margin-top: 7px; max-width: 73ch; }
 .lesson-actions { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px 14px; margin-top: 24px; padding-top: 15px; border-top: 1px solid var(--line); font-size: .93rem; }
 .terms { margin-top: 7px; }
-.terms dt { margin-top: 9px; font-weight: 650; }
+.terms dt { margin-top: .85rem; font-weight: 650; }
 .terms dd { margin-left: 0; max-width: 73ch; color: var(--muted); }
-.guide h2:not(:first-child) { margin-top: 22px; }
-.formula { padding: 7px 10px; background: var(--soft); font: .92rem/1.6 var(--mono); }
+.guide h2:not(:first-child) { margin-top: 1.5rem; }
+.formula { padding: .6rem .75rem; background: var(--soft); font: .95rem/1.6 var(--mono); overflow-wrap: anywhere; }
 .practice-note { margin-top: 20px; }
 .practice-note p { margin-top: 7px; font-size: .88rem; }
 .note-actions { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-top: 8px; color: var(--muted); }
@@ -251,6 +272,7 @@ footer p { color: var(--muted); }
   .theme-toggle { min-height: 29px; padding-inline: 5px; }
   .brand { font-size: .91rem; }
   .home { padding-top: 16px; }
+  .course-units { grid-template-columns: 1fr; gap: 1.35rem; }
   .hero { grid-template-columns: 1fr; padding: 22px; border-radius: 14px; }
   .hero-break { display: none; }
   .hero-figure { max-width: 24rem; }
@@ -274,22 +296,19 @@ footer p { color: var(--muted); }
 .course-sidebar .sidebar-unit summary { padding: 4px 7px; font-size: .81rem; line-height: 1.4; color: var(--ink); }
 .course-sidebar .sidebar-unit ol { margin: 4px 0; }
 .course-sidebar .contents-link { margin-bottom: 4px; }
-.roadmap .unit { margin-top: 21px; }
-.roadmap .unit h3, .lesson .reading h2 { margin-bottom: 6px; }
-.roadmap .unit ol { margin-top: 6px; }
-.reading { max-width: 76ch; margin-block: 22px; }
-.reading p + p { margin-top: 10px; }
-.reading details { margin-top: 12px; }
-.reading .formula { margin-block: 10px; }
-.lesson-experiment { margin-top: 19px; }
-.investigation-setup { max-width: 75ch; margin-top: 8px; color: var(--muted); }
+.reading { margin-block: var(--section-gap); }
+.reading details { margin-top: .9rem; }
+.reading .formula { margin-block: .75rem; }
+.lesson-experiment { margin-top: var(--section-gap); }
+.lesson-experiment .instructions { margin-top: .9rem; }
+.investigation-setup { max-width: var(--prose-width); margin-top: .8rem; color: var(--muted); }
 .investigation-fields { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 12px 15px; margin-top: 14px; }
 .investigation-fields label { display: block; font-size: .9rem; font-weight: 650; line-height: 1.3; }
 .investigation-fields input, .investigation-fields select { display: block; margin-top: 4px; min-height: 40px; }
 #investigation { padding: 14px 16px; border: 1px solid var(--line); border-radius: 8px; background: var(--soft); }
 .investigation-actions { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
 #investigation-status { min-height: 1.5em; }
-.investigation-results { margin-block: 16px 20px; }
+.investigation-results { margin-block: 1.5rem var(--section-gap); }
 .investigation-results h3 { margin-block: 10px 5px; }
 .investigation-results table caption, #run-history table caption { margin-bottom: 4px; text-align:left; font-weight:650; color:var(--ink); }
 .investigation-results .table-wrap, #run-history .table-wrap { margin-block: 10px 16px; }
@@ -307,19 +326,22 @@ footer p { color: var(--muted); }
 .course-heatmap td { background:color-mix(in srgb,var(--heat-end) var(--heat),var(--panel)); text-align:center; }
 .course-heatmap th { white-space:nowrap; }
 .course-heatmap thead th:not(:first-child) { text-align:center; }
-.learner-draft { margin-top:13px; font-size:.91rem; }
+.learner-draft { max-width:var(--prose-width); margin-top:13px; font-size:.95rem; }
 .learner-draft label { display:block; font-weight:650; }
 .learner-draft textarea { margin-top:4px; }
 .learner-draft p { color: var(--muted); margin-top:4px; font-size:.84rem; }
 .answer { margin-top: 11px; }
-.answer p { margin-top: 6px; }
+.answer p { margin-top: .65rem; }
 @media(max-width:650px) { .investigation-fields { grid-template-columns:repeat(2,minmax(0,1fr)); } }
 @media(max-width:400px) { .investigation-fields { grid-template-columns:1fr; } }
 
-.investigation-group + .investigation-group { margin-top:15px; padding-top:8px; border-top:1px solid var(--line); }
+.investigation-group + .investigation-group { margin-top: 1.2rem; padding-top: .65rem; border-top: 1px solid var(--line); }
 .investigation-group .investigation-fields { margin-top:5px; }
+@media (min-width: 401px) {
+  .investigation-group:first-child .investigation-fields { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
 
-.experiment-question { margin-top: 8px; max-width: 72ch; font-weight: 650; }
+.experiment-question { margin-top: .65rem; max-width: var(--prose-width); font-size: 1.0625rem; font-weight: 650; }
 #investigation-status:empty, .learner-draft .draft-status:empty { min-height: 0; margin: 0; }
 #investigation { margin-top: 12px; }
 .reset-settings { border: 0; background: transparent; color: var(--accent); text-decoration: underline; cursor: pointer; padding: 6px 10px; }
