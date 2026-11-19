@@ -51,7 +51,8 @@
       </header>
       <div class="teaching">
         <div>
-          <p><strong>Network round-trip time (RTT)</strong> is the time to send a request and receive a response. Each extra millisecond of RTT adds one millisecond to latency in this model. An 8–12 ms range spans 4 ms. A 2–65 ms range spans 63 ms. The formula stays the same across both scenarios.</p>
+          <p><strong>Network round-trip time (RTT)</strong> is the time to send a request and receive a response. In this pipeline model, each extra millisecond of RTT adds one millisecond to the time a job takes to finish, called its <strong>latency</strong>. One millisecond (ms) is one thousandth of a second.</p>
+          <p>An 8–12 ms range spans 4 ms. A 2–65 ms range spans 63 ms. The formula stays the same across both scenarios.</p>
           <p>Choose input ranges that describe the situation you care about. A nearby network and a global rollout could produce different spreads. Measuring RTT where you plan to deploy helps you choose a relevant range.</p>
         </div>
         <figure class="worked">
