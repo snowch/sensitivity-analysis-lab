@@ -1,29 +1,31 @@
 # Cutting Through the Noise: Sensitivity Analysis & Attribution
 
-[Start the course](https://snowch.github.io/sensitivity-analysis-lab/)
+[Start the browser course](https://snowch.github.io/sensitivity-analysis-lab/) · [Curriculum audit and coverage](CURRICULUM.md)
 
-Learn to screen many inputs, challenge what you assumed, recognise interactions, and distinguish predictive evidence from the effect of a change. The course teaches each method on a data pipeline, then asks you to apply the techniques to a household electricity budget. Allow about 60–90 minutes including independent practice. You can spread the lessons across sessions.
+A self-paced course in four units. Start with arithmetic and a simple fare model, then decide what to measure, choose how to vary inputs, test numerical reliability, and defend an analysis in an editable event-staffing capstone. The pipeline and household examples carry the methods into practical decisions. Two applied lessons cover benchmark design and hyperparameter optimisation. No programming or calculus is required for the browser lessons.
 
-| Lesson | What you’ll practise |
+| Unit | What you’ll do |
 | --- | --- |
-| [Rank the knobs](https://snowch.github.io/sensitivity-analysis-lab/rank.html) | Monte Carlo sampling and Spearman rank correlation |
-| [Change the assumptions](https://snowch.github.io/sensitivity-analysis-lab/ranges.html) | Range sensitivity, distributions and dependence |
-| [Find hidden interactions](https://snowch.github.io/sensitivity-analysis-lab/interactions.html) | First- and total-order Sobol indices |
-| [Work from logs](https://snowch.github.io/sensitivity-analysis-lab/logs.html) | Held-out evaluation and individual or grouped permutation importance |
-| [Independent practice](https://snowch.github.io/sensitivity-analysis-lab/practice.html) | Choose methods, test interventions against a budget criterion, and check a written recommendation against a rubric |
-| [Field guide](https://snowch.github.io/sensitivity-analysis-lab/apply.html) | Frame and investigate a question of your own |
+| Frame a question and measure a change | Choose an outcome, calculate slopes and elasticities, and interpret response curves and one-at-a-time plots. |
+| Build a defensible experiment | Choose ranges, distribution shapes and dependence. Compare sample designs, regression, correlations and Morris elementary effects. |
+| Understand interactions and variance | Read joint responses, derive exact Sobol indices, check estimates and allocate shared variance under dependence. |
+| Test reliability and make a decision | Separate numerical, structural and simulator uncertainty. Compare interventions and benchmarks, examine predictive attribution and complete a capstone report. |
 
-The course includes separate worked follow-ups on Spearman scores, Sobol indices and testing predictors on real logs. The models and datasets are illustrative. Read the worked calculations and assumptions in each lesson. No programming or statistics course is required.
+## Build and verify
 
-## Run locally
-
-From the repository root, serve the files with Python and open [localhost:8000](http://localhost:8000/).
+The repository has no runtime package dependencies. Use Node.js 20 or newer for local builds and tests. Pages are rendered into `_site/` for deployment.
 
 ```sh
-python3 -m http.server 8000
+node --test tests/*.test.mjs
+node scripts/build-course.mjs
+python3 -m http.server 8000 --directory _site
 ```
 
-The browser uses JavaScript and a Web Worker. Node.js is optional for running a small, adaptable [analysis example](assets/energy-example.mjs) and generating the same CSVs used by the lab.
+Open [localhost:8000](http://localhost:8000/). Use the lesson declarations in `course/` for new content and the published legacy HTML files for the original exercises. The generated pages use the same design and preserve the deployed links and previous notes. The worker runs the numerical experiments in the browser.
+
+The models, data and validation surfaces are illustrative. The course links references next to the relevant method. The capstone offers editable assumptions for a bounded model and exports a draft plus numerical evidence. Text drafts and up to six capstone runs stay in browser storage. The other experiments keep recent runs on the page and offer CSV download.
+
+## Reuse the examples
 
 ```sh
 node assets/energy-example.mjs
@@ -31,8 +33,4 @@ node --input-type=module -e 'import {makeLogs, toCsv} from "./assets/logs.mjs"; 
 node --input-type=module -e 'import {energyCsv} from "./assets/energy.mjs"; process.stdout.write(energyCsv())' > household-energy-runs.csv
 ```
 
-## Related labs
-
-- Browser experiments and reproducible draws. [Monte Carlo Lab](https://snowch.github.io/monte-carlo-lab/)
-- Predictions and evidence checks. [Scientific Method Lab](https://snowch.github.io/scientific-method-lab/)
-- Traceable ranges and model assumptions. [Sizing & TCO Lab](https://snowch.github.io/sizing/)
+The [field guide](https://snowch.github.io/sensitivity-analysis-lab/apply.html) helps select a method for a question of your own. For further practice, see [Monte Carlo Lab](https://snowch.github.io/monte-carlo-lab/), [Scientific Method Lab](https://snowch.github.io/scientific-method-lab/) and [Sizing & TCO Lab](https://snowch.github.io/sizing/).

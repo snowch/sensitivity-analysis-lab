@@ -7,7 +7,7 @@
   <meta name="theme-color" content="#fdfdff">
   <title>Cutting Through the Noise · Sensitivity Analysis Lab</title>
   <link rel="icon" href="data:,">
-  <link rel="stylesheet" href="assets/lab.css?v=2">
+  <link rel="stylesheet" href="assets/lab.css?v=3">
   <script type="module" src="assets/theme.mjs"></script>
 
 </head>
@@ -25,22 +25,22 @@
         <div>
           <h1 id="title">Cutting Through<br class="hero-break"> the Noise</h1>
           <p class="home-lead">Find which inputs drive an outcome, test what your ranking depends on, and decide what to investigate. Start with a data pipeline, then apply the methods to a household budget.</p>
-          <p class="hero-time">Four lessons and independent practice · 60–90 minutes</p>
+          <p class="hero-time">Self-paced · Four units and a capstone</p>
           <div class="home-start">
-            <a class="button dark" href="rank.html">Start lesson 1</a>
+            <a class="button dark" href="questions.html">Start lesson 1</a>
             <a href="#before-title">Before you start</a>
           </div>
         </div>
         <figure class="hero-figure" aria-labelledby="preview-title">
-          <figcaption id="preview-title">What tracks pipeline latency?<small>Spearman scores from the prepared model</small></figcaption>
-          <div class="preview-row"><span>Cache hit rate</span><strong>−0.84</strong><span class="preview-track" aria-hidden="true"><i class="preview-negative"></i></span></div>
-          <div class="preview-row"><span>Payload size</span><strong>+0.51</strong><span class="preview-track" aria-hidden="true"><i class="preview-positive"></i></span></div>
-          <div class="preview-axis" aria-hidden="true"><span>−1</span><span>0</span><span>+1</span></div>
+          <figcaption id="preview-title">The same average can hide a late trip<small>Illustrative journeys · minutes</small></figcaption>
+          <div class="preview-journey"><span>Route A</span><strong>25</strong><strong>25</strong><strong>25</strong></div>
+          <div class="preview-journey"><span>Route B</span><strong>10</strong><strong>10</strong><strong class="preview-late">55</strong></div>
+          <p class="hero-time">Both average 25 minutes. Which would you take with a 40-minute deadline?</p>
         </figure>
       </div>
       <section class="before" aria-labelledby="before-title">
         <h2 id="before-title">Before you start</h2>
-        <p>You’ll read tables and compare numbers. The lessons introduce rank correlation, variance and prediction error as you need them. The experiments run in your browser.</p>
+        <p>Bring basic arithmetic and comfort using a browser. Start by choosing an output, then calculate a change by hand. The lessons introduce sampling and statistics when you need them. All essential work runs in the browser. No programming or calculus is required.</p>
         <details>
           <summary>Quick refresher on measurements</summary>
           <dl class="terms">
@@ -52,20 +52,10 @@
       </section>
       <section class="roadmap" id="course" aria-labelledby="course-title">
         <h2 id="course-title">Course outline</h2>
-        <ol>
-          <li><a href="rank.html">Rank the knobs</a><span>Screen a model with Monte Carlo and Spearman rank correlation.</span></li>
-          <li><a href="ranges.html">Change the assumptions</a><span>See how plausible input ranges can change your shortlist.</span></li>
-          <li><a href="interactions.html">Find hidden interactions</a><span>Use first- and total-order Sobol indices to untangle a queue delay.</span></li>
-          <li><a href="logs.html">Work from logs</a><span>Measure what a predictor relies on with permutation importance.</span></li>
-          <li><a href="practice.html">Independent practice</a><span>Use the analyses to make a recommendation about a household electricity budget.</span></li>
-        </ol>
-        <h3>Worked follow-ups</h3>
-        <ul class="follow-ups">
-          <li><a href="spearman-calculation.html">Calculate a Spearman score by hand</a></li>
-          <li><a href="sobol-calculation.html">Calculate Sobol indices for two switches</a></li>
-          <li><a href="predictive-attribution.html">Plan a fair test on real logs</a></li>
-        </ul>
-        <p class="field-guide-link">Bring a question of your own to the <a href="apply.html">field guide</a>.</p>
+        <p>Follow the units in order if the methods are new. You will build a model, choose how to vary its inputs, diagnose a misleading screen and compare decisions. In the capstone, you will choose assumptions and defend a recommendation using your own runs.</p>
+        <!-- course-units -->
+        <h3>Worked references</h3>
+        <ul class="follow-ups"><!-- course-references --></ul>
       </section>
     </section>
     <script type="module">
