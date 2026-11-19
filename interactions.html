@@ -69,16 +69,11 @@
       </div>
       <div class="instructions">
         <h2>Does the queue change which inputs matter?</h2>
-        <ol>
-          <li>Leave <strong>Scenario</strong> set to <strong>Baseline</strong> and select <strong>Run sensitivity analysis</strong>. In <strong>Sobol indices and latency</strong>, compare the <strong>First-order</strong> and <strong>Total-order</strong> values for <strong>Cache hit rate</strong>. How large is the gap with the penalty off?</li>
-          <li>Select <strong>Queue saturation</strong>, then run again at the same sample size. Compare <strong>First-order</strong> and <strong>Total-order</strong> for <strong>Arrival rate</strong> and <strong>Worker capacity</strong>. Does either have a bigger gap than cache hit rate did? Use <strong>Spearman rank</strong> to check whether the rank screen places both near the top.</li>
-          <li>Compare <strong>p95 latency</strong> in <strong>Latency across scenarios</strong>, which appears after both runs. p95 is the time by which at least 95% of the sampled jobs finish. Use <strong>Jobs with extra delay</strong> to see how often the penalty occurs. How does that fraction help explain the change in p95?</li>
-        </ol>
       </div>
       <div class="experiment">
         <form id="assumptions-form" class="controls">
           <h2>Queue model</h2>
-          <p>The page prepares 8,192 sample pairs with seed 42. It uses those same draws for both scenarios if the sample size stays fixed.</p>
+          <p>Start with the baseline. The page uses 8,192 pairs from seed 42 for both scenarios if the sample size stays fixed.</p>
           <fieldset>
             <legend>Scenario</legend>
             <label class="choice"><input type="radio" name="scenario" value="baseline" checked><span><strong>Baseline</strong><small>Extra queue delay off</small></span></label>
@@ -95,10 +90,17 @@
         </form>
         <div class="results" id="assumptions-results">
           <h2>Sobol indices and latency</h2>
-          <p>Each pair of bars shows what an input explains alone and what it explains with interactions.</p>
-          <div class="output"><p class="empty">The indices and p95 latency appear here after the first run.</p></div>
+          <p>In the baseline, compare the first- and total-order bars for cache hit rate. How large is the gap?</p>
+          <div class="output"></div>
         </div>
       </div>
+      <section class="instructions">
+        <h3>Turn on the queue penalty</h3>
+        <ol>
+          <li>Select <strong>Queue saturation</strong> and rerun at the same sample size. Compare the first- and total-order gaps for <strong>Arrival rate</strong> and <strong>Worker capacity</strong> with the baseline gap for cache hit rate. Does <strong>Spearman rank</strong> also place both near the top?</li>
+          <li>In <strong>Latency across scenarios</strong>, compare p95, the time by which at least 95% of sampled jobs finish. How does <strong>Jobs with extra delay</strong> help explain the change?</li>
+        </ol>
+      </section>
       <section class="interpretation" aria-labelledby="sobol-read">
         <h2 id="sobol-read">Read the result</h2>
         <p>When the total-order bar is much longer than the first-order bar, the input’s interactions account for much of its contribution. The Sobol bars describe variance across all jobs. Read p95 for a separate view of the slowest jobs.</p>

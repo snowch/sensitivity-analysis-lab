@@ -63,13 +63,7 @@
       </div>
       <div class="instructions">
         <h2>Gather evidence for a recommendation</h2>
-        <ol>
-          <li><strong>Compare the rankings.</strong> Set <strong>Method</strong> to <strong>Spearman rank screen</strong>. Select <strong>Run analysis</strong> for <strong>Usual conditions</strong> and again for <strong>Colder season</strong>. Read <strong>Top input across scenarios</strong>.</li>
-          <li><strong>Check for interactions.</strong> Keep <strong>Colder season</strong> selected. Switch <strong>Method</strong> to <strong>First- and total-order Sobol</strong> and run again. Which input has the largest gap between <strong>First-order</strong> and <strong>Total-order</strong>?</li>
-          <li><strong>Check the predictor against the baseline.</strong> Set <strong>Method</strong> to <strong>Permutation importance</strong> and <strong>Shuffle</strong> to <strong>One feature at a time</strong>. Run the analysis. Compare <strong>Forest test MAE</strong> with <strong>Median-only test MAE</strong>.</li>
-          <li><strong>Test the shared weather signal.</strong> Set <strong>Shuffle</strong> to <strong>Cold-weather signals together</strong> and run again. In <strong>Weather signal comparison</strong>, which shuffle gives the largest <strong>Increase in test MAE ($)</strong>?</li>
-          <li><strong>Test two ways to lower the bill.</strong> Set <strong>Method</strong> to <strong>Compare interventions</strong>. Under <strong>Intervention</strong>, run <strong>Reduce heat loss by 30%</strong> and <strong>Halve dryer cycles</strong> in each <strong>Model scenario</strong>. In <strong>Options across runs</strong>, check which values in <strong>Option over $200</strong> are 5% or less.</li>
-        </ol>
+        <p>For the first run, choose <strong>Spearman rank screen</strong> and <strong>Usual conditions</strong>.</p>
       </div>
       <div class="experiment">
         <form id="practice-form" class="controls">
@@ -103,9 +97,20 @@
         </form>
         <div id="practice-results" class="results">
           <h2>Evidence for your decision</h2>
-          <div class="output"><p class="empty">Select a method and run it. A comparison table appears after you run two scenarios, shuffle settings or interventions for the same method.</p></div>
+          <p>A comparison table appears after two runs in the same method with different scenarios, shuffles or interventions.</p>
+          <div class="output"></div>
         </div>
       </div>
+      <section class="instructions">
+        <h3>After the first run</h3>
+        <ol>
+          <li><strong>Compare seasons.</strong> Keep the rank screen selected. Change <strong>Model scenario</strong> to <strong>Colder season</strong> and run again. Read <strong>Top input across scenarios</strong>.</li>
+          <li><strong>Check for interactions.</strong> Keep <strong>Colder season</strong> selected. Switch <strong>Method</strong> to <strong>First- and total-order Sobol</strong> and run again. Which input has the largest gap between <strong>First-order</strong> and <strong>Total-order</strong>?</li>
+          <li><strong>Check the predictor against the baseline.</strong> Set <strong>Method</strong> to <strong>Permutation importance</strong> and <strong>Shuffle</strong> to <strong>One feature at a time</strong>. Run the analysis. Compare <strong>Forest test MAE</strong> with <strong>Median-only test MAE</strong>.</li>
+          <li><strong>Test the shared weather signal.</strong> Set <strong>Shuffle</strong> to <strong>Cold-weather signals together</strong> and run again. In <strong>Weather signal comparison</strong>, which shuffle gives the largest <strong>Increase in test MAE ($)</strong>?</li>
+          <li><strong>Test two ways to lower the bill.</strong> Set <strong>Method</strong> to <strong>Compare interventions</strong>. Run <strong>Reduce heat loss by 30%</strong> and <strong>Halve dryer cycles</strong> in each <strong>Model scenario</strong>. In <strong>Options across runs</strong>, check which values in <strong>Option over $200</strong> are 5% or less.</li>
+        </ol>
+      </section>
       <section id="decision" class="practice-note" aria-labelledby="note-heading">
         <h2 id="note-heading">Make your case</h2>
         <p>In <strong>Investigation note</strong>, write what you would try first, what you would hold steady, and what outcome would change your mind. Cite at least one number from each type of analysis you used. Select <strong>Download note</strong> to keep a copy.</p>

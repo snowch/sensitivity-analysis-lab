@@ -53,7 +53,7 @@ function stepNav(id) {
 function frame(id,title,body,interactive=false) {
   const head=pageStart
     .replace(/<title>.*?<\/title>/,`<title>${html(title)} · Sensitivity Analysis Lab</title>`)
-    .replace("</head>",interactive ? '  <script type="module" src="assets/investigation.mjs?v=3"></script>\n</head>' : "</head>");
+    .replace("</head>",interactive ? '  <script type="module" src="assets/investigation.mjs?v=4"></script>\n</head>' : "</head>");
   return `${head}
   <div class="course-layout">
     ${sidebar(id)}
@@ -94,8 +94,8 @@ function renderLesson([id,title],lesson) {
       <h2>Experiment</h2>
       <p id="prediction-prompt" class="experiment-question">${lesson.predict}</p>
       <p class="investigation-setup">${lesson.setup}</p>
-      <div class="instructions"><ol>${lesson.steps.map(step=>`<li>${step}</li>`).join("")}</ol></div>
-      ${lesson.report ? `<div class="learner-draft"><label for="report">Report draft</label><textarea id="report" data-save="report" rows="6">${html(reportTemplate)}</textarea>
+      ${lesson.report ? `<p class="investigation-plan">${lesson.plan}</p>
+      <div class="learner-draft"><label for="report">Report draft</label><textarea id="report" data-save="report" rows="6">${html(reportTemplate)}</textarea>
         <p>Browser storage keeps your draft and up to six completed runs on this device when available.</p>
         <p class="draft-status status" role="status"></p></div>` : ""}
       <details class="learner-draft"><summary>Write down your prediction</summary>
@@ -105,6 +105,7 @@ function renderLesson([id,title],lesson) {
       </details>
       <noscript><p class="notice">Enable JavaScript to run the investigation. The worked example and explanation are available below.</p></noscript>
       <form id="investigation" data-lesson="${id}">
+        ${lesson.report ? "" : '<p class="investigation-start">Use the starting settings for your first run.</p>'}
         ${fields}
         <div class="investigation-actions">
           <button class="button dark" type="submit" disabled>Run experiment</button>
@@ -112,15 +113,20 @@ function renderLesson([id,title],lesson) {
         </div>
         <p id="investigation-status" role="status" class="status"></p>
       </form>
-      <section class="investigation-results">
-        <h2>Results</h2>
-        ${lesson.report ? `<p id="run-save-status" class="status" role="status"></p>` : ""}
-        <div id="investigation-output"><p class="empty">Results appear here after you select <strong>Run experiment</strong>.</p></div>
+      ${lesson.report ? `<p id="run-save-status" class="status" role="status"></p>` : ""}
+      <section class="investigation-results" aria-labelledby="results-title" hidden>
+        <h3 id="results-title">Results</h3>
+        <p class="investigation-read">${lesson.read}</p>
+        <div id="investigation-output"></div>
         <div id="run-history"></div>
         <details id="result-tools" class="reference" hidden><summary>Export run settings and values</summary>
           <p>The CSV includes settings, tables and chart values from up to six completed runs.</p>
           <button class="button outline-button" id="export-results" type="button">Download results CSV</button>
         </details>
+      </section>
+      <section class="instructions investigation-next">
+        <h3>After the first run</h3>
+        <ol>${lesson.steps.map(step=>`<li>${step}</li>`).join("")}</ol>
       </section>
     </section>
     <section class="reading"><h2>Explain your result</h2><p id="explanation-prompt">${lesson.task}</p>
@@ -144,7 +150,7 @@ const existing = (await readdir(root)).filter(name=>name.endsWith(".html"));
 for (const file of existing) {
   if (file==="index.html") continue;
   const id=file.slice(0,-5);
-  let page=(await readFile(join(root,file),"utf8")).replace(/lab\.css\?v=\d+/,"lab.css?v=6").replace("lab.mjs?v=2","lab.mjs?v=4");
+  let page=(await readFile(join(root,file),"utf8")).replace(/lab\.css\?v=\d+/,"lab.css?v=7").replace("lab.mjs?v=2","lab.mjs?v=4");
   page=page.replace("</head>", '  <script type="module" src="assets/scroll-tables.mjs"></script>\n</head>');
   page=page.replace(/<aside class="course-sidebar">[\s\S]*?<\/aside>/,sidebar(id));
   const index=route.findIndex(row=>row[0]===id);

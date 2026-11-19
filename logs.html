@@ -68,15 +68,11 @@
       </div>
       <div class="instructions">
         <h2>Do the cache counters carry the same signal?</h2>
-        <ol>
-          <li>Leave <strong>Shuffle</strong> set to <strong>Individual features</strong>. Select <strong>Run permutation importance</strong>. In <strong>Test error and feature importance</strong>, compare <strong>Forest test MAE</strong> with <strong>Median-only test MAE</strong>, the error of always predicting the training median. Does the forest make smaller errors on these test rows?</li>
-          <li>Set <strong>Shuffle</strong> to <strong>Group the cache counters</strong> and run again, keeping five shuffles. In <strong>Cache counter comparison</strong>, read <strong>Increase in MAE (ms)</strong> for <strong>Edge miss rate</strong>, <strong>Origin fetch rate</strong> and the pair. Does moving both raise test error more than moving either alone?</li>
-        </ol>
       </div>
       <div class="experiment">
         <form id="logs-form" class="controls">
           <h2>Shuffle the test data</h2>
-          <p>The prepared settings repeat each shuffle five times.</p>
+          <p>Start with individual features. The prepared settings repeat each shuffle five times.</p>
           <fieldset>
             <legend>Shuffle</legend>
             <label class="choice"><input type="radio" name="grouping" value="individual" checked><span><strong>Individual features</strong><small>Shuffle one column at a time</small></span></label>
@@ -94,10 +90,14 @@
         </form>
         <div class="results" id="logs-results">
           <h2>Test error and feature importance</h2>
-          <p>Feature importance is the average increase in test MAE across repeated shuffles.</p>
-          <div class="output"><p class="empty">The baseline errors and shuffle results appear here after the first run.</p></div>
+          <p>Compare forest test MAE with median-only test MAE. Does the forest make smaller errors than always predicting the training median?</p>
+          <div class="output"></div>
         </div>
       </div>
+      <section class="instructions">
+        <h3>Shuffle both cache counters</h3>
+        <p>Set <strong>Shuffle</strong> to <strong>Group the cache counters</strong> and rerun with five shuffles. In <strong>Cache counter comparison</strong>, check whether shuffling the pair increases test MAE more than shuffling either counter alone.</p>
+      </section>
       <section class="interpretation" aria-labelledby="logs-read">
         <h2 id="logs-read">Read the result</h2>
         <p>An edge cache stores copies close to users. <strong>Edge miss rate</strong> is the share of requests with no usable copy there. <strong>Origin fetch rate</strong> is the share that had to reach the original source.</p>

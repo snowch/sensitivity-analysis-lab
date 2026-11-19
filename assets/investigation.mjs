@@ -1,5 +1,6 @@
 const form = document.querySelector("#investigation");
 const results = document.querySelector("#investigation-output");
+const resultSection = results.closest(".investigation-results");
 const history = document.querySelector("#run-history");
 const status = document.querySelector("#investigation-status");
 const resultTools = document.querySelector("#result-tools");
@@ -205,7 +206,7 @@ function renderPlots(target, {charts = [], heatmap: map, tornado}) {
 function render(result) {
   const {headline,text,tables} = result;
   for (const old of results.querySelectorAll("canvas")) plots.unobserve(old);
-  results.replaceChildren(node("h3",headline));
+  results.replaceChildren(node("h4",headline));
   if (text) results.append(node("p",text,"chart-note"));
   for (const table of tables) results.append(createTable(table));
   renderPlots(results, result);
@@ -252,7 +253,7 @@ function renderHistory() {
   for (const canvas of history.querySelectorAll("canvas")) plots.unobserve(canvas);
   history.replaceChildren();
   if (runs.length < 2) return;
-  history.append(node("h3", "Earlier runs"));
+  history.append(node("h4", "Earlier runs"));
   history.append(node("p", "Open a run to compare its tables with the latest result."));
   for (const {id, options, result} of runs.slice(1)) {
     const details = node("details");
@@ -275,6 +276,7 @@ function renderHistory() {
 
 function showLatest() {
   const {id, options, result} = runs[0];
+  resultSection.hidden = false;
   render(result);
   renderHistory();
   results.prepend(node("p", `Run ${id}`, "run-label"));

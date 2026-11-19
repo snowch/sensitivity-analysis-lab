@@ -64,10 +64,7 @@
       </div>
       <div class="instructions">
         <h2>Can a wider range change which input ranks first?</h2>
-        <ol>
-          <li>Predict which range will put Network RTT closer to the top of the ranking. Select <strong>Compare ranges</strong>. The page runs both scenarios together.</li>
-          <li>In <strong>Network RTT across scenarios</strong>, compare <strong>Rank</strong> and <strong>Spearman score</strong>. Did Network RTT overtake the other inputs?</li>
-        </ol>
+        <p>Predict which range will put network RTT closer to the top.</p>
       </div>
       <div class="experiment">
         <form id="ranges-form" class="controls">
@@ -78,7 +75,8 @@
         </form>
         <div class="results" id="ranges-results">
           <h2>Network RTT across scenarios</h2>
-          <div class="output"><p class="empty">Both ranks and scores appear here after the comparison runs.</p></div>
+          <p>Compare the rank and Spearman score for the two ranges. Did network RTT overtake the other inputs?</p>
+          <div class="output"></div>
         </div>
       </div>
       <section class="interpretation" aria-labelledby="ranges-read">
