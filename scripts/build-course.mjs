@@ -51,7 +51,7 @@ function stepNav(id) {
 function frame(id,title,body,interactive=false) {
   const head=pageStart
     .replace(/<title>.*?<\/title>/,`<title>${html(title)} · Sensitivity Analysis Lab</title>`)
-    .replace("</head>",interactive ? '  <script type="module" src="assets/investigation.mjs?v=2"></script>\n</head>' : "</head>");
+    .replace("</head>",interactive ? '  <script type="module" src="assets/investigation.mjs?v=3"></script>\n</head>' : "</head>");
   return `${head}
   <div class="course-layout">
     ${sidebar(id)}
@@ -83,21 +83,23 @@ function renderLesson([id,title],lesson) {
     : `<div class="investigation-fields">${controls(lesson.fields)}</div>`;
   const answer=lesson.report
     ? reportGuide
-    : `<details class="answer"><summary>Compare with a worked explanation</summary><p>${lesson.answer}</p></details>`;
+    : `<details class="answer"><summary>Reveal the worked explanation</summary><p>${lesson.answer}</p></details>`;
   return frame(id,title,`<article class="lesson shell">
     <header class="lesson-header"><p class="kicker">Lesson ${index} of ${route.length}</p><h1>${html(title)}</h1><p>${lesson.goal}</p></header>
     <div class="reading">${lesson.concept}</div>
     <section class="reading"><h2>Worked example</h2>${lesson.example}</section>
     <section class="lesson-experiment">
-      <h2>Run the experiment</h2>
+      <h2>Experiment</h2>
       <p id="prediction-prompt" class="experiment-question">${lesson.predict}</p>
       <p class="investigation-setup">${lesson.setup}</p>
       <div class="instructions"><ol>${lesson.steps.map(step=>`<li>${step}</li>`).join("")}</ol></div>
       ${lesson.report ? `<div class="learner-draft"><label for="report">Report draft</label><textarea id="report" data-save="report" rows="6">${html(reportTemplate)}</textarea>
-        <p>The draft and your six most recent runs are saved in this browser.</p></div>` : ""}
-      <details class="learner-draft"><summary>Record a prediction</summary>
+        <p>Browser storage keeps your draft and up to six completed runs on this device when available.</p>
+        <p class="draft-status status" role="status"></p></div>` : ""}
+      <details class="learner-draft"><summary>Write down your prediction</summary>
         <label for="prediction">Your prediction</label>
         <textarea id="prediction" data-save="prediction" aria-describedby="prediction-prompt" rows="2"></textarea>
+        <p class="draft-status status" role="status"></p>
       </details>
       <noscript><p class="notice">Enable JavaScript to run the investigation. The worked example and explanation are available below.</p></noscript>
       <form id="investigation" data-lesson="${id}">
@@ -110,20 +112,21 @@ function renderLesson([id,title],lesson) {
       </form>
       <section class="investigation-results">
         <h2>Results</h2>
+        ${lesson.report ? `<p id="run-save-status" class="status" role="status"></p>` : ""}
         <div id="investigation-output"><p class="empty">Results appear here after you select <strong>Run experiment</strong>.</p></div>
         <div id="run-history"></div>
-        <details id="result-tools" class="reference" hidden><summary>Download data</summary>
-          <p>The CSV includes settings and values from up to six runs.</p>
+        <details id="result-tools" class="reference" hidden><summary>Export run settings and values</summary>
+          <p>The CSV includes settings, tables and chart values from up to six completed runs.</p>
           <button class="button outline-button" id="export-results" type="button">Download results CSV</button>
         </details>
       </section>
     </section>
     <section class="reading"><h2>Explain your result</h2><p id="explanation-prompt">${lesson.task}</p>
-      ${lesson.report ? "" : `<details class="learner-draft"><summary>Record an explanation</summary>
+      ${lesson.report ? "" : `<details class="learner-draft"><summary>Write down your explanation</summary>
         <label for="explanation">Your explanation</label>
         <textarea id="explanation" data-save="explanation" aria-describedby="explanation-prompt" rows="3"></textarea>
+        <p class="draft-status status" role="status"></p>
       </details>`}
-      <p id="save-note-status" role="status"></p>
       ${answer}
       ${lesson.report ? `<p>The report download includes your draft and the tables from your six most recent runs.</p>
         <button type="button" id="download-report" class="button outline-button">Download report</button>` : ""}
@@ -139,7 +142,7 @@ const existing = (await readdir(root)).filter(name=>name.endsWith(".html"));
 for (const file of existing) {
   if (file==="index.html") continue;
   const id=file.slice(0,-5);
-  let page=(await readFile(join(root,file),"utf8")).replace("lab.css?v=2","lab.css?v=4").replace("lab.mjs?v=2","lab.mjs?v=3");
+  let page=(await readFile(join(root,file),"utf8")).replace("lab.css?v=2","lab.css?v=5").replace("lab.mjs?v=2","lab.mjs?v=4");
   page=page.replace("</head>", '  <script type="module" src="assets/scroll-tables.mjs"></script>\n</head>');
   page=page.replace(/<aside class="course-sidebar">[\s\S]*?<\/aside>/,sidebar(id));
   const index=route.findIndex(row=>row[0]===id);

@@ -7,6 +7,7 @@ const exportButton = document.querySelector("#export-results");
 const submit = form.querySelector("button[type=submit]");
 const reset = form.querySelector("button[type=reset]");
 const lesson = form.getAttribute("data-lesson");
+const runSaveStatus = document.querySelector("#run-save-status");
 let worker;
 let activeOptions;
 let runs = [];
@@ -57,14 +58,18 @@ function createTable({ caption, columns, rows }) {
   return wrap;
 }
 
-function heatmap({ x, y, xs, zs, values }) {
-  const result = createTable({
+function heatmapTable({ x, y, xs, zs, values }) {
+  return {
     caption: `Heatmap · ${y} by row, ${x} by column. Cells are delay in minutes.`,
     columns: [y, ...xs],
     rows: zs.map((z,i) => [z, ...values[i]]),
-  });
+  };
+}
+
+function heatmap(spec) {
+  const result = createTable(heatmapTable(spec));
   result.classList.add("course-heatmap");
-  const flat = values.flat();
+  const flat = spec.values.flat();
   const min = Math.min(...flat);
   const max = Math.max(...flat);
   [...result.querySelectorAll("td")].forEach((cell, i) => {
@@ -248,6 +253,7 @@ function renderHistory() {
   history.replaceChildren();
   if (runs.length < 2) return;
   history.append(node("h3", "Earlier runs"));
+  history.append(node("p", "Open a run to compare its tables with the latest result."));
   for (const {id, options, result} of runs.slice(1)) {
     const details = node("details");
     const current = new Map(describe(runs[0].options));
@@ -288,25 +294,32 @@ function ready(busy) {
 function failure(message) {
   activeOptions = null;
   status.dataset.state = "error";
-  status.textContent = runs.length ? `${message} The earlier result is still shown below.` : message;
+  status.textContent = runs.length ? `${message} Run ${runs[0].id} is still shown below.` : message;
   ready(false);
 }
 function startWorker() {
-  worker = new Worker(new URL("./course-worker.mjs?v=2",import.meta.url),{type:"module"});
+  worker = new Worker(new URL("./course-worker.mjs?v=3",import.meta.url),{type:"module"});
   worker.addEventListener("error",()=>{
     worker.terminate();
     worker=null;
-    failure("The experiment could not start. Run again or reload this page.");
+    if (activeOptions) failure("The experiment could not run. Try again or reload this page.");
   });
   worker.addEventListener("message",({data:{id,result,error}})=>{
     if (error) {failure(error);return;}
     const entry = {id, options:activeOptions, result};
     activeOptions=null;
+    nextRun=id+1;
     runs = [entry,...runs].slice(0,6);
     showLatest();
-    if (runKey) {
-      try { localStorage.setItem(runKey,JSON.stringify(runs)); }
-      catch { document.querySelector("#save-note-status").textContent="Could not save runs in this browser. Download the results before leaving."; }
+    if (runSaveStatus) {
+      try {
+        localStorage.setItem(runKey,JSON.stringify(runs));
+        delete runSaveStatus.dataset.state;
+        runSaveStatus.textContent = "Runs saved in this browser.";
+      } catch {
+        runSaveStatus.dataset.state = "error";
+        runSaveStatus.textContent = `Run ${id} is available in this tab. Browser storage could not save it. Download your report or results CSV before leaving.`;
+      }
     }
     status.textContent=`Run ${id} ready.`;
     ready(false);
@@ -324,7 +337,7 @@ form.addEventListener("submit",event=>{
   ready(true);
   try {
     if(!worker) startWorker();
-    worker.postMessage({id:nextRun++,lesson,options});
+    worker.postMessage({id:nextRun,lesson,options});
   } catch (error) {
     failure(error.message);
   }
@@ -333,12 +346,12 @@ form.addEventListener("input",()=>{
   updateFields();
   if(activeOptions) return;
   delete status.dataset.state;
-  status.textContent=runs.length ? "Settings changed. Run again to compare with the displayed result." : "";
+  status.textContent=runs.length ? `Results below are from Run ${runs[0].id}. Select Run experiment to use the current settings.` : "";
 });
 form.addEventListener("reset",()=>{
   queueMicrotask(updateFields);
   delete status.dataset.state;
-  status.textContent="Default settings restored. Run to use them.";
+  status.textContent="Starting settings restored. Select Run experiment to use them.";
 });
 updateFields();
 window.addEventListener("pageshow", updateFields);
@@ -351,10 +364,13 @@ if (runKey) {
       runs=saved.slice(0,6);
       nextRun=runs[0].id+1;
       showLatest();
+      runSaveStatus.textContent = `Saved runs loaded. Run ${runs[0].id} used the settings listed below its results.`;
     }
   } catch {
     runs=[];
     nextRun=1;
+    runSaveStatus.dataset.state = "error";
+    runSaveStatus.textContent = "Saved runs could not be loaded in this browser. You can still run the experiment and download new results.";
   }
 }
 
@@ -371,7 +387,8 @@ exportButton.addEventListener("click",()=>{
   const rows=[["Run","Table","Row","Field","Value"]];
   for(const {id,options,result} of [...runs].reverse()) {
     for(const [label,value] of describe(options)) rows.push([id,"Settings",0,label,value]);
-    for(const {caption,columns,rows:cells} of result.tables) cells.forEach((row,i)=>
+    const tables = result.heatmap ? [...result.tables, heatmapTable(result.heatmap)] : result.tables;
+    for(const {caption,columns,rows:cells} of tables) cells.forEach((row,i)=>
       row.forEach((value,j)=>rows.push([id,caption,i+1,columns[j],value])));
     for(const {x,y,series} of result.charts ?? []) for(const line of series) line.points.forEach(([vx,vy],i)=>{
       if(vy===null)return;
@@ -383,17 +400,25 @@ exportButton.addEventListener("click",()=>{
 
 for(const editable of document.querySelectorAll("[data-save]")){
   const key=`sensitivity-analysis-lab:${lesson}:${editable.dataset.save}`;
+  const noteStatus = editable.parentElement.querySelector(".draft-status");
   try {
     const saved = localStorage.getItem(key);
     if (saved !== null) editable.value = saved;
     if (saved?.trim() && editable.closest("details")) editable.closest("details").open = true;
-  } catch {}
+  } catch {
+    noteStatus.dataset.state = "error";
+    noteStatus.textContent = "Saved text could not be loaded. You can still write in this tab.";
+  }
   editable.addEventListener("input",()=>{
     try {
       localStorage.setItem(key,editable.value);
-      document.querySelector("#save-note-status").textContent = "Saved in this browser.";
+      delete noteStatus.dataset.state;
+      noteStatus.textContent = "Saved in this browser.";
     } catch {
-      document.querySelector("#save-note-status").textContent="Browser storage is unavailable. Copy or download your work before leaving.";
+      noteStatus.dataset.state = "error";
+      noteStatus.textContent = editable.id === "report"
+        ? "This draft is available in this tab. Browser storage could not save it. Download your report before leaving."
+        : "This text is available in this tab. Browser storage could not save it. Copy it before leaving.";
     }
   });
 }

@@ -44,7 +44,6 @@
   <main id="main" tabindex="-1">
     <article class="lesson shell" aria-labelledby="worked-title">
       <header class="lesson-header">
-        <p class="kicker">Worked follow-up</p>
         <h1 id="worked-title">Calculate Sobol indices for two switches</h1>
         <p>Use four equally likely outcomes to separate individual effects from an interaction.</p>
       </header>
@@ -58,8 +57,8 @@
         <h2>Compare the two sources of spread</h2>
         <p>All four outputs average to 0.25. Their variance is the average squared distance from that mean, or 0.1875. The two averages for A alone, 0 and 0.5, are equally likely. Each sits 0.25 from their mean, so their variance is 0.25² = 0.0625. Divide 0.0625 by 0.1875 to get A’s first-order index of <strong>1/3</strong>. B has the same index.</p>
         <p>The two first-order effects account for 2/3 of the variance. The remaining 1/3 belongs to their interaction. A’s total-order index includes its own 1/3 and the interaction’s 1/3, giving <strong>2/3</strong>. Each switch’s total includes that same interaction.</p>
-        <h2>Try it</h2>
-        <p>On paper, use a new rule where the output counts how many switches are on. Write the four outputs, group them by A’s state, and calculate A’s first- and total-order indices. Before opening the answer, write what happens to the gap between the two indices.</p>
+        <h2>Recalculate when the output counts switches</h2>
+        <p>On paper, use a new rule where the output counts how many switches are on. Write the four outputs, group them by A’s state, and calculate A’s first- and total-order indices. Write what happens to the gap between the two indices, then reveal the answer to check your work.</p>
         <details class="reference"><summary>Answer for the switch-count rule</summary><p>The outputs are 0, 1, 1, 2. Their variance is 0.5. A off and A on give averages of 0.5 and 1.5, with variance 0.25. A’s first-order index is 0.25 ÷ 0.5 = 1/2. B explains the other half, so A’s total order is also 1/2. Each switch always adds one, whatever the other switch does.</p></details>
       </div>
       <nav class="lesson-actions" aria-label="Course sequence"><a href="./#course">Course outline</a><a class="button dark" href="interactions.html">Back to Find the pipeline interaction</a></nav>

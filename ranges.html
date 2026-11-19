@@ -61,16 +61,16 @@
         </figure>
       </div>
       <div class="instructions">
-        <h2>Can a wider range change the top driver?</h2>
+        <h2>Can a wider range change which input ranks first?</h2>
         <ol>
-          <li>Predict which range will give Network RTT a higher rank. Select <strong>Compare ranges</strong> to run both scenarios.</li>
+          <li>Predict which range will put Network RTT closer to the top of the ranking. Select <strong>Compare ranges</strong>. The page runs both scenarios together.</li>
           <li>In <strong>Network RTT across scenarios</strong>, compare <strong>Rank</strong> and <strong>Spearman score</strong>. Did Network RTT overtake the other inputs?</li>
         </ol>
       </div>
       <div class="experiment">
         <form id="ranges-form" class="controls">
           <h2>Network scenarios</h2>
-          <p>The page compares the two prepared ranges over 8,192 simulated jobs. Each job uses the same values for every other input in both scenarios.</p>
+          <p>The two prepared RTT ranges are 8–12 ms and 2–65 ms. The page matches 8,192 simulated jobs across scenarios and reuses every other input value for each matched job.</p>
           <button class="button dark" disabled>Compare ranges</button>
           <p class="status" role="status"></p>
         </form>

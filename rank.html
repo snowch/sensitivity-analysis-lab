@@ -51,7 +51,7 @@
       </header>
       <div class="teaching">
         <div>
-          <p>A pipeline fetches, processes and writes data. Its <strong>latency</strong> is the time one job takes to finish. A cache can serve a stored copy and save time. The <strong>cache hit rate</strong> is the percentage of requests served this way. <strong>Payload size</strong> is the amount of data in a job.</p>
+          <p>A pipeline fetches, processes and writes data. Here a job is one item of work that passes through those stages. Its <strong>latency</strong> is the time it takes to finish. A <strong>cache</strong> serves a stored copy without fetching the data again. The <strong>cache hit rate</strong> is the percentage of requests served from that copy. <strong>Payload size</strong> is the amount of data in a job.</p>
           <p>A <strong>Monte Carlo simulation</strong> draws values from assumed input ranges and calculates latency for each draw. The model samples each input independently, so drawing one value leaves the other inputs’ chances unchanged. Within each range, equal-width intervals are equally likely.</p>
           <p><strong>Spearman rank correlation</strong> sorts the jobs by one input and again by latency. A score near +1 means larger inputs usually go with longer jobs. A score near −1 means larger inputs usually go with shorter jobs. A score near zero means there is little consistent ordering in either direction. An input can still matter if its effect changes direction.</p>
         </div>
@@ -68,14 +68,14 @@
       <div class="instructions">
         <h2>Which two inputs would you investigate?</h2>
         <ol>
-          <li>Select <strong>Run simulation</strong> with the prepared settings. In <strong>Spearman scores</strong>, find the two longest bars and read their signs. A bar’s length shows how closely the orders agree or reverse.</li>
+          <li>Leave the starting settings at 8,192 jobs and seed 42. Select <strong>Run simulation</strong>. In <strong>Spearman scores</strong>, find the two longest bars. Use each sign to say whether higher input values go with shorter or longer jobs.</li>
           <li>Open <strong>Simulation settings</strong>, change <strong>Random seed</strong> from 42 to 19, and select <strong>Run simulation</strong> again. A seed sets the sequence of draws. In <strong>Top two across runs</strong>, compare the input names and their signs for seeds 42 and 19. Did your shortlist change?</li>
         </ol>
       </div>
       <div class="experiment">
         <form id="screen-form" class="controls">
           <h2>Simulation</h2>
-          <p>The starting settings are 8,192 simulated jobs and seed 42.</p>
+          <p>The page prepares 8,192 simulated jobs from seed 42 when you run.</p>
           <button class="button dark" disabled>Run simulation</button>
           <p class="status" role="status"></p>
           <details class="settings">
@@ -96,7 +96,7 @@
       <section class="interpretation" aria-labelledby="rank-read">
         <h2 id="rank-read">Read the result</h2>
         <p>In this model, cache hits avoid slower fetches and larger jobs take longer to process. Changing the seed draws a different sample from the same ranges. Check whether the top two stay the same before interpreting small score changes.</p>
-        <details class="reference"><summary>Check the starting settings</summary><p>At seed 42 and 8,192 jobs, cache hit rate leads at −0.84 and payload size follows at +0.51.</p></details>
+        <details class="reference"><summary>Reveal the two highest-ranked inputs for seed 42</summary><p>At seed 42 and 8,192 jobs, cache hit rate leads at −0.84 and payload size follows at +0.51.</p></details>
         <p>A small score can conceal a strong effect that changes direction. For example, fuel use can rise both below and above an efficient speed. Plot the input against the output before you rule it out.</p>
       </section>
       <form class="knowledge-check">

@@ -1,25 +1,33 @@
 import { inputs } from "./model.mjs";
 
-const worker = new Worker(new URL("./worker.mjs", import.meta.url), { type: "module" });
+let worker;
 const pending = new Map();
 let requestId = 0;
-let workerFailure;
-worker.addEventListener("message", ({ data: { id, result, error } }) => {
-  const { resolve, reject } = pending.get(id);
-  pending.delete(id);
-  if (error) reject(new Error(error));
-  else resolve(result);
-});
-worker.addEventListener("error", () => {
-  workerFailure = new Error("The experiment could not load. Reload and try again.");
-  for (const { reject } of pending.values()) reject(workerFailure);
-  pending.clear();
-});
+
+function startWorker() {
+  worker = new Worker(new URL("./worker.mjs?v=2", import.meta.url), { type: "module" });
+  worker.addEventListener("message", ({ data: { id, result, error } }) => {
+    const request = pending.get(id);
+    if (!request) return;
+    pending.delete(id);
+    if (error) request.reject(new Error(error));
+    else request.resolve(result);
+  });
+  worker.addEventListener("error", () => {
+    worker.terminate();
+    worker = undefined;
+    const failure = new Error("The experiment could not load. Try again or reload this page.");
+    for (const { reject } of pending.values()) reject(failure);
+    pending.clear();
+  });
+}
 
 function run(task, options) {
   return new Promise((resolve, reject) => {
-    if (workerFailure) {
-      reject(workerFailure);
+    try {
+      if (!worker) startWorker();
+    } catch {
+      reject(new Error("The experiment could not start in this browser. Reload and try again."));
       return;
     }
     const id = ++requestId;
@@ -158,16 +166,20 @@ function connect(formId, resultId, task, getOptions, render) {
   if (!form) return;
   const output = document.querySelector(`#${resultId} .output`);
   const status = form.querySelector(".status");
-  const controls = Array.from(form.elements).filter(control => control.type !== "button");
+  const controls = Array.from(form.elements).filter(control => control.name);
   const submit = form.querySelector("button:not([type])");
   let hasResult = false;
+  let running = false;
   form.addEventListener("input", () => {
     delete status.dataset.state;
-    status.textContent = hasResult ? "Previous result shown. Run again with these settings." : "";
+    status.textContent = hasResult ? `The earlier result is still shown. Select ${submit.textContent} to use these settings.` : "";
   });
   form.addEventListener("submit", async event => {
     event.preventDefault();
+    if (running) return;
     const options = getOptions(new FormData(form));
+    running = true;
+    submit.setAttribute("aria-disabled", "true");
     for (const control of controls) control.disabled = true;
     output.setAttribute("aria-busy", "true");
     delete status.dataset.state;
@@ -180,6 +192,8 @@ function connect(formId, resultId, task, getOptions, render) {
       status.dataset.state = "error";
       status.textContent = hasResult ? `${error.message} The earlier result is still shown.` : error.message;
     } finally {
+      running = false;
+      submit.removeAttribute("aria-disabled");
       for (const control of controls) control.disabled = false;
       output.removeAttribute("aria-busy");
     }
@@ -241,19 +255,26 @@ function connectNote(id, noteKey, filename, title) {
   if (!note) return;
   const status = document.getElementById("note-status");
   const button = document.getElementById("download-note");
-  const unavailable = "Browser storage is unavailable. Download your note to keep it.";
+  const unavailable = "This note is available in this tab. Browser storage could not save it. Download your note before leaving.";
   try {
-    note.value = localStorage.getItem(noteKey) ?? "";
+    const stored = localStorage.getItem(noteKey);
+    if (stored !== null) {
+      note.value = stored;
+      status.textContent = "Saved note loaded.";
+    }
   } catch {
-    status.textContent = unavailable;
+    status.dataset.state = "error";
+    status.textContent = "Saved text could not be loaded. You can still write and download a new note.";
   }
   button.disabled = !note.value.trim();
   note.addEventListener("input", () => {
     button.disabled = !note.value.trim();
     try {
       localStorage.setItem(noteKey, note.value);
+      delete status.dataset.state;
       status.textContent = "Saved in this browser.";
     } catch {
+      status.dataset.state = "error";
       status.textContent = unavailable;
     }
   });

@@ -44,9 +44,8 @@
   <main id="main" tabindex="-1">
     <article class="lesson shell" aria-labelledby="guide-title">
       <header class="lesson-header">
-        <p class="kicker">Field guide</p>
         <h1 id="guide-title">Apply it to your own decision</h1>
-        <p>Pick a decision affected by several uncertain inputs. Start with a small example you can calculate by hand.</p>
+        <p>Use this field guide to plan a decision that depends on several uncertain inputs. Start with a small example you can calculate by hand.</p>
       </header>
       <div class="guide">
         <h2>1. Write the decision before picking a method</h2>
@@ -71,7 +70,7 @@
         <h2>4. Keep a record someone else can check</h2>
         <p>Record your decision rule, data period, input ranges and sources, method, and one result with units. Name the assumption that most threatens your conclusion. Describe the next measurement or test and what result would reverse your decision.</p>
         <details class="method-note"><summary>Use the analysis code on a small model</summary>
-          <p>If you have Node.js, copy or clone the source repository and run <code>node assets/energy-example.mjs</code> in its root. In your local copy, replace the input names and ranges in <code>factors</code> and the formula in <code>evaluate</code>. Run again and find the rank and Sobol tables in the terminal. The example samples all inputs independently. Use it when that assumption fits your question.</p>
+          <p>With Node.js 20 or later, copy or clone the source repository and run <code>node assets/energy-example.mjs</code> from its root. In your local copy of <code>assets/energy-example.mjs</code>, find <code>cold_days</code> in <code>factors</code> and change its range from <code>[0, 22]</code> to <code>[0, 4]</code>. Run the same command again. Compare the leading inputs by absolute <code>rho</code> in the rank table and by <code>total</code> in the Sobol table. Which input leads both after narrowing the range? The example treats inputs as independent. For your own model, change the input names and ranges in <code>factors</code> and the formula in <code>evaluate</code> if independence fits the question.</p>
           <p><a href="assets/energy-example.mjs">Open the example script</a> · <a href="assets/energy.mjs">Read the full practice model</a></p>
         </details>
       </div>
