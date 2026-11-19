@@ -172,7 +172,7 @@ function trajectories({ model, count, seed }) {
 }
 
 function interaction({ model, regime, low, high }) {
-  if (low >= high) throw new Error("Set Low arrivals below High arrivals.");
+  if (low >= high) throw new Error("Set Low arrivals (scaled units) below High arrivals (scaled units), then run again.");
   const f = (x,z) => 5 + x + (model === "add" ? 3*z : 5*z*Math.max(0,x-regime));
   const rows = [low,high].map(x => [x, f(x,0), f(x,1)]);
   const delta = [0,1].map(z => f(high,z)-f(low,z));
@@ -234,7 +234,7 @@ function dependence({ agreement, model }) {
     headline: "Allocate explained variance by averaging two orders",
     tables: [
       table("Joint distribution (each variable is on half the time)", ["X", "Z", "Probability", "Output"], rows),
-      table("Credit from coalitions", ["Input", "Mean when off", "Mean when on", "Explained alone", "Added after the other", "Shapley effect"], [0,1].map(i=>
+      table("How each input adds information", ["Input", "Mean when off", "Mean when on", "Explained alone", "Added after the other", "Shapley effect"], [0,1].map(i=>
         ["XZ"[i], ...means[i].map(row=>row[0]), shares[i], 1-shares[1-i], shapley[i]])),
       table("Total output variance", ["Variance"], [[total]]),
     ],
@@ -347,8 +347,8 @@ function capstone(o) {
     }
   }
   return {
-    headline: o.analysis === "event" ? "Sensitivity output: 1 for wait above the limit, 0 otherwise" : "Sensitivity output: wait in minutes for one event",
-    text: `${linked ? "Linked guest and burst percentiles" : "Independent draws"} · ${o.count.toLocaleString()} matched samples · seed ${o.seed} · ${o.structure === "spread" ? "spread arrival model" : "peak arrival model"}.`,
+    headline: "Staffing outcomes and sensitivity",
+    text: `${linked ? "Linked guest and burst percentiles" : "Independent draws"} · ${o.count.toLocaleString()} matched samples · seed ${o.seed} · ${o.structure === "spread" ? "spread arrival model" : "full burst share"}. Sensitivity uses ${o.analysis === "event" ? "1 for waits above the limit and 0 otherwise" : "wait in minutes for one event"}.`,
     tables: results,
     charts: [plot("Guests (people)", "Wait proxy (minutes)", options.map((values,i)=>
       dots(`${o.team+i} volunteers`, sample.slice(0,100).map((row,j)=>[row[0],values[j]]))))],
@@ -387,8 +387,9 @@ function tuning({ budget, dataset, cost, seed }) {
   const best = eligible[0];
   return {
     headline: best ? "Lowest simulated validation loss within the time limit" : "No candidate fits the time limit",
+    text: best ? undefined : "In Candidate runs in design order, check Training time (seconds) for the shortest trial. Increase Training time limit (seconds) or change Trial budget and run again to test more options.",
     tables: [
-      table("Selected by simulated validation score", ["Learning rate", "Model size", "Validation loss", "Training time (seconds)"], best ? [best] : []),
+      ...(best ? [table("Selected by simulated validation score", ["Learning rate", "Model size", "Validation loss", "Training time (seconds)"], [best])] : []),
       table("Sensitivity at a shared reference (log learning rate −2.5, size 4)", ["Parameter", "Loss at low", "Loss at reference", "Loss at high"], [
         ["Log learning rate: −4 to −1",validationLoss(-4,4),validationLoss(-2.5,4),validationLoss(-1,4)],
         ["Model size: 1 to 8",validationLoss(-2.5,1),validationLoss(-2.5,4),validationLoss(-2.5,8)],

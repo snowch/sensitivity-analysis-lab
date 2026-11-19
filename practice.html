@@ -47,18 +47,18 @@
       <header class="lesson-header">
         <p class="kicker">Independent practice</p>
         <h1 id="practice-title">Stay within a household electricity budget</h1>
-        <p>A household wants to stay at or below $200 in at least 95% of months. It can test one change. Use the results below to recommend which change to try first.</p>
+        <p>A household wants to stay at or below $200 in at least 95% of months. It can test one change. Run the analyses and use the results to recommend which change to try first.</p>
       </header>
       <div class="teaching">
         <p>The model multiplies electricity use, in kilowatt-hours (kWh), by the price per kWh and adds $12. It counts 3 kWh per dryer cycle and 18 kWh per cold day multiplied by a heat-loss factor. It also includes other household use. For example, a factor of 1.2 raises estimated heating use by 20%.</p>
-        <p>The page samples each model input independently. In <strong>Usual conditions</strong>, a month can have 0–22 cold days. In <strong>Colder season</strong>, it can have 12–26. The two scenarios share the other ranges. The predictor uses a separate set of 3,000 synthetic records from usual conditions, with noisy bills and two measurements of cold weather: <strong>Outdoor-sensor cold days</strong> and <strong>Thermostat-request days</strong>.</p>
+        <p>The page prepares 8,192 months for the model-based analyses and samples each model input independently. In <strong>Usual conditions</strong>, a month can have 0–22 cold days. In <strong>Colder season</strong>, it can have 12–26. The two scenarios share the other ranges. The predictor uses a separate set of 3,000 synthetic records from usual conditions, with noisy bills and two measurements of cold weather: <strong>Outdoor-sensor cold days</strong> and <strong>Thermostat-request days</strong>.</p>
       </div>
       <div class="instructions">
         <h2>Gather evidence for a recommendation</h2>
         <ol>
-          <li>Set <strong>Method</strong> to <strong>Spearman rank screen</strong>. With <strong>Model scenario</strong> set to <strong>Usual conditions</strong>, select <strong>Run analysis</strong>. Repeat for <strong>Colder season</strong> and read <strong>Top input across scenarios</strong>. Keep <strong>Colder season</strong> selected, switch <strong>Method</strong> to <strong>First- and total-order Sobol</strong>, and run again. Which input has the largest gap between its two bars?</li>
-          <li>Set <strong>Method</strong> to <strong>Permutation importance</strong>. With <strong>Shuffle</strong> set to <strong>One feature at a time</strong>, select <strong>Run analysis</strong>. Compare <strong>Forest test MAE</strong> with <strong>Median-only test MAE</strong>. Switch <strong>Shuffle</strong> to <strong>Cold-weather signals together</strong> and run again. Use <strong>Weather signal comparison</strong> to compare the group with the individual signals.</li>
-          <li>Set <strong>Method</strong> to <strong>Compare interventions</strong> and <strong>Model scenario</strong> to <strong>Usual conditions</strong>. Run two choices under <strong>Intervention</strong>, such as <strong>Reduce heat loss by 30%</strong> and <strong>Halve dryer cycles</strong>. Repeat both in <strong>Colder season</strong>. In <strong>Options across runs</strong>, check which values in <strong>Option over $200</strong> are 5% or less.</li>
+          <li>Set <strong>Method</strong> to <strong>Spearman rank screen</strong>. With <strong>Model scenario</strong> set to <strong>Usual conditions</strong>, select <strong>Run analysis</strong>. Repeat for <strong>Colder season</strong> and read <strong>Top input across scenarios</strong>. Keep <strong>Colder season</strong> selected, switch <strong>Method</strong> to <strong>First- and total-order Sobol</strong>, and run again. Which input has the largest gap between its <strong>First-order</strong> and <strong>Total-order</strong> values?</li>
+          <li>Set <strong>Method</strong> to <strong>Permutation importance</strong>. With <strong>Shuffle</strong> set to <strong>One feature at a time</strong>, select <strong>Run analysis</strong>. Compare <strong>Forest test MAE</strong> with <strong>Median-only test MAE</strong>. Which is lower? Switch <strong>Shuffle</strong> to <strong>Cold-weather signals together</strong> and run again. In <strong>Weather signal comparison</strong>, which shuffle produces the greatest <strong>Increase in test MAE ($)</strong>?</li>
+          <li>Set <strong>Method</strong> to <strong>Compare interventions</strong> and <strong>Model scenario</strong> to <strong>Usual conditions</strong>. Select <strong>Reduce heat loss by 30%</strong> under <strong>Intervention</strong> and run. Select <strong>Halve dryer cycles</strong> and run again. Set <strong>Model scenario</strong> to <strong>Colder season</strong> and run each option again. In <strong>Options across runs</strong>, check which values in <strong>Option over $200</strong> are 5% or less.</li>
         </ol>
       </div>
       <div class="experiment">
@@ -93,15 +93,15 @@
         </form>
         <div id="practice-results" class="results">
           <h2>Evidence for your decision</h2>
-          <div class="output"><p class="empty">Select a method and run it. Compare settings using the tables that appear after both runs.</p></div>
+          <div class="output"><p class="empty">Select a method and run it. A comparison table appears after you run two scenarios, shuffle settings or interventions for the same method.</p></div>
         </div>
       </div>
       <section id="decision" class="practice-note" aria-labelledby="note-heading">
         <h2 id="note-heading">Make your case</h2>
-        <p>Write what you would try first, what you would hold steady, and what outcome would change your mind. Cite at least one number from each type of analysis you used.</p>
+        <p>In <strong>Investigation note</strong>, write what you would try first, what you would hold steady, and what outcome would change your mind. Cite at least one number from each type of analysis you used. Select <strong>Download note</strong> to keep a copy.</p>
         <label for="energy-brief">Investigation note</label>
         <textarea id="energy-brief" rows="7" placeholder="My recommendation and what I would measure…"></textarea>
-        <div class="note-actions"><small id="note-status">Saved in this browser when storage is available.</small><button id="download-note" type="button" disabled class="button outline-button">Download note</button></div>
+        <div class="note-actions"><small id="note-status" role="status">Notes stay in this browser when storage is available.</small><button id="download-note" type="button" disabled class="button outline-button">Download note</button></div>
         <p><a href="pipeline-notes.html">Open your earlier pipeline note</a></p>
       </section>
       <section class="interpretation" aria-labelledby="rubric-title">
@@ -113,7 +113,7 @@
         </ol>
       </section>
       <details class="method-note">
-        <summary>Compare your work with a worked recommendation</summary>
+        <summary>Reveal a worked household recommendation</summary>
         <p>Cold days lead the usual Spearman ranking. With the 12–26 day range, cold days vary less and the electricity rate ranks first. Heating demand multiplies cold days by the heat-loss factor, so a change in heat loss matters more during colder months. On the synthetic logs, the forest’s test MAE is lower than the median-only prediction’s test MAE. The two cold-weather signals share information, so shuffling them together costs more predictive accuracy than shuffling either alone.</p>
         <p>In the usual model, about 15% of baseline months exceed $200. Reducing heat loss by 30% takes this to about 3.5%, while halving dryer cycles leaves about 12% over budget. In the colder case, even the heat-loss option leaves about 14% over budget. I’d test and measure the achievable heat-loss reduction before committing to the usual-case plan, and budget separately for a colder season.</p>
         <p>To test a small, reversible change, compare heating electricity per cold day before and after it under similar conditions. Hold thermostat settings and occupancy as steady as possible and record weather, comfort and major load changes. I’d revise the estimate if the reduction were substantially below 30% after accounting for weather.</p>

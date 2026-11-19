@@ -44,7 +44,6 @@
   <main id="main" tabindex="-1">
     <article class="lesson shell" aria-labelledby="worked-title">
       <header class="lesson-header">
-        <p class="kicker">Worked follow-up</p>
         <h1 id="worked-title">Calculate a Spearman score by hand</h1>
         <p>Use four jobs to see how a single change in order affects the score.</p>
       </header>
@@ -59,8 +58,8 @@
         <p>For ranks with no ties, multiply the sum of squared differences by 6 and divide by the number of rows multiplied by (the number of rows squared minus 1). Subtract the result from 1.</p>
         <p class="formula">1 − 6 × 2 ÷ [4 × (4² − 1)] = 0.80</p>
         <p>The positive score shows that larger payloads generally go with longer jobs. It uses order alone, so changing 140 to 400 ms keeps the same ranks and score. If two values tie for second and third place, give both rank 2.5. Calculate <a href="patterns.html">Pearson correlation</a> on the two rank columns when there are ties.</p>
-        <h2>Try it</h2>
-        <p>On paper or in a spreadsheet, copy the payload values. Beside them, write 140, 105, 90 and 75 ms in that order. Predict the score, calculate it, then open the answer.</p>
+        <h2>Recalculate with reversed latencies</h2>
+        <p>On paper or in a spreadsheet, copy the payload values. Beside them, write 140, 105, 90 and 75 ms in that order. Predict whether the score will be positive or negative. Reuse the calculation above, then reveal the answer to check the sign and value.</p>
         <details class="reference"><summary>Answer for the reversed ranks</summary><p>The latency ranks are 4, 3, 2, 1. The squared differences are 9, 1, 1, 9. The score is 1 − 6 × 20 ÷ 60 = −1, because the orders reverse exactly.</p></details>
       </div>
       <nav class="lesson-actions" aria-label="Course sequence"><a href="./#course">Course outline</a><a class="button dark" href="rank.html">Back to Rank the pipeline inputs</a></nav>

@@ -51,7 +51,7 @@
       </header>
       <div class="teaching">
         <div>
-          <p>Arrival rate is how many jobs arrive per second. Worker capacity is how many jobs the pipeline can process per second. The model adds a 155 ms queue delay when many jobs arrive and capacity is low. When the effect of one input depends on the value of another, they <strong>interact</strong>.</p>
+          <p>Arrival rate is how many jobs arrive per second. Worker capacity is how many jobs the pipeline can process per second. The model can add 155 ms of queue delay at 750 arrivals per second or more and 800 jobs per second of capacity or less. When the effect of one input depends on the value of another, they <strong>interact</strong>.</p>
           <p><strong>Variance</strong> measures how far outcomes spread around their average and gives extra weight to large deviations. A <strong>first-order Sobol index</strong> estimates the share of variance explained by an input on its own. Its <strong>total-order index</strong> also includes every interaction involving that input. A score of 0.70 represents roughly 70% of the modelled variance under the chosen input ranges.</p>
         </div>
         <figure class="worked">
@@ -66,14 +66,15 @@
       <div class="instructions">
         <h2>Does the queue change which inputs matter?</h2>
         <ol>
-          <li>Leave <strong>Scenario</strong> set to <strong>Baseline</strong> and select <strong>Run sensitivity analysis</strong>. Compare the first-order and total-order bars for cache hit rate.</li>
-          <li>Select <strong>Queue saturation</strong>, then run again. Compare both bars for <strong>Arrival rate</strong> and <strong>Worker capacity</strong>. Use <strong>Spearman rank</strong> in the results to see where each input placed in the rank screen.</li>
-          <li>Compare <strong>p95 latency</strong> in <strong>Latency across scenarios</strong>, which appears after both runs. p95 is the time by which about 95 out of 100 jobs finish. Use <strong>Jobs with extra delay</strong> to see how often the penalty occurs. How does that fraction help explain the change in p95?</li>
+          <li>Leave <strong>Scenario</strong> set to <strong>Baseline</strong> and select <strong>Run sensitivity analysis</strong>. In <strong>Sobol indices and latency</strong>, compare the <strong>First-order</strong> and <strong>Total-order</strong> values for <strong>Cache hit rate</strong>. How large is the gap with the penalty off?</li>
+          <li>Select <strong>Queue saturation</strong>, then run again at the same sample size. Compare <strong>First-order</strong> and <strong>Total-order</strong> for <strong>Arrival rate</strong> and <strong>Worker capacity</strong>. Does either have a bigger gap than cache hit rate did? Use <strong>Spearman rank</strong> to check whether the rank screen places both near the top.</li>
+          <li>Compare <strong>p95 latency</strong> in <strong>Latency across scenarios</strong>, which appears after both runs. p95 is the time by which at least 95% of the sampled jobs finish. Use <strong>Jobs with extra delay</strong> to see how often the penalty occurs. How does that fraction help explain the change in p95?</li>
         </ol>
       </div>
       <div class="experiment">
         <form id="assumptions-form" class="controls">
           <h2>Queue model</h2>
+          <p>The page prepares 8,192 sample pairs with seed 42. It uses those same draws for both scenarios if the sample size stays fixed.</p>
           <fieldset>
             <legend>Scenario</legend>
             <label class="choice"><input type="radio" name="scenario" value="baseline" checked><span><strong>Baseline</strong><small>Extra queue delay off</small></span></label>
@@ -97,7 +98,7 @@
       <section class="interpretation" aria-labelledby="sobol-read">
         <h2 id="sobol-read">Read the result</h2>
         <p>When the total-order bar is much longer than the first-order bar, the input’s interactions account for much of its contribution. The Sobol bars describe variance across all jobs. Read p95 for a separate view of the slowest jobs.</p>
-        <details class="reference"><summary>Check the starting settings</summary><p>With the penalty off, cache hit rate leads. With the penalty on, arrival rate and worker capacity lead by total order. The penalty affects about six in 100 jobs, enough to move p95 from about 124 to 239 ms.</p></details>
+        <details class="reference"><summary>Reveal the leading inputs and p95 for both scenarios</summary><p>With the penalty off, cache hit rate leads. With the penalty on, arrival rate and worker capacity lead by total order. The penalty affects about six in 100 jobs, enough to move p95 from about 124 to 239 ms.</p></details>
       </section>
       <form class="knowledge-check">
         <h2>Check your reasoning</h2>
