@@ -47,11 +47,11 @@
       <header class="lesson-header">
         <p class="kicker">Lesson 4 of 4</p>
         <h1 id="logs-title">Work from logs</h1>
-        <p>Use recorded examples to see which inputs a delay predictor relies on.</p>
+        <p>Use synthetic pipeline records to see which inputs help predict job delays.</p>
       </header>
       <div class="teaching">
         <div>
-          <p>On the first run, the page generates 10,000 synthetic pipeline records. It trains a <strong>random forest</strong>, a model that averages predictions from decision trees, on 8,000 rows and tests it on the remaining 2,000. Later runs reuse the fitted model and test rows. The <strong>mean absolute error (MAE)</strong> is the average distance between predicted and recorded latency, in milliseconds.</p>
+          <p>On the first run, the page generates 10,000 synthetic pipeline records. It trains a <strong>random forest</strong> on 8,000 rows and tests it on the other 2,000. A forest averages predictions from decision trees, which make predictions by splitting data into groups. Later runs reuse the fitted model and test rows. The <strong>mean absolute error (MAE)</strong> is the average distance between predicted and recorded latency, in milliseconds.</p>
           <p><strong>Permutation importance</strong> shuffles the values in a test column and predicts again with the same model. Recorded latencies and the other columns stay in place. An increase in MAE shows how much accuracy the model loses when the shuffled values stop matching their jobs.</p>
         </div>
         <figure class="worked">
@@ -60,14 +60,14 @@
             <thead><tr><th scope="col">Actual latency</th><th scope="col">Original prediction</th><th scope="col">After swap</th></tr></thead>
             <tbody><tr><td>100 ms</td><td>105 ms</td><td>155 ms</td></tr><tr><td>160 ms</td><td>155 ms</td><td>105 ms</td></tr></tbody>
           </table>
-          <p>This example predictor uses only payload size. Swapping those two values swaps the predictions. The two errors grow from 5 to 55 ms each, so the change in MAE is +50 ms.</p>
+          <p>This example predictor uses only payload size. Swapping those two values swaps the predictions. Each absolute error grows from 5 to 55 ms. The average also rises by 55 − 5 = 50 ms.</p>
         </figure>
       </div>
       <div class="instructions">
         <h2>Do the cache counters carry the same signal?</h2>
         <ol>
           <li>Leave <strong>Shuffle</strong> set to <strong>Individual features</strong>. Select <strong>Run permutation importance</strong>. Check whether <strong>Forest test MAE</strong> is lower than <strong>Median-only test MAE</strong>, the error of always predicting the training median.</li>
-          <li>Select <strong>Group the cache counters</strong> and run again. In <strong>Cache counter comparison</strong>, compare the error increases for Edge miss rate, Origin fetch rate and the pair. What did the model lose when both signals moved together?</li>
+          <li>Select <strong>Group the cache counters</strong> and run again. In <strong>Cache counter comparison</strong>, compare the error increases for Edge miss rate, Origin fetch rate and the pair. Does the pair raise test error more than either counter alone?</li>
         </ol>
       </div>
       <div class="experiment">
@@ -85,7 +85,7 @@
             <summary>Shuffle repetitions and CSV download</summary>
             <label for="shuffle-count">Shuffles per feature or group</label>
             <select id="shuffle-count" name="count"><option>3</option><option selected>5</option><option>10</option></select>
-            <button type="button" class="button outline-button" id="csv" disabled>Download 10,000 runs (.csv)</button>
+            <button type="button" class="button outline-button" id="csv" disabled>Download 10,000 synthetic records</button>
             <p class="status csv-status" role="status"></p>
           </details>
         </form>
@@ -103,7 +103,7 @@
       <form class="knowledge-check">
         <h2>Check your reasoning</h2>
         <fieldset>
-          <legend>Shuffling the cache pair raises test MAE much more than shuffling either counter alone. What follows?</legend>
+          <legend>Shuffling the cache pair raises test MAE much more than shuffling either counter alone. What does this tell you about the fitted model?</legend>
           <label><input type="radio" name="answer" value="2" required data-feedback="The comparison describes this fitted model and test set. A new model can learn to rely on different signals.">Both counters belong in every future predictor.</label>
           <label><input type="radio" name="answer" value="0" required data-feedback="Correct. The pair carries a shared cache signal. A controlled workload test can estimate the effect of changing cache policy or capacity.">The model uses information shared by the two counters.</label>
           <label><input type="radio" name="answer" value="1" required data-feedback="Shuffling changes what the predictor sees after a run. To learn how to change latency, intervene on a pipeline setting.">Changing either counter will reduce pipeline latency.</label>

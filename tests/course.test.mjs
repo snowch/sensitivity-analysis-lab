@@ -134,3 +134,9 @@ test("capstone preserves matching, handles dependence and enforces a coherent ra
   assert.match(experiments.capstone({...base,dependence:"linked",method:"sobol"}).tables[2].rows[0][0],/Linked inputs/);
   assert.throws(()=>experiments.capstone({...base,guestsLow:200}),/lower bound/);
 });
+
+test("a valid rare-event run without observed variation still reports the exact shares", () => {
+  const result = experiments["sobol-lab"]({ model: "tail", count: 128, seed: 92, objective: "event" });
+  assert.match(result.text, /no variance/);
+  assert.deepEqual(result.tables[0].rows.find(row => row[0] === "Z total order"), ["Z total order", undefined, 1]);
+});

@@ -2,6 +2,7 @@ const form = document.querySelector("#investigation");
 const results = document.querySelector("#investigation-output");
 const history = document.querySelector("#run-history");
 const status = document.querySelector("#investigation-status");
+const resultTools = document.querySelector("#result-tools");
 const exportButton = document.querySelector("#export-results");
 const submit = form.querySelector("button[type=submit]");
 const reset = form.querySelector("button[type=reset]");
@@ -190,60 +191,108 @@ function tornadoChart({base,rows}) {
   };
 }
 
-function render({headline,text,tables,charts = [],heatmap: map,tornado}) {
+function renderPlots(target, {charts = [], heatmap: map, tornado}) {
+  if (tornado) target.append(createPlot(tornadoChart(tornado)));
+  if (map) target.append(heatmap(map));
+  for (const chart of charts) target.append(createPlot(chart));
+}
+
+function render(result) {
+  const {headline,text,tables} = result;
   for (const old of results.querySelectorAll("canvas")) plots.unobserve(old);
   results.replaceChildren(node("h3",headline));
   if (text) results.append(node("p",text,"chart-note"));
   for (const table of tables) results.append(createTable(table));
-  if (tornado) results.append(createPlot(tornadoChart(tornado)));
-  if (map) results.append(heatmap(map));
-  for (const chart of charts) results.append(createPlot(chart));
+  renderPlots(results, result);
+}
+
+const conditionalFields = [...form.querySelectorAll("[data-show-when]")].map(label => {
+  const [name, value] = label.dataset.showWhen.split("=");
+  return { label, name, value, control: label.control };
+});
+const showField = ({ name, value }, getValue) => String(getValue(name)) === value;
+
+function updateFields() {
+  for (const field of conditionalFields) {
+    const visible = showField(field, name => form.elements.namedItem(name).value);
+    field.label.hidden = !visible;
+    field.control.disabled = !visible;
+  }
 }
 
 function describe(options) {
-  return Array.from(form.elements).filter(control => control.name).map(control=>{
+  return Array.from(form.elements).filter(control => {
+    if (!control.name) return false;
+    const condition = conditionalFields.find(field => field.control === control);
+    return !condition || showField(condition, name => options[name]);
+  }).map(control => {
     const value = options[control.name];
     const show = control.tagName === "SELECT" ? [...control.options].find(option=>option.value===String(value))?.text : value;
     return [control.labels[0].querySelector("span").textContent.trim(), show ?? value];
   });
 }
 
+function settingsDetails(options) {
+  const details = node("details", undefined, "run-settings");
+  details.append(node("summary", "Settings used"));
+  const list = node("dl");
+  for (const [label, value] of describe(options)) {
+    list.append(node("dt", label), node("dd", value));
+  }
+  details.append(list);
+  return details;
+}
+
 function renderHistory() {
+  for (const canvas of history.querySelectorAll("canvas")) plots.unobserve(canvas);
   history.replaceChildren();
-  if (runs.length<2) return;
-  history.append(node("h3","Earlier runs"));
-  for (const {id,options,result} of runs.slice(1)) {
+  if (runs.length < 2) return;
+  history.append(node("h3", "Earlier runs"));
+  for (const {id, options, result} of runs.slice(1)) {
     const details = node("details");
-    details.append(node("summary", `Run ${id} · ${result.headline}`));
-    details.append(node("p",describe(options).map(([label,value])=>`${label}: ${value}`).join(" · ")));
+    const current = new Map(describe(runs[0].options));
+    const compared = describe(options).find(([label, value]) => value !== current.get(label));
+    details.append(node("summary", compared ? `Run ${id} · ${compared[0]} = ${compared[1]}` : `Run ${id}`));
+    details.append(settingsDetails(options));
     for (const table of result.tables) details.append(createTable(table));
+    if (result.charts?.length || result.heatmap || result.tornado) {
+      const visuals = node("details");
+      visuals.append(node("summary", "Plots from this run"));
+      visuals.addEventListener("toggle", () => {
+        if (visuals.open && visuals.childElementCount === 1) renderPlots(visuals, result);
+      });
+      details.append(visuals);
+    }
     history.append(details);
   }
 }
 
 function showLatest() {
-  const {options,result} = runs[0];
-  const used = node("p",describe(options).map(([label,value])=>`${label}: ${value}`).join(" · "),"chart-note");
+  const {id, options, result} = runs[0];
   render(result);
-  results.prepend(used);
   renderHistory();
-  exportButton.disabled=false;
+  results.prepend(node("p", `Run ${id}`, "run-label"));
+  results.append(settingsDetails(options));
+  resultTools.hidden = false;
 }
 
 function ready(busy) {
   if (busy) submit.setAttribute("aria-disabled","true");
   else submit.removeAttribute("aria-disabled");
   reset.disabled = busy;
+  for (const control of form.elements) {
+    if (control.name) control.disabled = busy || control.closest("label").hidden;
+  }
   results.setAttribute("aria-busy",String(busy));
 }
 function failure(message) {
   activeOptions = null;
   status.dataset.state = "error";
-  status.textContent = message;
+  status.textContent = runs.length ? `${message} The earlier result is still shown below.` : message;
   ready(false);
 }
 function startWorker() {
-  worker = new Worker(new URL("./course-worker.mjs",import.meta.url),{type:"module"});
+  worker = new Worker(new URL("./course-worker.mjs?v=2",import.meta.url),{type:"module"});
   worker.addEventListener("error",()=>{
     worker.terminate();
     worker=null;
@@ -281,14 +330,18 @@ form.addEventListener("submit",event=>{
   }
 });
 form.addEventListener("input",()=>{
+  updateFields();
   if(activeOptions) return;
   delete status.dataset.state;
   status.textContent=runs.length ? "Settings changed. Run again to compare with the displayed result." : "";
 });
 form.addEventListener("reset",()=>{
+  queueMicrotask(updateFields);
   delete status.dataset.state;
   status.textContent="Default settings restored. Run to use them.";
 });
+updateFields();
+window.addEventListener("pageshow", updateFields);
 submit.disabled=false;
 reset.disabled=false;
 if (runKey) {
@@ -330,9 +383,16 @@ exportButton.addEventListener("click",()=>{
 
 for(const editable of document.querySelectorAll("[data-save]")){
   const key=`sensitivity-analysis-lab:${lesson}:${editable.dataset.save}`;
-  try { editable.value=localStorage.getItem(key) ?? editable.value; } catch {}
+  try {
+    const saved = localStorage.getItem(key);
+    if (saved !== null) editable.value = saved;
+    if (saved?.trim() && editable.closest("details")) editable.closest("details").open = true;
+  } catch {}
   editable.addEventListener("input",()=>{
-    try {localStorage.setItem(key,editable.value);} catch {
+    try {
+      localStorage.setItem(key,editable.value);
+      document.querySelector("#save-note-status").textContent = "Saved in this browser.";
+    } catch {
       document.querySelector("#save-note-status").textContent="Browser storage is unavailable. Copy or download your work before leaving.";
     }
   });
@@ -346,5 +406,5 @@ document.querySelector("#download-report")?.addEventListener("click",()=>{
   download("sensitivity-analysis-report.md",`# Sensitivity analysis report\n\n${draft}\n\n${lines.join("\n")}\n`,"text/markdown");
 });
 new MutationObserver(()=> {
-  for(const canvas of results.querySelectorAll("canvas")) canvas.drawPlot();
+  for (const canvas of document.querySelectorAll(".course-plot canvas")) canvas.drawPlot();
 }).observe(document.documentElement,{attributes:true,attributeFilter:["data-theme"]});

@@ -318,3 +318,16 @@ footer p { color: var(--muted); }
 
 .investigation-group + .investigation-group { margin-top:15px; padding-top:8px; border-top:1px solid var(--line); }
 .investigation-group .investigation-fields { margin-top:5px; }
+
+.experiment-question { margin-top: 8px; max-width: 72ch; font-weight: 650; }
+#investigation-status:empty, #save-note-status:empty { min-height: 0; margin: 0; }
+#investigation { margin-top: 12px; }
+.reset-settings { border: 0; background: transparent; color: var(--accent); text-decoration: underline; cursor: pointer; padding: 6px 10px; }
+.reset-settings:disabled { opacity: .6; cursor: default; }
+.run-settings { margin-block: 8px; font-size: .88rem; }
+.run-settings dl { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 4px 9px; margin-top: 6px; }
+.run-settings dd { margin: 0; }
+.run-settings dt { color: var(--muted); }
+#result-tools .button { margin-top: 8px; }
+#download-report { margin-top: 8px; }
+#save-note-status { font-size: .85rem; color: var(--muted); }

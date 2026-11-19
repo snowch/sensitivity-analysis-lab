@@ -46,7 +46,7 @@
       <header class="lesson-header">
         <p class="kicker">Field guide</p>
         <h1 id="guide-title">Apply it to your own decision</h1>
-        <p>Choose one real question where several uncertain factors compete for your attention. Start small enough that you can check the result by hand.</p>
+        <p>Pick a decision affected by several uncertain inputs. Start with a small example you can calculate by hand.</p>
       </header>
       <div class="guide">
         <h2>1. Write the decision before picking a method</h2>
@@ -56,7 +56,7 @@
           <dt>You need the effect of a specific small change</dt><dd>Choose a reference and a meaningful step. Hold other inputs fixed, calculate the change and report the slope with units. Inspect a response curve before extrapolating.</dd>
           <dt>You have a formula and want a shortlist</dt><dd>List inputs, units and plausible ranges. Draw values, record outcomes, and compare Spearman correlations. Plot the input against the output and look for curves or separate clusters. Repeat with plausible alternative ranges. If effects vary by region or there are many inputs, consider a Morris screen before spending evaluations on a full variance decomposition.</dd>
           <dt>You have a formula and suspect interactions</dt><dd>Simulate the output that matters to you. If independent input distributions are defensible, compare first- and total-order Sobol indices. Inspect a small grid of joint conditions and explain which regime makes the interaction matter. With dependent inputs, consider allocations that preserve the joint distribution, and distinguish shared predictive information from a controllable effect.</dd>
-          <dt>You have logs and want to understand a predictor</dt><dd>Define the target and a meaningful error score. Set aside examples for testing and check that your predictor beats a simple baseline on those examples. Shuffle each predictor, then group substitutes when their joint contribution matters. State which people, places or time periods the test data represent, and name the error measure.</dd>
+          <dt>You have logs and want to understand a predictor</dt><dd>Define the target and a meaningful error score. Set aside examples for testing and check that your predictor beats a simple baseline on those examples. Shuffle one input column at a time. Shuffle similar columns together to check their shared contribution to prediction. State which people, places or time periods the test data represent, and name the error measure.</dd>
           <dt>You need to know whether a particular change helps</dt><dd>Compare matched scenarios in a model. Validate with a controlled test where possible. Choose the conditions, what to measure, your target and any cost or safety limits before you look at results.</dd>
         </dl>
         <h2>3. Try a different setting</h2>
@@ -75,7 +75,7 @@
           <p><a href="assets/energy-example.mjs">Open the example script</a> · <a href="assets/energy.mjs">Read the full practice model</a></p>
         </details>
       </div>
-      <nav class="lesson-actions" aria-label="Course sequence"><a href="practice.html">Previous · Independent practice</a><a class="button dark" href="./#course">Course outline</a></nav>
+      <nav class="lesson-actions" aria-label="Course sequence"><a href="capstone.html">Previous · Conduct your own analysis</a><a class="button dark" href="./#course">Course outline</a></nav>
     </article>
   </main>
   </div>

@@ -3,7 +3,7 @@ import { screen, sobol } from "./sensitivity.mjs";
 import {
   binaryDistribution, clamp, conditionalShares, continuousModel, design, estimatedNoise, exactContinuous,
   inverseInput, mean, morris, outputStats, pairSobol, pearson, quantile, range, sampleVariance, tiedRanks, twoInputRegression,
-} from "./course-math.mjs";
+} from "./course-math.mjs?v=2";
 
 const metrics = ["Mean", "Variance", "p95", "Exceedance probability"];
 const modelNames = { add: "Additive", product: "Product", tail: "Rare jump" };
@@ -18,14 +18,17 @@ function questions({ scenario, threshold, metric }) {
   const stable = [20, 20, 20, 20, 20];
   const variable = scenario === "bursts" ? [10, 10, 10, 10, 60] : [12, 16, 20, 24, 28];
   const selected = metrics.indexOf(metric);
-  const rows = [["Steady", stable], ["Variable", variable]].map(([label, runs]) =>
+  const summarise = value => selected === 3 ? `${Math.round(value * 100)}%`
+    : `${Number(value.toFixed(3))} ${selected === 1 ? "min²" : "min"}`;
+  const label = scenario === "bursts" ? "Variable · occasional long trip" : "Variable · moderate spread";
+  const rows = [["Steady", stable], [label, variable]].map(([label, runs]) =>
     [label, runs.join(", "), ...outputStats(runs, threshold)]);
   return {
     headline: metric,
-    text: `Steady: ${Number(rows[0][2 + selected].toFixed(3))}. Variable: ${Number(rows[1][2 + selected].toFixed(3))}. Exceedance counts times strictly above ${threshold} minutes.`,
+    text: `Steady: ${summarise(rows[0][2 + selected])}. Variable: ${summarise(rows[1][2 + selected])}. A trip is late when it takes more than ${threshold} minutes.`,
     tables: [table("Five equally likely journey times", ["Service", "Time (minutes)", "Mean (min)", "Variance (min²)", "p95 (min)", "P(above limit)"], rows)],
     charts: [plot("Outcome number", "Journey time (minutes)", [
-      line("Steady", stable.map((y, i) => [i + 1, y])), line("Variable", variable.map((y, i) => [i + 1, y])),
+      dots("Steady", stable.map((y, i) => [i + 1, y])), dots("Variable", variable.map((y, i) => [i + 1, y])),
       line("Limit", [[1, threshold], [5, threshold]]),
     ])],
   };
@@ -204,14 +207,21 @@ function sobolLab({ model, count, seed, objective }) {
     const value = continuousModel(selected,row);
     return event ? Number(value > 14) : value;
   };
-  const estimate = pairSobol(evaluate,count,seed);
+  let estimate;
+  try {
+    estimate = pairSobol(evaluate,count,seed);
+  } catch (error) {
+    if (error.code !== "NO_VARIANCE") throw error;
+  }
   const [sx,sz,pair] = exactContinuous(selected,event);
   return {
     headline: event ? "Decompose variance of the event indicator Y > 14" : `${modelNames[selected]} model · decompose variance of Y`,
-    text: `${count.toLocaleString()} independent pairs, ${(4*count).toLocaleString()} model evaluations. Signs are retained on every estimate.`,
+    text: estimate
+      ? `${count.toLocaleString()} independent pairs, ${(4*count).toLocaleString()} model evaluations. Signs are retained on every estimate.`
+      : "All base outputs were the same, so this sample has no variance to divide up. The exact shares still appear below. Increase Independent sample pairs and run again.",
     tables: [table("Estimated versus exact", ["Quantity", "Estimate", "Exact"], [
-      ["X first order",estimate.first[0],sx],["Z first order",estimate.first[1],sz],
-      ["X × Z second order",estimate.pair,pair],["X total order",estimate.total[0],sx+pair],["Z total order",estimate.total[1],sz+pair],
+      ["X first order",estimate?.first[0],sx],["Z first order",estimate?.first[1],sz],
+      ["X × Z second order",estimate?.pair,pair],["X total order",estimate?.total[0],sx+pair],["Z total order",estimate?.total[1],sz+pair],
     ])],
   };
 }
@@ -282,7 +292,7 @@ function decisions({ premium, loss, risk, structure, seed, threshold }) {
     tables: [
       table("Technical model · one run is one job", ["Option", "p95 delay (min)", `P(delay > ${threshold} min)`, "Price per job ($)", "Expected total cost per job ($)"], result),
       table("Rare failure prevention versus current", ["Break-even price per job ($)"], [[loss*avoided]]),
-      table("Perfect signal example · separate decision", ["Chance of severe day", "Best expected cost without signal ($)", "With perfect signal before choosing ($)", "Value of perfect information ($)"], [[risk,without,perfect,without-perfect]]),
+      table("Perfect signal example · separate decision", ["Chance of severe day", "Best action without signal", "Best expected cost without signal ($)", "Expected cost with perfect signal ($)", "Value of perfect information ($)"], [[risk,risk < 0.3 ? "Wait" : risk > 0.3 ? "Mitigate" : "Either",without,perfect,without-perfect]]),
     ],
   };
 }
@@ -295,7 +305,7 @@ export function eventWait([guests, service, burst], volunteers, structure) {
 
 function capstone(o) {
   const bounds = [[o.guestsLow,o.guestsHigh],[o.serviceLow,o.serviceHigh],[o.burstLow,o.burstHigh]];
-  if (bounds.some(([low,high])=>low>=high)) throw new Error("Every lower bound must be below its upper bound.");
+  if (bounds.some(([low,high])=>low>=high)) throw new Error("Check the guest, service-rate and burst-share ranges. Each lower bound must be below its upper bound.");
   const linked = o.dependence === "linked";
   const makeScale = () => {
     const linkRandom = seededRandom(o.seed + 868);

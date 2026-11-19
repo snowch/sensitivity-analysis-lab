@@ -31,3 +31,9 @@ Keep the existing browser worker, deployed URLs, generated data and local note k
 The repository tests exact fare changes and elasticity under unit conversion, a discontinuity, conditional interaction effects, Latin hypercube stratification, a U-shaped rank failure, Morris scores, exact switch decompositions, sampled Sobol estimates, repeated-design convergence, stochastic replication and matched decisions. The first-, pair- and total-order estimators were also compared with SALib using the same centred model evaluations. Correlations and standardised regression were checked against SciPy and NumPy.
 
 The exercises use illustrative models and controlled synthetic data. The capstone supports a bounded editable simulator rather than arbitrary model upload. The benchmark and tuning labs teach experimental choices on synthetic surfaces. Scaling Shapley estimation to larger problems, running production optimisers and establishing causal intervention effects require additional tools and evidence. Functional checks are separate from a study of learning effectiveness.
+
+## Learner wording and layout review
+
+The review covers all 30 rendered pages, including the overview, bibliography, 18 generated investigations, five retained labs and five worked examples or notes. Instructions use the labels on the page and identify the result to compare. Earlier-run tables and plots support those comparisons. Optional drafts, exports, derivations and sources have separate disclosures.
+
+The pipeline rank and household practice retain the specific comparisons their instructions ask for. A rare-event sample without variation is shown as a valid result with undefined estimates and the exact shares. Saved predictions, explanations, reports, recent capstone runs and legacy notes keep their original browser storage keys.

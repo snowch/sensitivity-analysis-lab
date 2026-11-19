@@ -93,10 +93,23 @@ function renderRanges({ baseline, wide }) {
     </details>`;
 }
 
+function comparisonTable(title, columns, rows) {
+  return `<div class="result-table"><h3>${title}</h3><div class="table-wrap"><table>
+    <thead><tr>${columns.map(label => `<th scope="col">${label}</th>`).join("")}</tr></thead>
+    <tbody>${rows.map(([label, ...values]) => `<tr><th scope="row">${label}</th>${values.map(value => `<td>${value}</td>`).join("")}</tr>`).join("")}</tbody>
+  </table></div></div>`;
+}
+
+let previousScreen;
 function renderScreen(result, { seed, count }) {
-  return `
-    <p class="run-label">${formatCount(count)} simulated jobs · seed ${seed}</p>
-    ${rankChart(result.scores)}`;
+  const row = [seed, formatCount(count), ...result.scores.slice(0, 2).map(({ label, rho }) => `${label} (${signed(rho)})`)];
+  const comparison = previousScreen
+    ? comparisonTable("Top two across runs", ["Seed", "Simulated jobs", "First input", "Second input"], [previousScreen, row])
+    : "";
+  previousScreen = row;
+  return `<p class="run-label">${formatCount(count)} simulated jobs · seed ${seed}</p>
+    ${rankChart(result.scores)}
+    ${comparison}`;
 }
 
 const scenarios = { baseline: "Baseline", queue: "Queue saturation" };
@@ -112,7 +125,7 @@ function renderAssumptions({ rank, indices }, { scenario, count }) {
     ${sobolChart(indices)}
     <p class="chart-note"><strong>Spearman rank.</strong> Arrival rate ${rankOf("arrival")} of 13. Worker capacity ${rankOf("capacity")} of 13.</p>
     ${scenarioRuns.size > 1 ? `<div class="result-table"><h3>Latency across scenarios</h3>
-      <div class="table-wrap"><table><thead><tr><th scope="col">Scenario</th><th scope="col">Sample pairs</th><th scope="col">p95 latency</th><th scope="col">Queue delay</th></tr></thead>
+      <div class="table-wrap"><table><thead><tr><th scope="col">Scenario</th><th scope="col">Sample pairs</th><th scope="col">p95 latency</th><th scope="col">Jobs with extra delay</th></tr></thead>
       <tbody>${Object.keys(scenarios).map(id => {
         const entry = scenarioRuns.get(id);
         return `<tr><th scope="row">${scenarios[id]}</th><td>${formatCount(entry.count)}</td><td>${entry.p95}</td><td>${entry.queue}</td></tr>`;
@@ -165,7 +178,7 @@ function connect(formId, resultId, task, getOptions, render) {
       status.textContent = "Results ready.";
     } catch (error) {
       status.dataset.state = "error";
-      status.textContent = error.message;
+      status.textContent = hasResult ? `${error.message} The earlier result is still shown.` : error.message;
     } finally {
       for (const control of controls) control.disabled = false;
       output.removeAttribute("aria-busy");
@@ -251,28 +264,47 @@ connectNote("brief", "sensitivity-analysis-lab:investigation-note", "pipeline-in
 connectNote("energy-brief", "sensitivity-analysis-lab:energy-note", "energy-investigation.md", "Household electricity investigation");
 
 const money = value => `$${format(value)}`;
+const practiceRanks = new Map();
+const practiceShuffles = new Map();
+const practiceChanges = new Map();
 function renderPractice(result, { method, colder, grouped }) {
   const scenario = colder ? "Colder season" : "Usual conditions";
   switch (method) {
-    case "rank":
-      return `<p class="run-label">${scenario} · Spearman rank correlation</p>${rankChart(result.scores)}`;
+    case "rank": {
+      const { label, rho } = result.scores[0];
+      practiceRanks.set(scenario, [scenario, label, signed(rho)]);
+      const comparison = practiceRanks.size > 1
+        ? comparisonTable("Top input across scenarios", ["Model scenario", "First input", "Spearman score"], [...practiceRanks.values()])
+        : "";
+      return `<p class="run-label">${scenario} · Spearman rank correlation</p>${rankChart(result.scores)}${comparison}`;
+    }
     case "sobol":
       return `<p class="run-label">${scenario} · 8,192 sample pairs</p>${sobolChart(result)}`;
     case "logs": {
       const min = Math.min(0, ...result.scores.map(score => score.delta));
       const max = Math.max(0.01, ...result.scores.map(score => score.delta));
       const series = [{ key: "delta", label: "Average increase in test MAE ($)", show: signed, color: "teal" }];
+      const relevant = new Set(["cold_outdoor_days", "heater_request_days", "weather_pair"]);
+      practiceShuffles.set(grouped, result.scores.filter(score => relevant.has(score.id)).map(score => [score.label, signed(score.delta)]));
+      const comparison = practiceShuffles.size > 1
+        ? comparisonTable("Weather signal comparison", ["Shuffled signals", "Increase in test MAE ($)"], [...practiceShuffles.get(false), ...practiceShuffles.get(true)])
+        : "";
       return `<p class="run-label">Recorded runs · ${grouped ? "weather signals grouped" : "individual features"} · ${result.test} test rows · 5 shuffles</p>
         ${stats([["Forest test MAE", money(result.baseline)], ["Median-only test MAE", money(result.naive)]])}
-        ${bars(result.scores, series, { min, max })}`;
+        ${bars(result.scores, series, { min, max })}${comparison}`;
     }
     case "change": {
-      const row = (label, value) => `<tr><th scope="row">${label}</th><td>${money(value.median)}</td><td>${money(value.p95)}</td><td>${format(value.overBudget * 100, 1)}%</td></tr>`;
+      const rate = value => `${format(value.overBudget * 100, 1)}%`;
+      const row = (label, value) => `<tr><th scope="row">${label}</th><td>${money(value.median)}</td><td>${money(value.p95)}</td><td>${rate(value)}</td></tr>`;
+      practiceChanges.set(`${scenario}:${result.label}`, [scenario, result.label, rate(result.baseline), rate(result.alternative)]);
+      const comparison = practiceChanges.size > 1
+        ? comparisonTable("Options across runs", ["Model scenario", "Option", "Baseline over $200", "Option over $200"], [...practiceChanges.values()])
+        : "";
       return `<p class="run-label">${scenario} · 8,192 matched months</p>
         <div class="table-wrap"><table>
           <thead><tr><th scope="col">Option</th><th scope="col">Median bill</th><th scope="col">p95 bill</th><th scope="col">Over $200</th></tr></thead>
           <tbody>${row("Baseline", result.baseline)}${row(result.label, result.alternative)}</tbody>
-        </table></div>`;
+        </table></div>${comparison}`;
     }
   }
 }

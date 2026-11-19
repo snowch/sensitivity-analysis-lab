@@ -1,5 +1,5 @@
 export const reportTemplate = `Question and decision rule
-- Situation, options, outcome, units, and what would justify acting:
+- What are you deciding, what will you measure, and what result would justify acting?
 
 Model and assumptions
 - Model and scope:
@@ -18,13 +18,13 @@ Results and recommendation
 `;
 
 export const reportGuide = `<section class="reading" aria-labelledby="rubric"><h2 id="rubric">Assess the report</h2>
-<p>Check each item before you submit your conclusions. Strong work explains the choices and limits well enough for someone else to repeat the analysis.</p>
+<p>Before downloading your report, check that someone else could repeat your analysis and see how the results support your choice.</p>
 <div class="table-wrap"><table><thead><tr><th scope="col">Criterion</th><th scope="col">Meets the standard when…</th></tr></thead><tbody>
 <tr><th scope="row">Question</th><td>You identify an action, a decision metric with units or a probability, and a threshold set before comparing options.</td></tr>
 <tr><th scope="row">Assumptions</th><td>You explain each range, the burst model and whether independence is plausible. You distinguish teaching assumptions from measured values.</td></tr>
 <tr><th scope="row">Methods</th><td>You use at least two relevant analyses or outputs, and explain any disagreement. You separate variation from the predicted effect of an extra shift.</td></tr>
-<tr><th scope="row">Checks</th><td>You record seeds and budgets, test a plausible alternative range and formula, and identify a measurement or observation that could disconfirm the model.</td></tr>
-<tr><th scope="row">Decision</th><td>You quantify the benefit against the rule and cost, state where the choice breaks down, and propose a comparable pilot.</td></tr>
+<tr><th scope="row">Checks</th><td>You record the seeds and number of runs, test a different range and arrival model, and name a measurement that could show your assumptions are wrong.</td></tr>
+<tr><th scope="row">Decision</th><td>You compare the expected improvement with your rule and the shift cost. You state when the choice changes and propose a small test under comparable conditions.</td></tr>
 </tbody></table></div>
 <details class="answer"><summary>Read a complete worked report</summary>
 <h3>Question and decision rule</h3><p>I would pay $25 for a third volunteer if the current team exceeds a 10-minute wait in more than 10% of modelled events and the extra volunteer brings that probability down to 10% or less. Both the limit and cost are illustrative.</p>

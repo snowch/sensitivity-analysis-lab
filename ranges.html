@@ -24,9 +24,9 @@
       <nav aria-label="Lessons">
         <a class="contents-link" href="./#course">Course contents</a>
         <ol class="sidebar-lessons">
-          <li><a href="rank.html">Rank the knobs</a></li>
+          <li><a href="rank.html">Rank the pipeline inputs</a></li>
           <li><a href="ranges.html" aria-current="page">Change the assumptions</a></li>
-          <li><a href="interactions.html">Find hidden interactions</a></li>
+          <li><a href="interactions.html">Change two inputs</a></li>
           <li><a href="logs.html">Work from logs</a></li>
         </ol>
         <ul class="sidebar-links">
@@ -69,7 +69,7 @@
       <div class="experiment">
         <form id="ranges-form" class="controls">
           <h2>Network scenarios</h2>
-          <p>The page prepares both ranges. It uses 8,192 matched draws, with the same values for every other input in both scenarios.</p>
+          <p>The page compares the two prepared ranges over 8,192 simulated jobs. Each job uses the same values for every other input in both scenarios.</p>
           <button class="button dark" disabled>Compare ranges</button>
           <p class="status" role="status"></p>
         </form>
@@ -80,14 +80,14 @@
       </div>
       <section class="interpretation" aria-labelledby="ranges-read">
         <h2 id="ranges-read">Read the result</h2>
-        <p>Network RTT rises from fourth to first. The wider range lets network time contribute more to latency variation. This comparison isolates an assumption. To estimate a saving, model a specific change to RTT and compare the resulting latencies.</p>
+        <p>Each millisecond of RTT contributes the same delay in both models. The wider range gives RTT more room to vary, so its ranking can rise. To estimate a saving, compare the delays before and after a specific change to RTT.</p>
       </section>
       <form class="knowledge-check">
         <h2>Check your reasoning</h2>
         <fieldset>
           <legend>Network RTT ranks first under the wider range. What evidence would tell you whether that ranking applies to your deployment?</legend>
           <label><input type="radio" name="answer" required data-feedback="That ranking describes the wide scenario. Check which range fits the deployment you care about.">Use the wide range for every deployment.</label>
-          <label><input type="radio" name="answer" required data-feedback="Correct. Measure RTT during representative runs, then rerun with a range that describes those conditions.">Measure RTT under the conditions you plan to operate in.</label>
+          <label><input type="radio" name="answer" required data-feedback="Correct. Measure RTT during representative runs. Use that evidence to choose a range for a real analysis.">Measure RTT under the conditions you plan to operate in.</label>
           <label><input type="radio" name="answer" required data-feedback="A ranking is based on variation across scenarios. Compare controlled model runs to estimate a specific saving.">Treat the rank as an estimate of milliseconds saved.</label>
         </fieldset>
         <button class="button outline-button" disabled>Check answer</button>

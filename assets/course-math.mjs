@@ -134,7 +134,11 @@ export function pairSobol(evaluate, n, seed) {
   const base = pairs.flatMap(([a, b]) => [a, b]);
   const center = mean(base);
   const v = variance(base, center);
-  if (!v) throw new Error("The base samples have no output variation. Increase the pair count or check the output.");
+  if (!v) {
+    const error = new Error("The base samples have no output variation.");
+    error.code = "NO_VARIANCE";
+    throw error;
+  }
   const first = j => mean(pairs.map(row => (row[1] - center) * (row[j] - row[0]))) / v;
   const total = j => mean(pairs.map(row => (row[j] - row[0]) ** 2)) / (2 * v);
   const sx = first(2), sz = first(3);

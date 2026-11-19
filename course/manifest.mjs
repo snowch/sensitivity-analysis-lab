@@ -38,5 +38,6 @@ export const references = [
   ["sobol-calculation", "Calculate Sobol indices for two switches"],
   ["predictive-attribution", "Plan a fair test on real logs"],
   ["apply", "Apply it to your own question"],
+  ["pipeline-notes", "Write a pipeline test plan"],
   ["references", "Bibliography"],
 ];

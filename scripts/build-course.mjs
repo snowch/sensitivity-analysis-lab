@@ -6,7 +6,7 @@ import { foundations } from "../course/foundations.mjs";
 import { methods } from "../course/methods.mjs";
 import { application } from "../course/application.mjs";
 import { extensions } from "../course/extensions.mjs";
-import { sources, sourceLink } from "../course/references.mjs";
+import { sources, sourceGroups, sourceLink } from "../course/references.mjs";
 import { reportGuide, reportTemplate } from "../course/report.mjs";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
@@ -33,7 +33,7 @@ function sidebar(current) {
         </details>`;
       }).join("\n")}
       <p>References and notes</p>
-      <ul class="sidebar-links">${references.map(entry).join("\n")}<li><a href="pipeline-notes.html">Pipeline notes</a></li></ul>
+      <ul class="sidebar-links">${references.map(entry).join("\n")}</ul>
     </nav>
   </aside>`;
 }
@@ -51,7 +51,7 @@ function stepNav(id) {
 function frame(id,title,body,interactive=false) {
   const head=pageStart
     .replace(/<title>.*?<\/title>/,`<title>${html(title)} · Sensitivity Analysis Lab</title>`)
-    .replace("</head>",interactive ? '  <script type="module" src="assets/investigation.mjs"></script>\n</head>' : "</head>");
+    .replace("</head>",interactive ? '  <script type="module" src="assets/investigation.mjs?v=2"></script>\n</head>' : "</head>");
   return `${head}
   <div class="course-layout">
     ${sidebar(id)}
@@ -63,57 +63,72 @@ function frame(id,title,body,interactive=false) {
 }
 
 function controls(fields) {
-  return fields.map(({id,label,value,options,min,max,step,numeric})=>{
+  return fields.map(({id,label,value,options,min,max,step,numeric,when})=>{
     const control=options
       ? `<select id="${id}" name="${id}"${numeric ? " data-number" : ""}>${options.map(option=>{
           const [key,text]=Array.isArray(option) ? option : [option,option];
           return `<option value="${html(key)}"${value===key ? " selected" : ""}>${html(text)}</option>`;
         }).join("")}</select>`
       : `<input id="${id}" name="${id}" type="number" required min="${min}" max="${max}" step="${step}" value="${value}">`;
-    return `<label for="${id}"><span>${html(label)}</span>${control}</label>`;
+    const condition = when ? ` data-show-when="${html(when.join("="))}"` : "";
+    return `<label for="${id}"${condition}><span>${html(label)}</span>${control}</label>`;
   }).join("\n");
 }
 
 function renderLesson([id,title],lesson) {
   const index=route.findIndex(row=>row[0]===id)+1;
-  const draft = lesson.report ? `<p>Browser storage saves this draft and the six most recent runs on this device. Download the report for a portable copy.</p>
-          <button type="button" id="download-report" class="button outline-button">Download report</button>` : "";
   const fields=lesson.report
     ? [["Input assumptions",0,8],["Staffing and outcome",8,12],["Sensitivity setup",12]]
       .map(([title,from,to])=>`<fieldset class="investigation-group"><legend>${title}</legend><div class="investigation-fields">${controls(lesson.fields.slice(from,to))}</div></fieldset>`).join("")
     : `<div class="investigation-fields">${controls(lesson.fields)}</div>`;
   const answer=lesson.report
     ? reportGuide
-    : `<details class="answer"><summary>Check your explanation</summary><p>${lesson.answer}</p></details>`;
+    : `<details class="answer"><summary>Compare with a worked explanation</summary><p>${lesson.answer}</p></details>`;
   return frame(id,title,`<article class="lesson shell">
     <header class="lesson-header"><p class="kicker">Lesson ${index} of ${route.length}</p><h1>${html(title)}</h1><p>${lesson.goal}</p></header>
     <div class="reading">${lesson.concept}</div>
     <section class="reading"><h2>Worked example</h2>${lesson.example}</section>
-    ${lesson.report ? `<div class="learner-draft"><label for="report">Report draft</label><textarea id="report" data-save="report" rows="12">${html(reportTemplate)}</textarea>${draft}<p id="save-note-status" role="status"></p></div>` : ""}
     <section class="lesson-experiment">
-      <h2>Run the investigation</h2><p class="investigation-setup">${lesson.setup}</p>
+      <h2>Run the experiment</h2>
+      <p id="prediction-prompt" class="experiment-question">${lesson.predict}</p>
+      <p class="investigation-setup">${lesson.setup}</p>
       <div class="instructions"><ol>${lesson.steps.map(step=>`<li>${step}</li>`).join("")}</ol></div>
-      <div class="learner-draft"><label for="prediction">Predict before running</label><p id="prediction-prompt">${lesson.predict}</p>
+      ${lesson.report ? `<div class="learner-draft"><label for="report">Report draft</label><textarea id="report" data-save="report" rows="6">${html(reportTemplate)}</textarea>
+        <p>The draft and your six most recent runs are saved in this browser.</p></div>` : ""}
+      <details class="learner-draft"><summary>Record a prediction</summary>
+        <label for="prediction">Your prediction</label>
         <textarea id="prediction" data-save="prediction" aria-describedby="prediction-prompt" rows="2"></textarea>
-      </div>
+      </details>
       <noscript><p class="notice">Enable JavaScript to run the investigation. The worked example and explanation are available below.</p></noscript>
       <form id="investigation" data-lesson="${id}">
         ${fields}
         <div class="investigation-actions">
           <button class="button dark" type="submit" disabled>Run experiment</button>
-          <button class="button outline-button" type="reset" disabled>Reset settings</button>
-          <button class="button outline-button" id="export-results" type="button" disabled>Download results CSV</button>
+          <button class="reset-settings" type="reset" disabled>Reset settings</button>
         </div>
         <p id="investigation-status" role="status" class="status"></p>
       </form>
-      <section class="investigation-results"><h2>Results</h2><div id="investigation-output"><p class="empty">Choose Run experiment to see the results.</p></div><div id="run-history"></div></section>
+      <section class="investigation-results">
+        <h2>Results</h2>
+        <div id="investigation-output"><p class="empty">Results appear here after you select <strong>Run experiment</strong>.</p></div>
+        <div id="run-history"></div>
+        <details id="result-tools" class="reference" hidden><summary>Download data</summary>
+          <p>The CSV includes settings and values from up to six runs.</p>
+          <button class="button outline-button" id="export-results" type="button">Download results CSV</button>
+        </details>
+      </section>
     </section>
     <section class="reading"><h2>Explain your result</h2><p id="explanation-prompt">${lesson.task}</p>
-      ${lesson.report ? "" : `<div class="learner-draft"><label for="explanation">Your explanation</label><textarea id="explanation" data-save="explanation" aria-describedby="explanation-prompt" rows="3"></textarea>
-      <p id="save-note-status" role="status">Browser storage saves your text drafts on this device.</p></div>`}
+      ${lesson.report ? "" : `<details class="learner-draft"><summary>Record an explanation</summary>
+        <label for="explanation">Your explanation</label>
+        <textarea id="explanation" data-save="explanation" aria-describedby="explanation-prompt" rows="3"></textarea>
+      </details>`}
+      <p id="save-note-status" role="status"></p>
       ${answer}
+      ${lesson.report ? `<p>The report download includes your draft and the tables from your six most recent runs.</p>
+        <button type="button" id="download-report" class="button outline-button">Download report</button>` : ""}
     </section>
-    ${lesson.refs ? `<section class="reading"><h2>Sources</h2><ul>${lesson.refs.map(key=>`<li>${sourceLink(key)}</li>`).join("")}</ul></section>` : ""}
+    ${lesson.refs ? `<details class="reading reference"><summary>Sources for this lesson</summary><ul>${lesson.refs.map(key=>`<li>${sourceLink(key)}</li>`).join("")}</ul></details>` : ""}
     ${stepNav(id)}
   </article>`,true);
 }
@@ -124,7 +139,8 @@ const existing = (await readdir(root)).filter(name=>name.endsWith(".html"));
 for (const file of existing) {
   if (file==="index.html") continue;
   const id=file.slice(0,-5);
-  let page=(await readFile(join(root,file),"utf8")).replace("lab.css?v=2","lab.css?v=3");
+  let page=(await readFile(join(root,file),"utf8")).replace("lab.css?v=2","lab.css?v=4").replace("lab.mjs?v=2","lab.mjs?v=3");
+  page=page.replace("</head>", '  <script type="module" src="assets/scroll-tables.mjs"></script>\n</head>');
   page=page.replace(/<aside class="course-sidebar">[\s\S]*?<\/aside>/,sidebar(id));
   const index=route.findIndex(row=>row[0]===id);
   if(index>=0) {
@@ -144,8 +160,8 @@ const outline=units.map(([title,links])=>`<section class="unit"><h3>${html(title
 const links=references.map(([id,title])=>`<li><a href="${pageName(id)}">${html(title)}</a></li>`).join("\n");
 await writeFile(join(target,"index.html"),home.replace("<!-- course-units -->",outline).replace("<!-- course-references -->",links));
 await writeFile(join(target,"references.html"),frame("references","Bibliography",`<article class="lesson shell">
-  <header class="lesson-header"><h1>Bibliography</h1><p>Original papers and technical references for the methods used in the course.</p></header>
-  <div class="reading"><dl class="terms">${Object.keys(sources).map(key=>`<dt>${sourceLink(key)}</dt><dd>${html(sources[key][2])}</dd>`).join("\n")}</dl></div>
+  <header class="lesson-header"><h1>Bibliography</h1><p>Use the descriptions to find a paper or guide for the method you want to check. Lesson pages also link to their sources.</p></header>
+  ${sourceGroups.map(([title, keys]) => `<section class="reading"><h2>${html(title)}</h2><dl class="terms">${keys.map(key=>`<dt>${sourceLink(key)}</dt><dd>${html(sources[key][2])}</dd>`).join("\n")}</dl></section>`).join("\n")}
   <nav class="lesson-actions"><a href="./#course">Course outline</a></nav>
 </article>`));
 console.log(`Built ${route.length} lessons in ${target}`);
