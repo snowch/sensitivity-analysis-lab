@@ -250,13 +250,83 @@ th[scope="row"] { font-weight: 620; }
 .knowledge-check fieldset { margin-block: 8px; }
 .knowledge-check label { min-height: 32px; padding-block: 4px; font-size: .94rem; }
 .check-feedback:not(:empty) { margin-top: 8px; padding: 7px 11px; max-width: 73ch; border-left: 2px solid var(--accent); background: var(--accent-soft); }
-summary { cursor: pointer; color: var(--accent); font-weight: 650; }
+summary {
+  display: grid;
+  grid-template-columns: 1em minmax(0, 1fr);
+  align-items: start;
+  gap: .5rem;
+  inline-size: fit-content;
+  max-inline-size: 100%;
+  padding-block: .2rem;
+  list-style: none;
+  cursor: pointer;
+  color: var(--accent);
+  font-weight: 650;
+}
+summary::-webkit-details-marker { display: none; }
+summary::before {
+  content: "";
+  block-size: 1em;
+  margin-block-start: .2em;
+  border: 1px solid var(--edge);
+  border-radius: 50%;
+  background:
+    linear-gradient(currentColor, currentColor) center / .5em 1.25px no-repeat,
+    linear-gradient(currentColor, currentColor) center / 1.25px .5em no-repeat;
+}
+details[open] > summary::before { background-size: .5em 1.25px, 0 0; }
+@media (forced-colors: active) {
+  summary::before { forced-color-adjust: none; color: ButtonText; border-color: ButtonText; }
+}
 summary:hover { text-decoration: underline; text-underline-offset: .2em; }
 .lesson summary { color: var(--muted); font-weight: 550; }
 .lesson summary:hover, .lesson details[open] > summary { color: var(--ink); }
 .more, .settings { margin-top: 9px; font-size: .86rem; }
 .lesson-notes, .method-note, .reference { margin-top: 14px; font-size: .9rem; }
 .lesson-notes p, .method-note p, .reference p { margin-top: 7px; max-width: 73ch; }
+.lesson-resources { margin-top: 1.3rem; padding-top: .9rem; border-top: 1px solid var(--line); }
+.lesson-resources h2 { font-size: 1.12rem; }
+.lesson-resources ul { margin: .3rem 0 0; padding: 0; list-style: none; }
+.lesson-resources li + li { border-top: 1px solid var(--line); }
+.resource-link {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: .7rem .25rem;
+  color: var(--ink);
+  font-size: .95rem;
+  text-decoration: none;
+}
+.resource-link > span:first-child { font-weight: 550; }
+.resource-arrow {
+  display: grid;
+  align-self: center;
+  place-items: center;
+  flex: none;
+  inline-size: 1em;
+  block-size: 1em;
+  color: var(--muted);
+}
+.resource-arrow::before, .resource-arrow::after {
+  content: "";
+  grid-area: 1 / 1;
+  border-top: 1.5px solid currentColor;
+}
+.resource-arrow::before { inline-size: .75em; }
+.resource-arrow::after {
+  inline-size: .36em;
+  block-size: .36em;
+  border-right: 1.5px solid currentColor;
+  transform: translateX(.18em) rotate(45deg);
+}
+.resource-link[href^="https:"] .resource-arrow { transform: rotate(-45deg); }
+button.resource-link .resource-arrow { transform: rotate(90deg); }
+.resource-link:hover { background: var(--soft); }
+.resource-link:hover > span:first-child, .resource-link:hover #export-label { text-decoration: underline; text-underline-offset: .2em; }
+#result-tools { margin-top: .75rem; border-top: 1px solid var(--line); }
+button.resource-link { width: 100%; border: 0; background: transparent; text-align: start; cursor: pointer; }
+.resource-link small { display: block; color: var(--muted); font-weight: 400; }
 .lesson-actions { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px 14px; margin-top: 24px; padding-top: 15px; border-top: 1px solid var(--line); font-size: .93rem; }
 .terms { margin-top: 7px; }
 .terms dt { margin-top: .85rem; font-weight: 650; }
@@ -311,6 +381,7 @@ footer p { color: var(--muted); }
 .course-sidebar .sidebar-unit summary { padding: 4px 7px; font-size: .81rem; line-height: 1.4; color: var(--ink); }
 .course-sidebar .sidebar-unit ol { margin: 4px 0; }
 .course-sidebar .contents-link { margin-bottom: 4px; }
+.course-sidebar .sidebar-resources { margin-top: .65rem; }
 .reading { margin-block: var(--section-gap); }
 .reading details { margin-top: .9rem; }
 .reading .formula { margin-block: .75rem; }
@@ -372,5 +443,4 @@ footer p { color: var(--muted); }
 .run-settings dl { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 4px 9px; margin-top: 6px; }
 .run-settings dd { margin: 0; }
 .run-settings dt { color: var(--muted); }
-#result-tools .button { margin-top: 8px; }
 #download-report { margin-top: 8px; }

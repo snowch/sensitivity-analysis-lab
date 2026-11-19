@@ -32,10 +32,7 @@ function sidebar(current) {
           <ol class="sidebar-links" start="${start}">${links.map(entry).join("\n")}</ol>
         </details>`;
       }).join("\n")}
-      <details class="sidebar-unit"${references.some(([id])=>id===current) ? " open" : ""}>
-        <summary>References and notes</summary>
-        <ul class="sidebar-links">${references.map(entry).join("\n")}</ul>
-      </details>
+      <a class="contents-link sidebar-resources" href="./#course-references">References and notes</a>
     </nav>
   </aside>`;
 }
@@ -126,10 +123,12 @@ function renderLesson([id,title],lesson) {
           <p class="investigation-read">${lesson.read}</p>
           <div id="investigation-output"></div>
           <div id="run-history"></div>
-          <details id="result-tools" class="reference" hidden><summary>Export run settings and values</summary>
-            <p>The CSV includes settings, tables and chart values from up to six completed runs.</p>
-            <button class="button outline-button" id="export-results" type="button">Download results CSV</button>
-          </details>
+          <div id="result-tools" hidden>
+            <button class="resource-link" id="export-results" type="button" aria-labelledby="export-label" aria-describedby="export-description">
+              <span><span id="export-label">Download results CSV</span><small id="export-description">Settings, tables and chart values from up to six runs</small></span>
+              <span class="resource-arrow" aria-hidden="true"></span>
+            </button>
+          </div>
         </section>
       </div>
       <section class="instructions investigation-next">
@@ -151,7 +150,13 @@ function renderLesson([id,title],lesson) {
           <button type="button" id="download-report" class="button outline-button">Download report</button>` : ""}
       </div>
     </section>
-    ${lesson.refs ? `<details class="reading reference"><summary>Sources for this lesson</summary><ul>${lesson.refs.map(key=>`<li>${sourceLink(key)}</li>`).join("")}</ul></details>` : ""}
+    ${lesson.refs ? `<nav class="lesson-resources" aria-labelledby="lesson-references-title">
+      <h2 id="lesson-references-title">References</h2>
+      <ul>${lesson.refs.map(key=>{
+        const [label,url]=sources[key];
+        return `<li><a class="resource-link" href="${html(url)}"><span>${html(label)}</span><span class="resource-arrow" aria-hidden="true"></span></a></li>`;
+      }).join("\n")}</ul>
+    </nav>` : ""}
     ${stepNav(id)}
   </article>`,true);
 }
@@ -162,7 +167,7 @@ const existing = (await readdir(root)).filter(name=>name.endsWith(".html"));
 for (const file of existing) {
   if (file==="index.html") continue;
   const id=file.slice(0,-5);
-  let page=(await readFile(join(root,file),"utf8")).replace(/lab\.css\?v=\d+/,"lab.css?v=8").replace("lab.mjs?v=2","lab.mjs?v=4");
+  let page=(await readFile(join(root,file),"utf8")).replace(/lab\.css\?v=\d+/,"lab.css?v=9").replace("lab.mjs?v=2","lab.mjs?v=4");
   page=page.replace("</head>", '  <script type="module" src="assets/scroll-tables.mjs"></script>\n</head>');
   page=page.replace(/<aside class="course-sidebar">[\s\S]*?<\/aside>/,sidebar(id));
   const index=route.findIndex(row=>row[0]===id);

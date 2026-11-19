@@ -124,13 +124,16 @@
         <p class="check-feedback" role="status"></p>
       </form>
       <div class="lesson-notes">
-        <p><a href="sobol-calculation.html">Worked lesson · Calculate Sobol indices for two switches</a></p>
         <details class="reference">
           <summary>Sampling method and limits of the queue model</summary>
           <p>The experiment draws independent inputs into two samples. For each input it swaps values between the samples and reruns the model to estimate the two indices. Small negative first-order estimates can occur because the sample is finite. Total-order shares can add to more than one because two inputs can both contribute to the same interaction.</p>
           <p>Each condition for the queue penalty covers a quarter of its input range. Under independent draws they coincide about one time in sixteen. The step penalty illustrates a slowdown and would need separate validation against a real queue.</p>
         </details>
       </div>
+      <nav class="lesson-resources" aria-labelledby="lesson-references-title">
+        <h2 id="lesson-references-title">Further reading</h2>
+        <ul><li><a class="resource-link" href="sobol-calculation.html"><span>Calculate Sobol indices for two switches</span><span class="resource-arrow" aria-hidden="true"></span></a></li></ul>
+      </nav>
       <nav class="lesson-actions" aria-label="Course sequence"><a href="ranges.html">Previous · Change the assumptions</a><a class="button dark" href="logs.html">Next · Work from logs</a></nav>
     </section>
   </main>

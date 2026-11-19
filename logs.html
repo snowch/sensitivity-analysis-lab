@@ -122,14 +122,19 @@
         <p class="check-feedback" role="status"></p>
       </form>
       <div class="lesson-notes">
-        <p><a href="https://scikit-learn.org/stable/modules/permutation_importance.html">scikit-learn documentation on permutation importance</a></p>
-        <p><a href="predictive-attribution.html">Worked lesson · Plan a fair test on real logs</a></p>
         <details class="reference">
           <summary>How the synthetic data and predictor are prepared</summary>
           <p>The data include noisy latency measurements, blanks in the two cache counters and an irrelevant deployment-age column. The page fills blank values with medians calculated from the training rows. The forest averages predictions from 24 trees fitted on resampled training rows.</p>
           <p>The output reports the mean change in error and how much that change varies across shuffles on the same test set. See the <a href="assets/logs.mjs">data generator and evaluation code</a>.</p>
         </details>
       </div>
+      <nav class="lesson-resources" aria-labelledby="lesson-references-title">
+        <h2 id="lesson-references-title">Further reading</h2>
+        <ul>
+          <li><a class="resource-link" href="predictive-attribution.html"><span>Plan a fair test on real logs</span><span class="resource-arrow" aria-hidden="true"></span></a></li>
+          <li><a class="resource-link" href="https://scikit-learn.org/stable/modules/permutation_importance.html"><span>scikit-learn documentation on permutation importance</span><span class="resource-arrow" aria-hidden="true"></span></a></li>
+        </ul>
+      </nav>
       <nav class="lesson-actions" aria-label="Course sequence"><a href="interactions.html">Previous · Find hidden interactions</a><a class="button dark" href="practice.html">Next · Independent practice</a></nav>
     </section>
   </main>
