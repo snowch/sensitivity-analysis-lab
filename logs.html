@@ -49,61 +49,67 @@
         <h1 id="logs-title">Work from logs</h1>
         <p>Use synthetic pipeline records to see which inputs help predict job delays.</p>
       </header>
-      <div class="teaching">
-        <div>
-          <h2>Test on jobs the model hasn’t seen</h2>
-          <p>On the first run, the page generates 10,000 synthetic pipeline records. It trains a <strong>random forest</strong> on 8,000 rows and tests it on the other 2,000. New shuffles during this visit reuse the fitted forest and test rows.</p>
-          <p>A forest averages predictions from decision trees, which split data into groups. The <strong>mean absolute error (MAE)</strong> is the average distance between predicted and recorded latency, in milliseconds.</p>
-          <h2>Shuffle one signal and measure the error again</h2>
-          <p><strong>Permutation importance</strong> shuffles the values in a test column and predicts again with the same model. Recorded latencies and the other columns stay in place. An increase in MAE shows how much accuracy the model loses when the shuffled values stop matching their jobs.</p>
-        </div>
-        <figure class="worked">
-          <figcaption>Example of a two-row shuffle</figcaption>
-          <table>
-            <thead><tr><th scope="col">Actual latency</th><th scope="col">Original prediction</th><th scope="col">After swap</th></tr></thead>
-            <tbody><tr><td>100 ms</td><td>105 ms</td><td>155 ms</td></tr><tr><td>160 ms</td><td>155 ms</td><td>105 ms</td></tr></tbody>
-          </table>
-          <p>This example predictor uses only payload size. Swapping those two values swaps the predictions. Each absolute error grows from 5 to 55 ms. The average also rises by 55 − 5 = 50 ms.</p>
-        </figure>
-      </div>
-      <div class="instructions">
-        <h2>Do the cache counters carry the same signal?</h2>
-      </div>
-      <div class="experiment">
-        <form id="logs-form" class="controls">
-          <h2>Shuffle the test data</h2>
-          <p>Start with individual features. The prepared settings repeat each shuffle five times.</p>
-          <fieldset>
-            <legend>Shuffle</legend>
-            <label class="choice"><input type="radio" name="grouping" value="individual" checked><span><strong>Individual features</strong><small>Shuffle one column at a time</small></span></label>
-            <label class="choice"><input type="radio" name="grouping" value="grouped"><span><strong>Group the cache counters</strong><small>Shuffle both using the same row order</small></span></label>
-          </fieldset>
-          <button class="button dark" disabled>Run permutation importance</button>
-          <p class="status" role="status"></p>
-          <details class="settings">
-            <summary>Shuffle repetitions and CSV download</summary>
-            <label for="shuffle-count">Shuffles per feature or group</label>
-            <select id="shuffle-count" name="count"><option>3</option><option selected>5</option><option>10</option></select>
-            <button type="button" class="button outline-button" id="csv" disabled>Download 10,000 synthetic records</button>
-            <p class="status csv-status" role="status"></p>
-          </details>
-        </form>
-        <div class="results" id="logs-results">
-          <h2>Test error and feature importance</h2>
-          <p>Compare forest test MAE with median-only test MAE. Does the forest make smaller errors than always predicting the training median?</p>
-          <div class="output"></div>
+      <div class="lesson-section">
+        <div class="teaching">
+          <div>
+            <h2>Test on jobs the model hasn’t seen</h2>
+            <p>On the first run, the page generates 10,000 synthetic pipeline records. It trains a <strong>random forest</strong> on 8,000 rows and tests it on the other 2,000. New shuffles during this visit reuse the fitted forest and test rows.</p>
+            <p>A forest averages predictions from decision trees, which split data into groups. The <strong>mean absolute error (MAE)</strong> is the average distance between predicted and recorded latency, in milliseconds.</p>
+            <h2>Shuffle one signal and measure the error again</h2>
+            <p><strong>Permutation importance</strong> shuffles the values in a test column and predicts again with the same model. Recorded latencies and the other columns stay in place. An increase in MAE shows how much accuracy the model loses when the shuffled values stop matching their jobs.</p>
+          </div>
+          <figure class="worked">
+            <figcaption>Example of a two-row shuffle</figcaption>
+            <table>
+              <thead><tr><th scope="col">Actual latency</th><th scope="col">Original prediction</th><th scope="col">After swap</th></tr></thead>
+              <tbody><tr><td>100 ms</td><td>105 ms</td><td>155 ms</td></tr><tr><td>160 ms</td><td>155 ms</td><td>105 ms</td></tr></tbody>
+            </table>
+            <p>This example predictor uses only payload size. Swapping those two values swaps the predictions. Each absolute error grows from 5 to 55 ms. The average also rises by 55 − 5 = 50 ms.</p>
+          </figure>
         </div>
       </div>
-      <section class="instructions">
-        <h3>Shuffle both cache counters</h3>
-        <p>Set <strong>Shuffle</strong> to <strong>Group the cache counters</strong> and rerun with five shuffles. In <strong>Cache counter comparison</strong>, check whether shuffling the pair increases test MAE more than shuffling either counter alone.</p>
+      <section class="lesson-section lesson-experiment" aria-labelledby="experiment-title">
+        <div class="instructions">
+          <h2 id="experiment-title">Do the cache counters carry the same signal?</h2>
+        </div>
+        <div class="experiment lesson-workspace">
+          <form id="logs-form" class="controls">
+            <h2>Shuffle the test data</h2>
+            <p>Start with individual features. The prepared settings repeat each shuffle five times.</p>
+            <fieldset>
+              <legend>Shuffle</legend>
+              <label class="choice"><input type="radio" name="grouping" value="individual" checked><span><strong>Individual features</strong><small>Shuffle one column at a time</small></span></label>
+              <label class="choice"><input type="radio" name="grouping" value="grouped"><span><strong>Group the cache counters</strong><small>Shuffle both using the same row order</small></span></label>
+            </fieldset>
+            <button class="button dark" disabled>Run permutation importance</button>
+            <p class="status" role="status"></p>
+            <details class="settings">
+              <summary>Shuffle repetitions and CSV download</summary>
+              <label for="shuffle-count">Shuffles per feature or group</label>
+              <select id="shuffle-count" name="count"><option>3</option><option selected>5</option><option>10</option></select>
+              <button type="button" class="button outline-button" id="csv" disabled>Download 10,000 synthetic records</button>
+              <p class="status csv-status" role="status"></p>
+            </details>
+          </form>
+          <div class="results" id="logs-results">
+            <h2>Test error and feature importance</h2>
+            <p>Compare forest test MAE with median-only test MAE. Does the forest make smaller errors than always predicting the training median?</p>
+            <div class="output"></div>
+          </div>
+        </div>
+        <section class="instructions investigation-next">
+          <h3>Shuffle both cache counters</h3>
+          <p>Set <strong>Shuffle</strong> to <strong>Group the cache counters</strong> and rerun with five shuffles. In <strong>Cache counter comparison</strong>, check whether shuffling the pair increases test MAE more than shuffling either counter alone.</p>
+        </section>
       </section>
-      <section class="interpretation" aria-labelledby="logs-read">
-        <h2 id="logs-read">Read the result</h2>
-        <p>An edge cache stores copies close to users. <strong>Edge miss rate</strong> is the share of requests with no usable copy there. <strong>Origin fetch rate</strong> is the share that had to reach the original source.</p>
-        <p>The synthetic data make both noisy measures of the same cache behaviour. Shuffling one leaves the other available. Moving both together keeps them aligned with each other while breaking their link to the original jobs.</p>
-        <p>The chart describes which signals help this predictor on these test rows. To test whether a change helps the pipeline, compare the same workload under two settings, such as current and increased worker capacity. Decide in advance which latency and cost measurements would justify the change.</p>
-      </section>
+      <div class="lesson-section">
+        <section class="interpretation" aria-labelledby="logs-read">
+          <h2 id="logs-read">Read the result</h2>
+          <p>An edge cache stores copies close to users. <strong>Edge miss rate</strong> is the share of requests with no usable copy there. <strong>Origin fetch rate</strong> is the share that had to reach the original source.</p>
+          <p>The synthetic data make both noisy measures of the same cache behaviour. Shuffling one leaves the other available. Moving both together keeps them aligned with each other while breaking their link to the original jobs.</p>
+          <p>The chart describes which signals help this predictor on these test rows. To test whether a change helps the pipeline, compare the same workload under two settings, such as current and increased worker capacity. Decide in advance which latency and cost measurements would justify the change.</p>
+        </section>
+      </div>
       <form class="knowledge-check">
         <h2>Check your reasoning</h2>
         <fieldset>

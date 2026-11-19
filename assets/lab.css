@@ -141,6 +141,12 @@ body:has(.home) { background: var(--soft); }
   color: var(--prose);
 }
 .lesson-header { border-bottom: 1px solid var(--line); padding-bottom: 22px; }
+.lesson-section { min-width: 0; padding-block: var(--section-gap); }
+.lesson-section + .lesson-section { border-top: 1px solid var(--line); }
+.lesson-section > :is(.reading, .teaching, .practice-note, .interpretation) { margin-block: 0; }
+.lesson-section > .worked-example { margin-block-start: 1.5rem; }
+.lesson-section > .instructions:first-child { margin-block-start: 0; }
+.lesson-section > .interpretation { padding-block: 0; border-top: 0; }
 .kicker { color: var(--muted); font-size: .86rem; }
 .lesson h1 { margin: 8px 0 10px; font-size: clamp(2.16rem, 4vw, 3.5rem); letter-spacing: -.05em; }
 .lesson-header > p:last-child { max-width: var(--prose-width); color: var(--muted); font-size: 1.1rem; }
@@ -160,12 +166,11 @@ body:has(.home) { background: var(--soft); }
 .lesson :is(.reading, .teaching, .guide, .interpretation) :is(p, ol, ul, .formula, details) + :is(h2, h3) { margin-top: 1.5rem; }
 .worked { margin-top: 1.4rem; }
 .worked, .worked-example {
-  padding: clamp(1rem, 2.5vw, 1.4rem);
-  border-inline-start: 2px solid var(--edge);
-  border-radius: 0 8px 8px 0;
-  background: var(--soft);
+  padding: .35rem 0 .35rem clamp(.8rem, 2vw, 1.25rem);
+  border-inline-start: 2px solid var(--series-3);
 }
 .worked figcaption { margin-bottom: .6rem; font-size: 1.1rem; font-weight: 625; line-height: 1.3; }
+.worked figcaption, .worked-example h2 { color: var(--series-3); }
 .worked p { margin-top: .65rem; }
 .worked td.highlight { background: var(--accent-soft); color: var(--accent); font-weight: 700; }
 .instructions { margin-bottom: 1.15rem; }
@@ -182,7 +187,8 @@ body:has(.home) { background: var(--soft); }
 .outline-button { color: var(--ink); background: var(--panel); border-color: var(--edge); }
 .outline-button:not(:disabled):hover { background: var(--accent-soft); }
 
-.experiment { display: grid; grid-template-columns: minmax(206px, .72fr) minmax(0, 2fr); border: 1px solid var(--line); border-radius: 10px; background: var(--panel); }
+.experiment { display: grid; grid-template-columns: minmax(206px, .72fr) minmax(0, 2fr); }
+.lesson-workspace { margin-top: 1.15rem; border: 1px solid var(--edge); border-radius: 10px; background: var(--panel); }
 .controls, .results { min-width: 0; padding: clamp(13px, 2vw, 22px); }
 .controls { display: flex; flex-direction: column; align-items: stretch; border-right: 1px solid var(--line); border-radius: 10px 0 0 10px; background: var(--soft); }
 .controls h2, .results h2 { font-size: 1.08rem; }
@@ -255,7 +261,7 @@ summary:hover { text-decoration: underline; text-underline-offset: .2em; }
 .terms { margin-top: 7px; }
 .terms dt { margin-top: .85rem; font-weight: 650; }
 .terms dd { margin-left: 0; max-width: 73ch; color: var(--muted); }
-.guide h2:not(:first-child) { margin-top: 1.5rem; }
+.lesson .guide h2:not(:first-child) { margin-top: 1.75rem; padding-top: 1.25rem; border-top: 1px solid var(--line); }
 .formula { padding: .6rem .75rem; background: var(--soft); font: .95rem/1.6 var(--mono); overflow-wrap: anywhere; }
 .practice-note { margin-top: 20px; }
 .practice-note p { margin-top: 7px; font-size: .88rem; }
@@ -308,18 +314,24 @@ footer p { color: var(--muted); }
 .reading { margin-block: var(--section-gap); }
 .reading details { margin-top: .9rem; }
 .reading .formula { margin-block: .75rem; }
-.lesson-experiment { margin-top: var(--section-gap); }
-.lesson-experiment .investigation-next { margin-top: 1.5rem; }
+.lesson-experiment .investigation-next {
+  margin-block: 1.5rem 0;
+  padding: .25rem 0 .25rem 1rem;
+  border-inline-start: 2px solid var(--series-1);
+}
+.lesson-experiment .investigation-next h3 { color: var(--series-1); }
 .investigation-setup, .investigation-plan, .investigation-read { max-width: var(--prose-width); margin-top: .65rem; }
 .investigation-setup { color: var(--muted); }
-.investigation-start { color: var(--muted); font-size: .9rem; }
+.investigation-start { margin-top: .4rem; color: var(--muted); font-size: .9rem; }
 .investigation-fields { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 12px 15px; margin-top: 14px; }
 .investigation-fields label { display: block; color: var(--muted); font-size: .9rem; font-weight: 500; line-height: 1.3; }
 .investigation-fields input, .investigation-fields select { display: block; margin-top: 4px; min-height: 40px; font-weight: 400; }
-#investigation { padding: 14px 16px; border: 1px solid var(--line); border-radius: 8px; background: var(--soft); }
+#investigation, .investigation-results { padding: clamp(14px, 2.6vw, 25px); }
+#investigation { border-radius: 9px; background: var(--soft); }
+.lesson-workspace:has(.investigation-results:not([hidden])) #investigation { border-end-start-radius: 0; border-end-end-radius: 0; }
 .investigation-actions { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
 #investigation-status { min-height: 1.5em; }
-.investigation-results { margin-block: 1.5rem var(--section-gap); }
+.investigation-results { border-top: 1px solid var(--line); }
 .investigation-results h4 { margin-block: .5rem; font-size: 1rem; font-weight: 625; }
 .investigation-results table caption, #run-history table caption { margin-bottom: 4px; text-align:left; font-weight:650; color:var(--ink); }
 .investigation-results .table-wrap, #run-history .table-wrap { margin-block: 10px 16px; }
@@ -354,7 +366,6 @@ footer p { color: var(--muted); }
 
 .experiment-question { margin-top: .65rem; max-width: var(--prose-width); font-size: 1.0625rem; font-weight: 500; }
 #investigation-status:empty, .learner-draft .draft-status:empty { min-height: 0; margin: 0; }
-#investigation { margin-top: 12px; }
 .reset-settings { border: 0; background: transparent; color: var(--muted); text-decoration: underline; cursor: pointer; padding: 6px 10px; }
 .reset-settings:disabled { opacity: .6; cursor: default; }
 .run-settings { margin-block: 8px; font-size: .88rem; }

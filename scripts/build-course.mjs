@@ -88,10 +88,15 @@ function renderLesson([id,title],lesson) {
     : `<details class="answer"><summary>Reveal the worked explanation</summary><p>${lesson.answer}</p></details>`;
   return frame(id,title,`<article class="lesson shell">
     <header class="lesson-header"><p class="kicker">Lesson ${index} of ${route.length}</p><h1>${html(title)}</h1><p>${lesson.goal}</p></header>
-    <section class="reading">${lesson.concept}</section>
-    <section class="reading worked-example"><h2>Worked example</h2>${lesson.example}</section>
-    <section class="lesson-experiment">
-      <h2>Experiment</h2>
+    <div class="lesson-section">
+      <div class="reading">${lesson.concept}</div>
+      <section class="reading worked-example" aria-labelledby="worked-title">
+        <h2 id="worked-title">Worked example</h2>
+        ${lesson.example}
+      </section>
+    </div>
+    <section class="lesson-section lesson-experiment" aria-labelledby="experiment-title">
+      <h2 id="experiment-title">${html(lesson.experimentTitle)}</h2>
       <p id="prediction-prompt" class="experiment-question">${lesson.predict}</p>
       <p class="investigation-setup">${lesson.setup}</p>
       ${lesson.report ? `<p class="investigation-plan">${lesson.plan}</p>
@@ -104,40 +109,47 @@ function renderLesson([id,title],lesson) {
         <p class="draft-status status" role="status"></p>
       </details>
       <noscript><p class="notice">Enable JavaScript to run the investigation. The worked example and explanation are available below.</p></noscript>
-      <form id="investigation" data-lesson="${id}">
-        ${lesson.report ? "" : '<p class="investigation-start">Use the starting settings for your first run.</p>'}
-        ${fields}
-        <div class="investigation-actions">
-          <button class="button dark" type="submit" disabled>Run experiment</button>
-          <button class="reset-settings" type="reset" disabled>Reset settings</button>
-        </div>
-        <p id="investigation-status" role="status" class="status"></p>
-      </form>
-      ${lesson.report ? `<p id="run-save-status" class="status" role="status"></p>` : ""}
-      <section class="investigation-results" aria-labelledby="results-title" hidden>
-        <h3 id="results-title">Results</h3>
-        <p class="investigation-read">${lesson.read}</p>
-        <div id="investigation-output"></div>
-        <div id="run-history"></div>
-        <details id="result-tools" class="reference" hidden><summary>Export run settings and values</summary>
-          <p>The CSV includes settings, tables and chart values from up to six completed runs.</p>
-          <button class="button outline-button" id="export-results" type="button">Download results CSV</button>
-        </details>
-      </section>
+      <div class="lesson-workspace">
+        <form id="investigation" data-lesson="${id}" aria-labelledby="settings-title">
+          <h3 id="settings-title">Settings</h3>
+          ${lesson.report ? "" : '<p class="investigation-start">Use the starting values for your first run.</p>'}
+          ${fields}
+          <div class="investigation-actions">
+            <button class="button dark" type="submit" disabled>Run experiment</button>
+            <button class="reset-settings" type="reset" disabled>Reset settings</button>
+          </div>
+          <p id="investigation-status" role="status" class="status"></p>
+          ${lesson.report ? '<p id="run-save-status" class="status" role="status"></p>' : ""}
+        </form>
+        <section class="investigation-results" aria-labelledby="results-title" hidden>
+          <h3 id="results-title">Results</h3>
+          <p class="investigation-read">${lesson.read}</p>
+          <div id="investigation-output"></div>
+          <div id="run-history"></div>
+          <details id="result-tools" class="reference" hidden><summary>Export run settings and values</summary>
+            <p>The CSV includes settings, tables and chart values from up to six completed runs.</p>
+            <button class="button outline-button" id="export-results" type="button">Download results CSV</button>
+          </details>
+        </section>
+      </div>
       <section class="instructions investigation-next">
-        <h3>After the first run</h3>
+        <h3>Change the settings</h3>
         <ol>${lesson.steps.map(step=>`<li>${step}</li>`).join("")}</ol>
       </section>
     </section>
-    <section class="reading"><h2>Explain your result</h2><p id="explanation-prompt">${lesson.task}</p>
-      ${lesson.report ? "" : `<details class="learner-draft"><summary>Write down your explanation</summary>
-        <label for="explanation">Your explanation</label>
-        <textarea id="explanation" data-save="explanation" aria-describedby="explanation-prompt" rows="3"></textarea>
-        <p class="draft-status status" role="status"></p>
-      </details>`}
-      ${answer}
-      ${lesson.report ? `<p>The report download includes your draft and the tables from your six most recent runs.</p>
-        <button type="button" id="download-report" class="button outline-button">Download report</button>` : ""}
+    <section class="lesson-section" aria-labelledby="explanation-title">
+      <div class="reading">
+        <h2 id="explanation-title">Explain your result</h2>
+        <p id="explanation-prompt">${lesson.task}</p>
+        ${lesson.report ? "" : `<details class="learner-draft"><summary>Write down your explanation</summary>
+          <label for="explanation">Your explanation</label>
+          <textarea id="explanation" data-save="explanation" aria-describedby="explanation-prompt" rows="3"></textarea>
+          <p class="draft-status status" role="status"></p>
+        </details>`}
+        ${answer}
+        ${lesson.report ? `<p>The report download includes your draft and the tables from your six most recent runs.</p>
+          <button type="button" id="download-report" class="button outline-button">Download report</button>` : ""}
+      </div>
     </section>
     ${lesson.refs ? `<details class="reading reference"><summary>Sources for this lesson</summary><ul>${lesson.refs.map(key=>`<li>${sourceLink(key)}</li>`).join("")}</ul></details>` : ""}
     ${stepNav(id)}
@@ -150,7 +162,7 @@ const existing = (await readdir(root)).filter(name=>name.endsWith(".html"));
 for (const file of existing) {
   if (file==="index.html") continue;
   const id=file.slice(0,-5);
-  let page=(await readFile(join(root,file),"utf8")).replace(/lab\.css\?v=\d+/,"lab.css?v=7").replace("lab.mjs?v=2","lab.mjs?v=4");
+  let page=(await readFile(join(root,file),"utf8")).replace(/lab\.css\?v=\d+/,"lab.css?v=8").replace("lab.mjs?v=2","lab.mjs?v=4");
   page=page.replace("</head>", '  <script type="module" src="assets/scroll-tables.mjs"></script>\n</head>');
   page=page.replace(/<aside class="course-sidebar">[\s\S]*?<\/aside>/,sidebar(id));
   const index=route.findIndex(row=>row[0]===id);

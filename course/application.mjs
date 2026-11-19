@@ -2,6 +2,7 @@ import { number, select, seed, count } from "./foundations.mjs";
 
 export const application = {
   reliability: {
+    experimentTitle: "Repeat the estimate at three budgets",
     goal: "Tell whether you need more simulation runs or better evidence about the model.",
     concept: `<h2>Repeat the calculation with new samples</h2>
     <p><strong>Simulation error</strong> comes from using a finite sample. Repeat the whole design with different seeds to see how estimates vary. Look for a narrower spread as the number of sample pairs grows.</p>
@@ -25,6 +26,7 @@ export const application = {
     refs: ["saltelli","salib"],
   },
   stochastic: {
+    experimentTitle: "Repeat runs at the same inputs",
     goal: "Separate variability within one input setting from changes in the typical outcome across settings.",
     concept: `<h2>Run the simulator again at the same input</h2>
     <p>A deterministic model always gives the same output at the same inputs. A <strong>stochastic simulator</strong> can give different outputs because it makes its own random draws.</p>
@@ -48,6 +50,7 @@ export const application = {
     refs: ["stochastic"],
   },
   decisions: {
+    experimentTitle: "Compare the cost of three options",
     goal: "Compare interventions by the decision criterion and test whether extra information could change the action.",
     concept: `<h2>Compare changes you can make</h2>
     <p>An importance score describes variation. A decision also depends on what you can change, how much you can change it and what that costs. Use <strong>matched conditions</strong> by comparing every option on the same simulated jobs.</p>
@@ -71,6 +74,7 @@ export const application = {
     refs: ["voi"],
   },
   capstone: {
+    experimentTitle: "Test a staffing decision",
     goal: "Choose and defend an analysis for a community event, then document the evidence that could overturn your recommendation.",
     concept: `<h2>Decide what would justify another shift</h2>
     <p>A community group can keep its current registration team or schedule one extra volunteer. Choose what counts as a long wait and how much improvement would justify the extra cost.</p>

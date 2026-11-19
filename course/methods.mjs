@@ -2,6 +2,7 @@ import { number, select, seed, count, when } from "./foundations.mjs";
 
 export const methods = {
   patterns: {
+    experimentTitle: "Compare what the three scores pick up",
     goal: "Use the shape of a scatterplot to decide whether a correlation or a fitted line is useful.",
     concept: `<h2>Look at the shape before reading a score</h2>
     <p>Each dot in the scatterplot is one run. <strong>Pearson correlation</strong> measures how closely the points follow a straight rising or falling line. <strong>Spearman correlation</strong> sorts each variable and compares the positions, or ranks. It can be strong for a curve that always rises.</p>
@@ -26,6 +27,7 @@ export const methods = {
     refs: ["spearman","regression"],
   },
   morris: {
+    experimentTitle: "Calculate an elementary effect",
     goal: "Use short sequences of one-input changes to find inputs with large or changing effects.",
     concept: `<h2>Follow a path through the input settings</h2>
     <p>On a <strong>Morris trajectory</strong>, start at one grid point and change each input once in a random order. One starting evaluation and three moves cost four model evaluations for three inputs.</p>
@@ -48,6 +50,7 @@ export const methods = {
     refs: ["morris","campolongo","salib"],
   },
   "interaction-lab": {
+    experimentTitle: "Compare the effect at two pressures",
     goal: "Check when the effect of one input depends on the value of another.",
     concept: `<h2>Compare the same change under two conditions</h2>
     <p>Here X is an arrival score from 0 to 10. Z measures pressure from 0 for spare capacity to 1 for high pressure. There is an <strong>interaction</strong> if a change in arrivals affects delay differently at different pressures.</p>
@@ -71,6 +74,7 @@ export const methods = {
     answer: "At pressure 0 the overload penalty is always zero. Under arrivals below 5 it is zero even at pressure 1. It appears when both conditions align. Separately check that your assumed operating distribution gives credible weight to that region.",
   },
   variance: {
+    experimentTitle: "Find what each switch explains",
     goal: "Work from squared deviations and conditional means to exact variance shares.",
     concept: `<h2>Measure how much outcomes vary</h2>
     <p>Variance is the average squared distance from the mean. Squaring keeps positive and negative deviations from cancelling and gives large deviations extra weight. Variance has squared units. Its square root is the standard deviation, in the original units.</p>
@@ -99,6 +103,7 @@ export const methods = {
     refs: ["sobol"],
   },
   "sobol-lab": {
+    experimentTitle: "Compare estimated and exact shares",
     goal: "Estimate first, second and total orders for continuous inputs, then change the output to study a rare event.",
     concept: `<h2>Estimate the shares by swapping inputs</h2>
     <p>The page draws two input settings and runs the model at both. It makes two more settings by swapping one input between them. Each swap leaves the other input fixed.</p>
@@ -129,6 +134,7 @@ export const methods = {
     refs: ["sobol","saltelli2009","jansen","salib"],
   },
   dependence: {
+    experimentTitle: "Allocate credit between the switches",
     goal: "See how two related inputs can receive credit for information they share.",
     concept: `<h2>Account for shared information</h2>
     <p>If X and Z are related, knowing X can reveal something about Z even when the formula uses only Z. Their contributions overlap. Use a method that accounts for how the inputs vary together.</p>

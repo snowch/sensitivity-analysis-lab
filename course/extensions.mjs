@@ -2,6 +2,7 @@ import { number, select, seed, when } from "./foundations.mjs";
 
 export const extensions = {
   benchmark: {
+    experimentTitle: "Compare two systems on the same workload",
     goal: "Choose benchmark conditions by asking where the comparison could change.",
     concept: `<h2>Find conditions where the comparison changes</h2>
     <p>A benchmark compares systems under a defined workload. Here the workload depends on requests per second and payload size. Sample combinations of both if load affects small and large requests differently. One average workload can hide where the systems trade places.</p>
@@ -24,6 +25,7 @@ export const extensions = {
     refs:["saltelli"],
   },
   tuning: {
+    experimentTitle: "Search within a training budget",
     goal:"Use sensitivity to plan where to search and optimisation to choose a feasible setting.",
     concept:`<h2>Choose which settings to vary</h2>
     <p>A <strong>hyperparameter</strong> is a setting you choose before fitting a machine learning model. For example, the learning rate sets how far the model adjusts at each training step.</p>

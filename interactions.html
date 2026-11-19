@@ -49,63 +49,69 @@
         <h1 id="assumptions-title">Find the pipeline interaction</h1>
         <p>Compare what the rank screen and Sobol indices reveal when the queue adds a delay only at high arrivals and low capacity.</p>
       </header>
-      <div class="teaching">
-        <div>
-          <h2>Find when the queue penalty applies</h2>
-          <p>Arrival rate is how many jobs arrive per second. Worker capacity is how many jobs the pipeline can process per second.</p>
-          <p>The queue rule adds a 155 ms delay at 750 arrivals per second or more and 800 jobs per second of capacity or less. Arrivals and capacity <strong>interact</strong> because the effect of one depends on the other.</p>
-          <h2>Compare individual and total effects</h2>
-          <p><strong>Variance</strong> measures spread around the average and gives extra weight to large deviations. A <strong>first-order Sobol index</strong> estimates the share of variance explained by an input on its own.</p>
-          <p>The <strong>total-order index</strong> also includes every interaction involving that input. A score of 0.70 represents roughly 70% of the modelled variance under the chosen ranges.</p>
-        </div>
-        <figure class="worked">
-          <figcaption>Example of the queue rule</figcaption>
-          <table>
-            <thead><tr><th scope="col">Arrival rate</th><th scope="col">Capacity ≤800</th><th scope="col">Capacity &gt;800</th></tr></thead>
-            <tbody><tr><th scope="row">&lt;750</th><td>0 ms</td><td>0 ms</td></tr><tr><th scope="row">≥750</th><td class="highlight">+155 ms</td><td>0 ms</td></tr></tbody>
-          </table>
-          <p>Rates and capacity are in jobs per second. Compare the rows within each column. Raising arrivals adds 155 ms at low capacity and 0 ms at high capacity.</p>
-        </figure>
-      </div>
-      <div class="instructions">
-        <h2>Does the queue change which inputs matter?</h2>
-      </div>
-      <div class="experiment">
-        <form id="assumptions-form" class="controls">
-          <h2>Queue model</h2>
-          <p>Start with the baseline. The page uses 8,192 pairs from seed 42 for both scenarios if the sample size stays fixed.</p>
-          <fieldset>
-            <legend>Scenario</legend>
-            <label class="choice"><input type="radio" name="scenario" value="baseline" checked><span><strong>Baseline</strong><small>Extra queue delay off</small></span></label>
-            <label class="choice"><input type="radio" name="scenario" value="queue"><span><strong>Queue saturation</strong><small>Extra queue delay on</small></span></label>
-          </fieldset>
-          <button class="button dark" disabled>Run sensitivity analysis</button>
-          <p class="status" role="status"></p>
-          <details class="settings">
-            <summary>Sample size</summary>
-            <label for="sobol-count">Sample pairs</label>
-            <select id="sobol-count" name="count"><option>2048</option><option selected>8192</option><option>32768</option></select>
-            <p class="tip">Use the same number of sample pairs in both runs so the scenarios reuse the draws.</p>
-          </details>
-        </form>
-        <div class="results" id="assumptions-results">
-          <h2>Sobol indices and latency</h2>
-          <p>In the baseline, compare the first- and total-order bars for cache hit rate. How large is the gap?</p>
-          <div class="output"></div>
+      <div class="lesson-section">
+        <div class="teaching">
+          <div>
+            <h2>Find when the queue penalty applies</h2>
+            <p>Arrival rate is how many jobs arrive per second. Worker capacity is how many jobs the pipeline can process per second.</p>
+            <p>The queue rule adds a 155 ms delay at 750 arrivals per second or more and 800 jobs per second of capacity or less. Arrivals and capacity <strong>interact</strong> because the effect of one depends on the other.</p>
+            <h2>Compare individual and total effects</h2>
+            <p><strong>Variance</strong> measures spread around the average and gives extra weight to large deviations. A <strong>first-order Sobol index</strong> estimates the share of variance explained by an input on its own.</p>
+            <p>The <strong>total-order index</strong> also includes every interaction involving that input. A score of 0.70 represents roughly 70% of the modelled variance under the chosen ranges.</p>
+          </div>
+          <figure class="worked">
+            <figcaption>Example of the queue rule</figcaption>
+            <table>
+              <thead><tr><th scope="col">Arrival rate</th><th scope="col">Capacity ≤800</th><th scope="col">Capacity &gt;800</th></tr></thead>
+              <tbody><tr><th scope="row">&lt;750</th><td>0 ms</td><td>0 ms</td></tr><tr><th scope="row">≥750</th><td class="highlight">+155 ms</td><td>0 ms</td></tr></tbody>
+            </table>
+            <p>Rates and capacity are in jobs per second. Compare the rows within each column. Raising arrivals adds 155 ms at low capacity and 0 ms at high capacity.</p>
+          </figure>
         </div>
       </div>
-      <section class="instructions">
-        <h3>Turn on the queue penalty</h3>
-        <ol>
-          <li>Select <strong>Queue saturation</strong> and rerun at the same sample size. Compare the first- and total-order gaps for <strong>Arrival rate</strong> and <strong>Worker capacity</strong> with the baseline gap for cache hit rate. Does <strong>Spearman rank</strong> also place both near the top?</li>
-          <li>In <strong>Latency across scenarios</strong>, compare p95, the time by which at least 95% of sampled jobs finish. How does <strong>Jobs with extra delay</strong> help explain the change?</li>
-        </ol>
+      <section class="lesson-section lesson-experiment" aria-labelledby="experiment-title">
+        <div class="instructions">
+          <h2 id="experiment-title">Does the queue change which inputs matter?</h2>
+        </div>
+        <div class="experiment lesson-workspace">
+          <form id="assumptions-form" class="controls">
+            <h2>Queue model</h2>
+            <p>Start with the baseline. The page uses 8,192 pairs from seed 42 for both scenarios if the sample size stays fixed.</p>
+            <fieldset>
+              <legend>Scenario</legend>
+              <label class="choice"><input type="radio" name="scenario" value="baseline" checked><span><strong>Baseline</strong><small>Extra queue delay off</small></span></label>
+              <label class="choice"><input type="radio" name="scenario" value="queue"><span><strong>Queue saturation</strong><small>Extra queue delay on</small></span></label>
+            </fieldset>
+            <button class="button dark" disabled>Run sensitivity analysis</button>
+            <p class="status" role="status"></p>
+            <details class="settings">
+              <summary>Sample size</summary>
+              <label for="sobol-count">Sample pairs</label>
+              <select id="sobol-count" name="count"><option>2048</option><option selected>8192</option><option>32768</option></select>
+              <p class="tip">Use the same number of sample pairs in both runs so the scenarios reuse the draws.</p>
+            </details>
+          </form>
+          <div class="results" id="assumptions-results">
+            <h2>Sobol indices and latency</h2>
+            <p>In the baseline, compare the first- and total-order bars for cache hit rate. How large is the gap?</p>
+            <div class="output"></div>
+          </div>
+        </div>
+        <section class="instructions investigation-next">
+          <h3>Turn on the queue penalty</h3>
+          <ol>
+            <li>Select <strong>Queue saturation</strong> and rerun at the same sample size. Compare the first- and total-order gaps for <strong>Arrival rate</strong> and <strong>Worker capacity</strong> with the baseline gap for cache hit rate. Does <strong>Spearman rank</strong> also place both near the top?</li>
+            <li>In <strong>Latency across scenarios</strong>, compare p95, the time by which at least 95% of sampled jobs finish. How does <strong>Jobs with extra delay</strong> help explain the change?</li>
+          </ol>
+        </section>
       </section>
-      <section class="interpretation" aria-labelledby="sobol-read">
-        <h2 id="sobol-read">Read the result</h2>
-        <p>When the total-order bar is much longer than the first-order bar, the input’s interactions account for much of its contribution. The Sobol bars describe variance across all jobs. Read p95 for a separate view of the slowest jobs.</p>
-        <details class="reference"><summary>Reveal the leading inputs and p95 for both scenarios</summary><p>With the penalty off, cache hit rate leads. With the penalty on, arrival rate and worker capacity lead by total order. The penalty affects about six in 100 jobs, enough to move p95 from about 124 to 239 ms.</p></details>
-      </section>
+      <div class="lesson-section">
+        <section class="interpretation" aria-labelledby="sobol-read">
+          <h2 id="sobol-read">Read the result</h2>
+          <p>When the total-order bar is much longer than the first-order bar, the input’s interactions account for much of its contribution. The Sobol bars describe variance across all jobs. Read p95 for a separate view of the slowest jobs.</p>
+          <details class="reference"><summary>Reveal the leading inputs and p95 for both scenarios</summary><p>With the penalty off, cache hit rate leads. With the penalty on, arrival rate and worker capacity lead by total order. The penalty affects about six in 100 jobs, enough to move p95 from about 124 to 239 ms.</p></details>
+        </section>
+      </div>
       <form class="knowledge-check">
         <h2>Check your reasoning</h2>
         <fieldset>

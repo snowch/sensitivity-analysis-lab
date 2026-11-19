@@ -49,84 +49,92 @@
         <h1 id="practice-title">Stay within a household electricity budget</h1>
         <p>A household wants to stay at or below $200 in at least 95% of months. It can test one change. Run the analyses and use the results to recommend which change to try first.</p>
       </header>
-      <div class="teaching">
-        <h2>How the bills are calculated</h2>
-        <p>The model multiplies electricity use, measured in kilowatt-hours (kWh), by the price per kWh and adds $12.</p>
-        <ul>
-          <li>Each dryer cycle uses 3 kWh.</li>
-          <li>Heating uses 18 kWh per cold day times a heat-loss factor. A factor of 1.2 raises heating use by 20%.</li>
-          <li>The model also includes other household electricity use.</li>
-        </ul>
-        <h2>Where the data come from</h2>
-        <p>The page prepares 8,192 simulated months and samples each bill-model input independently. A month can have 0–22 cold days in <strong>Usual conditions</strong> or 12–26 in <strong>Colder season</strong>. Both scenarios use the same ranges for the other inputs.</p>
-        <p>The predictor uses a separate set of 3,000 synthetic records from usual conditions. The records contain noisy bills and two measures of cold weather, <strong>Outdoor-sensor cold days</strong> and <strong>Thermostat-request days</strong>.</p>
-      </div>
-      <div class="instructions">
-        <h2>Gather evidence for a recommendation</h2>
-        <p>For the first run, choose <strong>Spearman rank screen</strong> and <strong>Usual conditions</strong>.</p>
-      </div>
-      <div class="experiment">
-        <form id="practice-form" class="controls">
-          <h2>Choose an analysis</h2>
-          <label for="method">Method</label>
-          <select id="method" name="method" required>
-            <option value="" selected disabled>Select a method</option>
-            <option value="rank">Spearman rank screen</option>
-            <option value="sobol">First- and total-order Sobol</option>
-            <option value="logs">Permutation importance</option>
-            <option value="change">Compare interventions</option>
-          </select>
-          <div id="practice-scenario" class="practice-setting" hidden>
-            <label for="season">Model scenario</label>
-            <select id="season" name="season"><option value="usual">Usual conditions</option><option value="colder">Colder season</option></select>
-          </div>
-          <div id="practice-group" class="practice-setting" hidden>
-            <label for="grouping">Shuffle</label>
-            <select id="grouping" name="grouping"><option value="individual">One feature at a time</option><option value="grouped">Cold-weather signals together</option></select>
-          </div>
-          <div id="practice-change" class="practice-setting" hidden>
-            <label for="change">Intervention</label>
-            <select id="change" name="change">
-              <option value="drafts">Reduce heat loss by 30%</option>
-              <option value="dryer">Halve dryer cycles</option>
-              <option value="timers">Cut other use by 25 kWh</option>
-            </select>
-          </div>
-          <button class="button dark" disabled>Run analysis</button>
-          <p class="status" role="status"></p>
-        </form>
-        <div id="practice-results" class="results">
-          <h2>Evidence for your decision</h2>
-          <p>A comparison table appears after two runs in the same method with different scenarios, shuffles or interventions.</p>
-          <div class="output"></div>
+      <div class="lesson-section">
+        <div class="teaching">
+          <h2>How the bills are calculated</h2>
+          <p>The model multiplies electricity use, measured in kilowatt-hours (kWh), by the price per kWh and adds $12.</p>
+          <ul>
+            <li>Each dryer cycle uses 3 kWh.</li>
+            <li>Heating uses 18 kWh per cold day times a heat-loss factor. A factor of 1.2 raises heating use by 20%.</li>
+            <li>The model also includes other household electricity use.</li>
+          </ul>
+          <h2>Where the data come from</h2>
+          <p>The page prepares 8,192 simulated months and samples each bill-model input independently. A month can have 0–22 cold days in <strong>Usual conditions</strong> or 12–26 in <strong>Colder season</strong>. Both scenarios use the same ranges for the other inputs.</p>
+          <p>The predictor uses a separate set of 3,000 synthetic records from usual conditions. The records contain noisy bills and two measures of cold weather, <strong>Outdoor-sensor cold days</strong> and <strong>Thermostat-request days</strong>.</p>
         </div>
       </div>
-      <section class="instructions">
-        <h3>After the first run</h3>
-        <ol>
-          <li><strong>Compare seasons.</strong> Keep the rank screen selected. Change <strong>Model scenario</strong> to <strong>Colder season</strong> and run again. Read <strong>Top input across scenarios</strong>.</li>
-          <li><strong>Check for interactions.</strong> Keep <strong>Colder season</strong> selected. Switch <strong>Method</strong> to <strong>First- and total-order Sobol</strong> and run again. Which input has the largest gap between <strong>First-order</strong> and <strong>Total-order</strong>?</li>
-          <li><strong>Check the predictor against the baseline.</strong> Set <strong>Method</strong> to <strong>Permutation importance</strong> and <strong>Shuffle</strong> to <strong>One feature at a time</strong>. Run the analysis. Compare <strong>Forest test MAE</strong> with <strong>Median-only test MAE</strong>.</li>
-          <li><strong>Test the shared weather signal.</strong> Set <strong>Shuffle</strong> to <strong>Cold-weather signals together</strong> and run again. In <strong>Weather signal comparison</strong>, which shuffle gives the largest <strong>Increase in test MAE ($)</strong>?</li>
-          <li><strong>Test two ways to lower the bill.</strong> Set <strong>Method</strong> to <strong>Compare interventions</strong>. Run <strong>Reduce heat loss by 30%</strong> and <strong>Halve dryer cycles</strong> in each <strong>Model scenario</strong>. In <strong>Options across runs</strong>, check which values in <strong>Option over $200</strong> are 5% or less.</li>
-        </ol>
+      <section class="lesson-section lesson-experiment" aria-labelledby="experiment-title">
+        <div class="instructions">
+          <h2 id="experiment-title">Gather evidence for a recommendation</h2>
+          <p>For the first run, choose <strong>Spearman rank screen</strong> and <strong>Usual conditions</strong>.</p>
+        </div>
+        <div class="experiment lesson-workspace">
+          <form id="practice-form" class="controls">
+            <h2>Choose an analysis</h2>
+            <label for="method">Method</label>
+            <select id="method" name="method" required>
+              <option value="" selected disabled>Select a method</option>
+              <option value="rank">Spearman rank screen</option>
+              <option value="sobol">First- and total-order Sobol</option>
+              <option value="logs">Permutation importance</option>
+              <option value="change">Compare interventions</option>
+            </select>
+            <div id="practice-scenario" class="practice-setting" hidden>
+              <label for="season">Model scenario</label>
+              <select id="season" name="season"><option value="usual">Usual conditions</option><option value="colder">Colder season</option></select>
+            </div>
+            <div id="practice-group" class="practice-setting" hidden>
+              <label for="grouping">Shuffle</label>
+              <select id="grouping" name="grouping"><option value="individual">One feature at a time</option><option value="grouped">Cold-weather signals together</option></select>
+            </div>
+            <div id="practice-change" class="practice-setting" hidden>
+              <label for="change">Intervention</label>
+              <select id="change" name="change">
+                <option value="drafts">Reduce heat loss by 30%</option>
+                <option value="dryer">Halve dryer cycles</option>
+                <option value="timers">Cut other use by 25 kWh</option>
+              </select>
+            </div>
+            <button class="button dark" disabled>Run analysis</button>
+            <p class="status" role="status"></p>
+          </form>
+          <div id="practice-results" class="results">
+            <h2>Evidence for your decision</h2>
+            <p>A comparison table appears after two runs in the same method with different scenarios, shuffles or interventions.</p>
+            <div class="output"></div>
+          </div>
+        </div>
+        <section class="instructions investigation-next">
+          <h3>After the first run</h3>
+          <ol>
+            <li><strong>Compare seasons.</strong> Keep the rank screen selected. Change <strong>Model scenario</strong> to <strong>Colder season</strong> and run again. Read <strong>Top input across scenarios</strong>.</li>
+            <li><strong>Check for interactions.</strong> Keep <strong>Colder season</strong> selected. Switch <strong>Method</strong> to <strong>First- and total-order Sobol</strong> and run again. Which input has the largest gap between <strong>First-order</strong> and <strong>Total-order</strong>?</li>
+            <li><strong>Check the predictor against the baseline.</strong> Set <strong>Method</strong> to <strong>Permutation importance</strong> and <strong>Shuffle</strong> to <strong>One feature at a time</strong>. Run the analysis. Compare <strong>Forest test MAE</strong> with <strong>Median-only test MAE</strong>.</li>
+            <li><strong>Test the shared weather signal.</strong> Set <strong>Shuffle</strong> to <strong>Cold-weather signals together</strong> and run again. In <strong>Weather signal comparison</strong>, which shuffle gives the largest <strong>Increase in test MAE ($)</strong>?</li>
+            <li><strong>Test two ways to lower the bill.</strong> Set <strong>Method</strong> to <strong>Compare interventions</strong>. Run <strong>Reduce heat loss by 30%</strong> and <strong>Halve dryer cycles</strong> in each <strong>Model scenario</strong>. In <strong>Options across runs</strong>, check which values in <strong>Option over $200</strong> are 5% or less.</li>
+          </ol>
+        </section>
       </section>
-      <section id="decision" class="practice-note" aria-labelledby="note-heading">
-        <h2 id="note-heading">Make your case</h2>
-        <p>In <strong>Investigation note</strong>, write what you would try first, what you would hold steady, and what outcome would change your mind. Cite at least one number from each type of analysis you used. Select <strong>Download note</strong> to keep a copy.</p>
-        <label for="energy-brief">Investigation note</label>
-        <textarea id="energy-brief" rows="7" placeholder="My recommendation and what I would measure…"></textarea>
-        <div class="note-actions"><small id="note-status" role="status">Notes stay in this browser when storage is available.</small><button id="download-note" type="button" disabled class="button outline-button">Download note</button></div>
-        <p><a href="pipeline-notes.html">Open your earlier pipeline note</a></p>
-      </section>
-      <section class="interpretation" aria-labelledby="rubric-title">
-        <h2 id="rubric-title">Check your recommendation</h2>
-        <ol>
-          <li><strong>Model.</strong> Name the leading input under each range and explain why the ranking moved. Give a plausible interaction in the bill formula. State where real ranges could come from and what dependence would invalidate the independent-input analysis.</li>
-          <li><strong>Logs.</strong> Compare the model’s test error with the simple baseline. Compare individual and grouped shuffles. Explain what these scores measure and what evidence you’d need to estimate the effect of an intervention.</li>
-          <li><strong>Decision.</strong> Give the percentage of months over $200 for at least two alternatives and state which meet the target under each scenario. Propose a fair test, specify what changes and what you’d hold steady, and account for upfront costs before a real purchase.</li>
-        </ol>
-      </section>
+      <div class="lesson-section">
+        <section id="decision" class="practice-note" aria-labelledby="note-heading">
+          <h2 id="note-heading">Make your case</h2>
+          <p>In <strong>Investigation note</strong>, write what you would try first, what you would hold steady, and what outcome would change your mind. Cite at least one number from each type of analysis you used. Select <strong>Download note</strong> to keep a copy.</p>
+          <label for="energy-brief">Investigation note</label>
+          <textarea id="energy-brief" rows="7" placeholder="My recommendation and what I would measure…"></textarea>
+          <div class="note-actions"><small id="note-status" role="status">Notes stay in this browser when storage is available.</small><button id="download-note" type="button" disabled class="button outline-button">Download note</button></div>
+          <p><a href="pipeline-notes.html">Open your earlier pipeline note</a></p>
+        </section>
+      </div>
+      <div class="lesson-section">
+        <section class="interpretation" aria-labelledby="rubric-title">
+          <h2 id="rubric-title">Check your recommendation</h2>
+          <ol>
+            <li><strong>Model.</strong> Name the leading input under each range and explain why the ranking moved. Give a plausible interaction in the bill formula. State where real ranges could come from and what dependence would invalidate the independent-input analysis.</li>
+            <li><strong>Logs.</strong> Compare the model’s test error with the simple baseline. Compare individual and grouped shuffles. Explain what these scores measure and what evidence you’d need to estimate the effect of an intervention.</li>
+            <li><strong>Decision.</strong> Give the percentage of months over $200 for at least two alternatives and state which meet the target under each scenario. Propose a fair test, specify what changes and what you’d hold steady, and account for upfront costs before a real purchase.</li>
+          </ol>
+        </section>
+      </div>
       <details class="method-note reading">
         <summary>Reveal a worked household recommendation</summary>
         <h3>Which inputs matter?</h3>

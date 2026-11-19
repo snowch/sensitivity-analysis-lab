@@ -7,6 +7,7 @@ export const count = (label, value, choices) => select("count", label, value, ch
 
 export const foundations = {
   questions: {
+    experimentTitle: "Compare the two services",
     goal: "Choose a measure that helps you decide which route to take.",
     concept: `<h2>What matters about the journey?</h2>
     <p>Suppose you must choose a route to class. Average journey time might matter on a free afternoon. If class starts at 9 am, you might care more about the chance of arriving late.</p>
@@ -37,6 +38,7 @@ export const foundations = {
     answer: "Both original means are 20 minutes. One of five variable trips exceeds 25 minutes (20%). All five steady trips meet the deadline. Under the edited settings both risks are zero in this small model, even though the spreads differ. A real decision would also check how well the five outcomes represent the journeys you care about.",
   },
   local: {
+    experimentTitle: "Change the trip distance",
     goal: "Change one input, calculate the effect, and attach the right units.",
     concept: `<h2>Measure the change from a starting point</h2>
     <p>A taxi fare has a fixed charge and a distance charge. In this example, distance changes while both prices stay fixed. The starting distance is the <strong>reference point</strong>.</p>
@@ -60,6 +62,7 @@ export const foundations = {
     answer: "The same $2 is divided by 1,000 metres instead of 1 km. At 8 km the reference fare is $20, so a $2 increase is 10% while a 1 km increase is 12.5%; elasticity is 0.8. The fixed $4 is a smaller share of the longer trip’s fare. Report the units when you use a slope to compare changes.",
   },
   curves: {
+    experimentTitle: "Measure the slope over a step",
     goal: "See how the same input can have a different effect at a new baseline or step.",
     concept: `<h2>Read the slope between two points</h2>
     <p>A response curve shows what the model predicts as one input varies. The straight line joining two points is a <strong>secant</strong>. Its slope is the change in output divided by the change in input.</p>
@@ -81,6 +84,7 @@ export const foundations = {
     answer: "Across the jump, the output rises from 4.9 to 10, so the finite slope is 51. Just after the jump a 0.1 step gives slope 1. The valley slopes have opposite signs, and the saturation slope shrinks as the input rises. The appropriate baseline and step depend on the changes you could actually make.",
   },
   tornado: {
+    experimentTitle: "Find the widest span",
     goal: "Use one-at-a-time changes to compare selected ranges around a reference.",
     concept: `<h2>Compare endpoints and the path between them</h2>
     <p>A <strong>tornado plot</strong> shows the outcomes at each input’s low and high settings. Change one input at a time with all other inputs at their starting values. The widest gap between endpoints appears first.</p>
@@ -102,6 +106,7 @@ export const foundations = {
     answer: "At demand 60 with a half-range of 2, demand contributes only a 0.2 min span and the fixed delay leads at 8 min. Changing the demand baseline to 75 brings the system near or above capacity. A joint change to high demand and low capacity could give much worse delays than either one-at-a-time run.",
   },
   inputs: {
+    experimentTitle: "Compare independent and linked draws",
     goal: "Choose which values and pairs of inputs the model should use.",
     concept: `<h2>Choose which values are likely</h2>
     <p>A distribution describes how likely different values are. The three distributions here use the same range but give different parts of it different weight.</p>
@@ -130,6 +135,7 @@ export const foundations = {
     refs: ["saltelli"],
   },
   designs: {
+    experimentTitle: "Compare three sampling designs",
     goal: "Compare sampling designs at the same model-evaluation budget.",
     concept: `<h2>Decide where to place the sample points</h2>
     <p>A sample is a limited set of input combinations. Each design uses its points differently.</p>

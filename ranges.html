@@ -49,40 +49,46 @@
         <h1 id="ranges-title">Change the assumptions</h1>
         <p>Test whether the same input stays important under two plausible sets of conditions.</p>
       </header>
-      <div class="teaching">
-        <div>
-          <h2>Keep the formula and vary the range</h2>
-          <p><strong>Network round-trip time (RTT)</strong> is the time to send a request and receive a response. It is often measured in milliseconds (ms). A millisecond is one thousandth of a second.</p>
-          <p>In this model, each extra millisecond of RTT adds one millisecond to the job’s <strong>latency</strong>, the time it takes to finish.</p>
-          <p>An 8–12 ms range spans 4 ms. A 2–65 ms range spans 63 ms. The formula stays the same across both scenarios.</p>
-          <p>Choose input ranges that describe the situation you care about. A nearby network and a global rollout could produce different spreads. Measuring RTT where you plan to deploy helps you choose a relevant range.</p>
-        </div>
-        <figure class="worked">
-          <figcaption>Example from the daily commute</figcaption>
-          <p>A train runs every 10 minutes at rush hour and every 30 minutes in the evening. If you arrive at a random time, the wait spans 0–10 or 0–30 minutes. The wider evening range gives waiting time more influence over how much journey times vary.</p>
-        </figure>
-      </div>
-      <div class="instructions">
-        <h2>Can a wider range change which input ranks first?</h2>
-        <p>Predict which range will put network RTT closer to the top.</p>
-      </div>
-      <div class="experiment">
-        <form id="ranges-form" class="controls">
-          <h2>Network scenarios</h2>
-          <p>The two prepared RTT ranges are 8–12 ms and 2–65 ms. The page matches 8,192 simulated jobs across scenarios and reuses every other input value for each matched job.</p>
-          <button class="button dark" disabled>Compare ranges</button>
-          <p class="status" role="status"></p>
-        </form>
-        <div class="results" id="ranges-results">
-          <h2>Network RTT across scenarios</h2>
-          <p>Compare the rank and Spearman score for the two ranges. Did network RTT overtake the other inputs?</p>
-          <div class="output"></div>
+      <div class="lesson-section">
+        <div class="teaching">
+          <div>
+            <h2>Keep the formula and vary the range</h2>
+            <p><strong>Network round-trip time (RTT)</strong> is the time to send a request and receive a response. It is often measured in milliseconds (ms). A millisecond is one thousandth of a second.</p>
+            <p>In this model, each extra millisecond of RTT adds one millisecond to the job’s <strong>latency</strong>, the time it takes to finish.</p>
+            <p>An 8–12 ms range spans 4 ms. A 2–65 ms range spans 63 ms. The formula stays the same across both scenarios.</p>
+            <p>Choose input ranges that describe the situation you care about. A nearby network and a global rollout could produce different spreads. Measuring RTT where you plan to deploy helps you choose a relevant range.</p>
+          </div>
+          <figure class="worked">
+            <figcaption>Example from the daily commute</figcaption>
+            <p>A train runs every 10 minutes at rush hour and every 30 minutes in the evening. If you arrive at a random time, the wait spans 0–10 or 0–30 minutes. The wider evening range gives waiting time more influence over how much journey times vary.</p>
+          </figure>
         </div>
       </div>
-      <section class="interpretation" aria-labelledby="ranges-read">
-        <h2 id="ranges-read">Read the result</h2>
-        <p>Each millisecond of RTT contributes the same delay in both models. The wider range gives RTT more room to vary, so its ranking can rise. To estimate a saving, compare the delays before and after a specific change to RTT.</p>
+      <section class="lesson-section lesson-experiment" aria-labelledby="experiment-title">
+        <div class="instructions">
+          <h2 id="experiment-title">Can a wider range change which input ranks first?</h2>
+          <p>Predict which range will put network RTT closer to the top.</p>
+        </div>
+        <div class="experiment lesson-workspace">
+          <form id="ranges-form" class="controls">
+            <h2>Network scenarios</h2>
+            <p>The two prepared RTT ranges are 8–12 ms and 2–65 ms. The page matches 8,192 simulated jobs across scenarios and reuses every other input value for each matched job.</p>
+            <button class="button dark" disabled>Compare ranges</button>
+            <p class="status" role="status"></p>
+          </form>
+          <div class="results" id="ranges-results">
+            <h2>Network RTT across scenarios</h2>
+            <p>Compare the rank and Spearman score for the two ranges. Did network RTT overtake the other inputs?</p>
+            <div class="output"></div>
+          </div>
+        </div>
       </section>
+      <div class="lesson-section">
+        <section class="interpretation" aria-labelledby="ranges-read">
+          <h2 id="ranges-read">Read the result</h2>
+          <p>Each millisecond of RTT contributes the same delay in both models. The wider range gives RTT more room to vary, so its ranking can rise. To estimate a saving, compare the delays before and after a specific change to RTT.</p>
+        </section>
+      </div>
       <form class="knowledge-check">
         <h2>Check your reasoning</h2>
         <fieldset>
