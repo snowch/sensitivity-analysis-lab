@@ -1,4 +1,5 @@
 import { number, select, seed, when } from "./foundations.mjs";
+import { tuningDiagram } from "./concept-diagrams.mjs";
 
 export const extensions = {
   benchmark: {
@@ -32,11 +33,7 @@ export const extensions = {
     <p>Before spending more trials on a setting, compare its effect on validation loss with the spread of losses across training seeds or validation splits. Prioritise settings that can change which configuration you would choose within the time limit.</p>
     <p>Check learning rates at several plausible model sizes. If changing the rate gives little repeatable improvement in validation loss, fix it and use the trials to compare more sizes. Keep varying the rate if it improves loss enough to change your choice at a size you might select. Optimisation searches for the lowest-loss configuration within the budget.</p>
     <h2>Measure performance on fresh examples</h2>
-    <ul>
-      <li><strong>Training set.</strong> Use these examples to fit the model.</li>
-      <li><strong>Validation set.</strong> Compare configurations on examples held back during fitting. <strong>Validation loss</strong> measures prediction error on these examples. Lower is better here.</li>
-      <li><strong>Test set.</strong> Evaluate the chosen configuration on examples held back from both fitting and tuning. If comparing tuning procedures, use the same untouched test examples for both.</li>
-    </ul>
+    ${tuningDiagram}
     <p>A procedure can appear better because it fit quirks in one validation set. When results vary across splits or training seeds, repeat the comparison.</p>`,
     example:`<p>Suppose two trial pairs compare learning rates of 0.001 and 0.01. Hold model size fixed within each pair.</p>
     <ul>

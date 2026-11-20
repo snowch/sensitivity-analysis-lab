@@ -1,4 +1,5 @@
 import { number, select, seed, count } from "./foundations.mjs";
+import { replicateDiagram, forecastDiagram, backlogDiagram } from "./concept-diagrams.mjs";
 
 export const application = {
   reliability: {
@@ -16,7 +17,7 @@ export const application = {
     <p>Repeated shuffles in <a href="logs.html">Work from logs</a> show another source of variation. Each shuffle uses the same test data and fitted model.</p>`,
     example: `<p>Suppose five designs estimate the same pair share as −0.04, −0.01, 0.00, 0.02 and 0.03. Their mean is 0.00.</p>
     <p>A true independent-input pair index is nonnegative. Keep the signed estimates to see how far the calculation can move in either direction. Replacing the two negatives with zero would raise the mean to 0.01.</p>`,
-    setup: "The page repeats 20 independently seeded designs at each of three budgets. Each design estimates a pair index for a known model. The smaller budget is one quarter of the middle budget. The larger budget is four times the middle budget. The plot spaces the three budgets equally.",
+    setup: "The page repeats 20 independently seeded designs at each of three budgets. Each design estimates a pair index for a known model. At the starting settings, the budgets are 64, 256 and 1,024 pairs per design. Changing <strong>Middle budget (pairs per design)</strong> sets the other budgets to one quarter and four times that value. The plot spaces the three budgets equally.",
     fields: [select("model","Reference model","add",[["add","Additive: exact pair index 0"],["product","Product: exact pair index 1/7"]]),count("Middle budget (pairs per design)",256,[64,256,1024]),seed],
     predict: "What should happen to the cloud of estimates as the number of pairs rises?",
     read: "In <strong>Run-to-run spread</strong>, read <strong>Negative estimates (of 20)</strong> for each value of <strong>Pairs per run</strong>. Subtract <strong>10th percentile</strong> from <strong>90th percentile</strong> to compare the width of the middle range. Does it narrow as you use more pairs?",
@@ -30,8 +31,9 @@ export const application = {
     goal: "Separate variability within one input setting from changes in the typical outcome across settings.",
     concept: `<h2>Run the simulator again at the same input</h2>
     <p>A deterministic model always gives the same output at the same inputs. A <strong>stochastic simulator</strong> can give different outputs because it makes its own random draws.</p>
-    <p>A <strong>replicate</strong> is another run at the same input. Average the replicate outputs at one input setting to estimate the mean output at that setting. To estimate the chance of crossing a limit, count the replicates that go over and divide by the total.</p>
+    <p>A <strong>replicate</strong> is another run at the same input. To estimate the chance of crossing a limit, count the replicates that go over and divide by the total.</p>
     <h2>Separate two sources of variation</h2>
+    ${replicateDiagram}
     <p>The <strong>law of total variance</strong> adds the average variance within one input setting to the variance of the true means across settings.</p>
     <p>With a finite number of replicates, the estimated means still contain noise. If replicate noise is independent and has the same variance at each setting, divide the within-input variance by the number of replicates. Subtract that amount from the variance across estimated means. This estimates the input contribution, and a small, noisy sample can make it negative.</p>`,
     example: `<p>The model averages 10X at input X. Draw X uniformly from 0 to 1.</p>
@@ -58,12 +60,7 @@ export const application = {
     <p>The <strong>break-even price</strong> per job is the price at which the paid option and the current setup have the same expected total cost per job. Multiply the reduction in late-job probability by the loss per late job. A negative result means the option raises late risk and would need compensation to tie.</p>
     <h2>Decide whether extra information is worth buying</h2>
     <p><strong>Value of information</strong> measures the gain from using new information to choose an action. For the severe-day forecast, compare the lowest expected daily cost of deciding whether to pay for prevention with and without a forecast. Subtract the cost with the forecast from the cost without it. Under the same costs and options, a perfect signal puts an upper bound on the value of a real measurement of the same uncertainty.</p>`,
-    example: `<p>A severe day costs $60 in losses. A mild day costs $0. You can pay $18 to prevent the loss. One in four days is severe.</p>
-    <ol>
-      <li><strong>Without a forecast.</strong> Waiting costs 0.25 × $60 = $15 on average. This is cheaper than paying $18 every day.</li>
-      <li><strong>With a perfect forecast.</strong> Pay $18 only on severe days. That costs 0.25 × $18 = $4.50 on average.</li>
-      <li><strong>Value of the forecast.</strong> Subtract the two costs. Perfect information saves $15 − $4.50 = $10.50 per day in this example.</li>
-    </ol>`,
+    example: `${forecastDiagram}`,
     setup: "All three options use the same 8,192 jobs. Ordinary delay is uniform from 0 to 10 minutes. An independent failure adds 18 minutes about 2% of the time. The paid options cut ordinary delay by 65% or prevent the failure.",
     fields: [number("threshold","Late-job limit (minutes)",14,3,25),number("premium","Price of either option per job ($)",.12,0,10,.01),number("loss","Loss per late job ($)",15,1,200),select("structure","Model structure","simple",[["simple","Prevention removes jump only"],["spill","Prevention also adds a 6-minute check"]]),number("risk","Chance of a severe day (0–1)",.25,0,1,.05),seed],
     predict: "At the 14-minute limit, which option will reduce the late-job risk? Which looks better by p95?",
@@ -89,12 +86,7 @@ export const application = {
     <p><strong>Full burst share</strong> uses the input burst share directly. <strong>Spread arrival assumption</strong> moves it 35% of the way towards 0.4. Compare both to see whether the staffing decision depends on how concentrated arrivals are.</p>
     <p>The starting ranges are independent and uniform. You can choose a triangular guest count with a peak a quarter of the way across its range. You can also make busier events tend to have a larger burst share by linking the two percentiles on 80% of draws.</p>
     <p>Use evidence for these choices or label them as what-if assumptions. Use classical Sobol indices with independent inputs.</p>`,
-    example: `<p>Suppose 160 guests attend and 75% arrive in the first half hour. That is 160 × 0.75 = 120 arrivals. Each volunteer can serve 30 people in that time.</p>
-    <ul>
-      <li><strong>Two volunteers.</strong> Capacity is 60 people and the backlog is 60. Clearing it takes 60 ÷ 60 × 30 = 30 minutes.</li>
-      <li><strong>Three volunteers.</strong> Capacity is 90 and the backlog is 30. Clearing it takes 30 ÷ 90 × 30 = 10 minutes.</li>
-    </ul>
-    <p>Only the two-person team goes over 10 minutes in this example. Now check the options across a range of plausible events.</p>`,
+    example: `${backlogDiagram}`,
     setup: "The page tests both teams on the same simulated events. The starting case compares two volunteers with three, using a 10-minute wait limit and a $25 extra shift.",
     fields: [
       number("guestsLow","Guests · lower bound",60,5,400),number("guestsHigh","Guests · upper bound",160,10,500),

@@ -1,3 +1,5 @@
+import { journeyDiagram, secantDiagram, percentileDiagram, hypercubeDiagram } from "./concept-diagrams.mjs";
+
 export const number = (id, label, value, min, max, step = 1) => ({ id, label, value, min, max, step });
 export const select = (id, label, value, options, numeric = false) => ({ id, label, value, options, numeric });
 export const when = (field, control, value) => ({ ...field, when: [control, value] });
@@ -11,8 +13,7 @@ export const foundations = {
     goal: "Choose a measure that helps you decide which route to take.",
     concept: `<h2>What matters about the journey?</h2>
     <p>Suppose you’re choosing between two routes to campus. If you want to spend less time travelling over many trips, choose the route with the shorter average journey time. If you leave at 8:35 for a 9 am class and want to avoid being late, choose the route with the lower chance of taking longer than 25 minutes.</p>
-    <p>A <strong>model</strong> uses inputs to calculate an outcome. Route and departure time are choices. Weather and traffic are conditions you face. A <strong>parameter</strong>, such as how many minutes the model adds per kilometre, sets how its calculation works.</p>
-    <p>The model’s <strong>output</strong> for one trip is its journey time. When the possible journey times are equally likely, calculate each route’s chance of arriving late by dividing the number of journeys over 25 minutes by the total number of journeys for that route.</p>
+    ${journeyDiagram}
     <p>Before changing a model input, choose what you’ll compare across routes, such as average journey time or the chance of arriving late. <strong>Sensitivity analysis</strong> asks how much that measure changes when you change an input or assumption.</p>`,
     example: `<p>Suppose two equally likely trips take 10 and 30 minutes. Compare four ways to describe those times.</p>
     <ul>
@@ -62,12 +63,7 @@ export const foundations = {
     <p>On a smooth curve, a smaller step brings that line closer to the <strong>tangent</strong>, which points in the curve’s direction at the start of the step. The slope at that point is called a <strong>derivative</strong>.</p>
     <h2>Look beyond one slope</h2>
     <p>A response can level off, jump at a threshold or turn around. A slope measured over one step may miss these changes. A secant across a jump includes the whole jump. At the jump itself, there is no finite derivative.</p>`,
-    example: `<p>Square the input to get the output. Start at input 2, where the output is 4.</p>
-    <ul>
-      <li><strong>Step of 1.</strong> At input 3 the output is 9. The slope is (9 − 4) ÷ 1 = 5.</li>
-      <li><strong>Step of 0.1.</strong> At input 2.1 the output is 4.41. The slope is (4.41 − 4) ÷ 0.1 = 4.1.</li>
-    </ul>
-    <p>The smaller step gives a slope closer to the tangent slope of 4 at input 2.</p>`,
+    example: `${secantDiagram}`,
     setup: "The starting settings use the square response at input 2 with a step of 1. The plot draws a secant between the start and end points.",
     fields: [select("shape","Response shape","curve",[["curve","Square: x²"],["saturation","Saturation: 10x ÷ (2+x)"],["threshold","Jump: add 5 at x=5"],["valley","Valley: (x−5)²"]]),number("baseline","Start input",2,0,8,.1),number("step","Step",1,.1,2,.1)],
     predict: "For the square response, will shrinking the step make the reported slope smaller or larger?",
@@ -113,11 +109,7 @@ export const foundations = {
     <p>Inputs are <strong>independent</strong> if knowing one leaves the other’s distribution unchanged. <strong>Correlation</strong> describes one kind of association.</p>
     <p>A percentile marks how much of a distribution falls at or below a value. The 50th percentile has half the distribution at or below it. The linked design gives capacity the same percentile as demand 80% of the time. Each input keeps its own distribution while different pairs appear.</p>
     <p>For a real service, check the rule with paired measurements. For example, does capacity rise immediately with demand or respond after a delay?</p>`,
-    example: `<p>Demand and capacity are each uniform from 40 to 100 jobs/hour. What’s the chance demand is above 80 while capacity is below 60?</p>
-    <ul>
-      <li><strong>Independent draws.</strong> Each condition occurs in one third of its range. Both happen with probability (1/3) × (1/3) = 1/9.</li>
-      <li><strong>Linked draws.</strong> The two conditions cannot happen at the same percentile. Only the 20% of pairs drawn independently can meet both, so the chance is 0.2 × (1/9) ≈ 2.2%.</li>
-    </ul>`,
+    example: `${percentileDiagram}`,
     setup: "The page draws 3,000 demand and capacity pairs between 40 and 100 jobs/hour. Capacity stays uniform. The scatterplot shows the first 200 pairs and highlights demand above 80 with capacity below 60.",
     fields: [select("shape","Demand distribution","uniform",[["uniform","Uniform"],["triangle","Triangular, peak at 55"],["right","Weighted toward high demand"]]),select("dependence","How capacity follows demand","independent",[["independent","Independent percentiles"],["linked","Share demand percentile 80% of the time"]]),seed],
     predict: "Will linking the percentiles change mean demand, the share of high-demand and low-capacity pairs, or both?",
@@ -134,9 +126,10 @@ export const foundations = {
     <p>A sample is a limited set of input combinations. Each design uses its points differently.</p>
     <ul>
       <li><strong>Independent random sampling.</strong> Draw each point separately. Some areas can cluster by chance.</li>
-      <li><strong>Latin hypercube.</strong> Divide each axis into equal-probability bins. Draw one value per bin and pair values across axes in a shuffled order. This spreads each axis out, though the combinations can still leave gaps.</li>
+      <li><strong>Latin hypercube.</strong> Divide each axis into equal-probability bins, draw once from each bin and pair the values in a shuffled order.</li>
       <li><strong>Low-discrepancy design.</strong> Use a pattern that aims to cover combinations evenly. This lesson uses a Halton sequence, then shifts each axis by a random amount and wraps values at 1.</li>
     </ul>
+    ${hypercubeDiagram}
     <p>A <strong>seed</strong> reproduces the same random draws, shuffles or shifts when the other settings stay fixed. Compare larger designs and several seeds to check whether a conclusion is stable.</p>
     <details><summary>How Halton places points</summary><p>On the first axis, write the indices 1, 2 and 3 in binary as 1, 10 and 11. Reverse the digits and put them after the binary point. The positions are 0.1, 0.01 and 0.11 in binary, or 1/2, 1/4 and 3/4. The other axis does the same in base 3.</p></details>`,
     example: `<p>Draw X and Z independently and uniformly from 0 to 1. Each has mean 0.5, so the exact mean of X × Z is 0.5 × 0.5 = 0.25.</p>

@@ -56,16 +56,9 @@
             <p>On the first run, the page generates 10,000 synthetic pipeline records. It trains a <strong>random forest</strong> on 8,000 rows and tests it on the other 2,000. New shuffles during this visit reuse the fitted forest and test rows.</p>
             <p>A forest averages predictions from decision trees, which split data into groups. The <strong>mean absolute error (MAE)</strong> averages the size of each prediction error in milliseconds. An error of 5 ms counts the same whether the prediction is too high or too low.</p>
             <h2>Shuffle one signal and measure the error again</h2>
-            <p><strong>Permutation importance</strong> shuffles the values in a test column and predicts again with the same model. Recorded latencies and the other columns stay in place. An increase in MAE shows how much accuracy the model loses when the shuffled values stop matching their jobs.</p>
+            <p><strong>Permutation importance</strong> shuffles the values in a test column and predicts again with the same model. Compare MAE before and after the shuffle to measure how much accuracy the predictor loses.</p>
           </div>
-          <figure class="worked">
-            <figcaption>Example of a two-row shuffle</figcaption>
-            <table>
-              <thead><tr><th scope="col">Actual latency</th><th scope="col">Original prediction</th><th scope="col">After swap</th></tr></thead>
-              <tbody><tr><td>100 ms</td><td>105 ms</td><td>155 ms</td></tr><tr><td>160 ms</td><td>155 ms</td><td>105 ms</td></tr></tbody>
-            </table>
-            <p>The table shows what happens when the two jobs trade payload sizes. This predictor uses only payload size, so the predictions swap places and the recorded latencies stay the same. Each absolute error grows from 5 to 55 ms. The average also rises by 55 − 5 = 50 ms.</p>
-          </figure>
+          <!-- payload-shuffle-diagram -->
         </div>
       </div>
       <section class="lesson-section lesson-experiment" aria-labelledby="experiment-title">

@@ -9,6 +9,7 @@ import { extensions } from "../course/extensions.mjs";
 import { sources, sourceGroups, sourceLink } from "../course/references.mjs";
 import { reportGuide, reportTemplate } from "../course/report.mjs";
 import { methodMap } from "../course/method-map.mjs";
+import { shuffleDiagram } from "../course/concept-diagrams.mjs";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const target = resolve(root, process.argv[2] ?? "_site");
@@ -19,6 +20,7 @@ const home = await readFile(join(root,"index.html"),"utf8");
 const pageStart = home.slice(0,home.indexOf('<main id="main"')).trimEnd();
 const footer = home.slice(home.indexOf('<footer class="shell"'));
 const pageName = id => id + ".html";
+const conceptStyles = '  <link rel="stylesheet" href="assets/concept-diagrams.css?v=1">';
 
 function sidebar(current) {
   function entry([id,title]) {
@@ -49,9 +51,13 @@ function stepNav(id) {
 }
 
 function frame(id,title,body,interactive=false) {
+  const assets = [];
+  if (body.includes('class="concept-figure"')) assets.push(conceptStyles);
+  if (id === "curves") assets.push('  <script type="module" src="assets/concept-curve.mjs?v=1"></script>');
+  if (interactive) assets.push('  <script type="module" src="assets/investigation.mjs?v=6"></script>');
   const head=pageStart
     .replace(/<title>.*?<\/title>/,`<title>${html(title)} · Sensitivity Analysis Lab</title>`)
-    .replace("</head>",interactive ? '  <script type="module" src="assets/investigation.mjs?v=6"></script>\n</head>' : "</head>");
+    .replace("</head>", [...assets, "</head>"].join("\n"));
   return `${head}
   <div class="course-layout">
     ${sidebar(id)}
@@ -170,6 +176,10 @@ for (const file of existing) {
   const id=file.slice(0,-5);
   let page=(await readFile(join(root,file),"utf8")).replace(/lab\.css\?v=\d+/,"lab.css?v=9").replace("lab.mjs?v=2","lab.mjs?v=4");
   page=page.replace("</head>", '  <script type="module" src="assets/scroll-tables.mjs?v=2"></script>\n</head>');
+  if (id === "logs") {
+    page = page.replace("<!-- payload-shuffle-diagram -->", shuffleDiagram);
+    page = page.replace("</head>", `${conceptStyles}\n</head>`);
+  }
   page=page.replace(/<aside class="course-sidebar">[\s\S]*?<\/aside>/,sidebar(id));
   const index=route.findIndex(row=>row[0]===id);
   if(index>=0) {

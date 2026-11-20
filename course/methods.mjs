@@ -1,4 +1,5 @@
 import { number, select, seed, count, when } from "./foundations.mjs";
+import { trajectoryDiagram, conditionalMeansDiagram, swapDiagram, shapleyDiagram } from "./concept-diagrams.mjs";
 
 export const methods = {
   patterns: {
@@ -38,7 +39,8 @@ export const methods = {
       <li><strong>Mean absolute effect μ*.</strong> Average the sizes of the slopes. The units are output points per scaled input unit.</li>
       <li><strong>Effect standard deviation σ.</strong> Measure how much the slopes vary across paths. A large σ can come from curvature, interaction or both. If you are following up on an input with large μ*, a large σ is a reason to plot the response at several fixed values of another input. Check whether the curve bends or its slope changes as the other input varies.</li>
     </ul>`,
-    example: `<p>In Y = 3X + Z + 0.5W, hold Z and W at 0. Move X from 0 to 2/3, so Y goes from 0 to 2. The effect is 2 ÷ (2/3) = 3. Every X step gives 3, so μ* = 3 and σ = 0.</p>
+    example: `${trajectoryDiagram}
+    <p>In this additive model, every X step gives an elementary effect of 3, so μ* = 3 and σ = 0.</p>
     <p>Now use Y = 3X² + Z + 0.5W. Moving X from 0 to 2/3 gives a slope of 2. Moving from 1/3 to 1 gives a slope of 4. The X effect varies even in this formula without interactions.</p>`,
     setup: "The page uses four levels (0, 1/3, 2/3, 1), a step of 2/3, and random step directions and input order. Each path is sampled separately.",
     fields: [select("model","Response","add",[["add","Additive: 3X + Z + 0.5W"],["curved","Curved: 3X² + Z + 0.5W"],["product","Interacting: 3XZ + Z + 0.5W"]]),count("Trajectories",12,[4,12,32,128]),seed],
@@ -88,11 +90,9 @@ export const methods = {
     </ul>
     <p>With more inputs, interactions can involve three or more. The gap between total and first order gives an input’s combined interaction share. Inspect its second-order indices to see which pairs contribute. Any share left over comes from interactions involving that input and at least two others.</p>`,
     example: `<p>Two independent switches X and Z each turn on half the time. The four switch combinations are equally likely. Their outputs Y = X × Z are 0, 0, 0 and 1.</p>
-    <ol>
-      <li><strong>Find total variance.</strong> The mean is 1/4. The variance is [3 × (1/4)² + (3/4)²] ÷ 4 = 3/16.</li>
-      <li><strong>Group by X.</strong> The mean is 0 when X is off and 1/2 when it is on. The variance of those means is [(0 − 1/4)² + (1/2 − 1/4)²] ÷ 2 = 1/16.</li>
-      <li><strong>Find the shares.</strong> X explains (1/16) ÷ (3/16) = 1/3 on its own. Z also explains 1/3. The pair gets the remaining 1/3, so either input’s total share is 2/3.</li>
-    </ol>`,
+    ${conditionalMeansDiagram}
+    <p>The total variance is [3 × (1/4)² + (3/4)²] ÷ 4 = 3/16. For the two conditional means, [(0 − 1/4)² + (1/2 − 1/4)²] ÷ 2 = 1/16.</p>
+    <p>Z also explains 1/3 on its own. The pair gets the remaining 1/3, so either input’s total share is 2/3.</p>`,
     setup: "The page calculates all four switch combinations directly. Each row has a probability of one quarter.",
     fields: [select("rule","Output rule","both",[["both","1 only when both switches are on"],["sum","Count the switches that are on"]])],
     predict: "If the output counts switches, what remains for a pair interaction?",
@@ -106,13 +106,8 @@ export const methods = {
     experimentTitle: "Compare estimated and exact shares",
     goal: "Estimate first, second and total orders for continuous inputs, then change the output to study a rare event.",
     concept: `<h2>Estimate the shares by swapping inputs</h2>
-    <p>For each sample pair, the page draws two independent input settings and evaluates the model at both. It also evaluates two mixed settings, one with X from the first draw and Z from the second, and one with those sources reversed.</p>
-    <ul>
-      <li><strong>Total order.</strong> Large output changes when you swap X suggest that X has a large total effect.</li>
-      <li><strong>First order.</strong> Compare outputs that share the same X to estimate what X explains on its own.</li>
-      <li><strong>Pair share.</strong> Estimate how much variance comes from X and Z acting together.</li>
-    </ul>
-    <p>Swapping requires independent inputs so the mixed settings come from the intended distribution. Finite samples can give estimates that differ from the exact shares, including small negative estimates. The table shows their signs.</p>
+    ${swapDiagram}
+    <p>The pair share estimates the variance that comes from X and Z acting together. Finite samples can give estimates that differ from the exact shares, including small negative estimates.</p>
     <details><summary>How the sampled indices are calculated</summary>
       <p>Let A and B be two independent settings. Each has an X and a Z value. Let Cₓ use X from B and Z from A. Let Y(A), Y(B) and Y(Cₓ) be their outputs. Estimate the variance V from the base outputs Y(A) and Y(B) across all pairs.</p>
       <p>For each pair, the change from swapping X is Y(Cₓ) − Y(A). The total-order estimate averages the squared change and divides by 2V. For the first-order estimate, multiply the change by Y(B) minus the mean of the base outputs. Average those products and divide by V. Swap the roles of X and Z for Z’s indices.</p>
@@ -139,20 +134,12 @@ export const methods = {
     concept: `<h2>Account for shared information</h2>
     <p>If X and Z are related, knowing X can reveal something about Z even when the formula uses only Z. Their contributions overlap. Use a method that accounts for how the inputs vary together.</p>
     <p>A <strong>Shapley effect</strong> keeps the probabilities of the original input pairs. For each possible order of learning the input values, measure how much extra output variance an input explains when its value becomes known. Average those extra shares across the orders. For X there are two orders to consider.</p>
-    <ul>
-      <li><strong>Learn X first.</strong> Use the share of variance explained by X alone.</li>
-      <li><strong>Learn X after Z.</strong> Use the share left unexplained by Z alone. Knowing both inputs accounts for all variance in this model.</li>
-    </ul>
     <p>The two credits add to 100%. They depend on the model and on how likely the different pairs are.</p>
     <h2>Choose a practical calculation</h2>
     <p>With many inputs, checking every subset can be expensive. Sample input orders to reduce the number of calculations. If the scores will determine what to investigate first, draw another sample of orders. Increase the number of orders if the shortlist changes. Sparse data can also make conditional means hard to estimate.</p>
     <p>Group related inputs to measure how much variance they explain together. Analyse operating conditions separately to see whether the variance shares change across them. If you can justify a model with independent underlying drivers, use it to estimate sensitivity to those drivers.</p>`,
-    example: `<p>Two switches are each on half the time and agree 90% of the time. The output Y is the value of Z.</p>
-    <ol>
-      <li><strong>X alone.</strong> When X is off and when it is on, the conditional means are 0.1 and 0.9. Their variance is 0.4² = 0.16. The output variance is 0.25, so X explains 0.16 ÷ 0.25 = 0.64.</li>
-      <li><strong>X after Z.</strong> Z already gives you Y, so X adds zero.</li>
-    </ol>
-    <p>X’s Shapley effect is (0.64 + 0) ÷ 2 = 0.32. Here X is a <strong>proxy</strong>, an input that reveals information about Z.</p>`,
+    example: `${shapleyDiagram}
+    <p>When X is off or on, the conditional means are 0.1 and 0.9. Their variance is 0.4² = 0.16, and total output variance is 0.25. X alone explains 0.16 ÷ 0.25 = 0.64. Here X is a <strong>proxy</strong>, an input that reveals information about Z.</p>`,
     setup: "The page lists all four pairs. It splits the chance of agreement equally between both switches off and both switches on. It splits the remaining chance between the two mismatched pairs.",
     fields: [number("agreement","Chance the switches agree (0–1)",.9,.05,.95,.05),select("model","Output","proxy",[["proxy","Proxy case: output is Z"],["add","Additive formula: X + 2Z"]])],
     predict: "Can X receive credit when the formula only uses Z?",
