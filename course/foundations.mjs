@@ -10,9 +10,9 @@ export const foundations = {
     experimentTitle: "Compare the two services",
     goal: "Choose a measure that helps you decide which route to take.",
     concept: `<h2>What matters about the journey?</h2>
-    <p>Suppose you must choose a route to class. Average journey time might matter on a free afternoon. If class starts at 9 am, you might care more about the chance of arriving late.</p>
+    <p>Suppose you’re choosing between two routes to campus. If you want to spend less time travelling over many trips, choose the route with the shorter average journey time. If you leave at 8:35 for a 9 am class and want to avoid being late, choose the route with the lower chance of taking longer than 25 minutes.</p>
     <p>A <strong>model</strong> uses inputs to calculate an outcome. Route and departure time are choices. Weather and traffic are conditions you face. A <strong>parameter</strong>, such as how many minutes the model adds per kilometre, sets how its calculation works.</p>
-    <p>The model’s <strong>output</strong> for one trip is its journey time. If you have 25 minutes to get to class, choose the route with the lower chance of taking longer than 25 minutes. When the possible journey times are equally likely, divide the number above 25 minutes by the total for that route.</p>
+    <p>The model’s <strong>output</strong> for one trip is its journey time. When the possible journey times are equally likely, calculate each route’s chance of arriving late by dividing the number of journeys over 25 minutes by the total number of journeys for that route.</p>
     <p>Before changing a model input, choose what you’ll compare across routes, such as average journey time or the chance of arriving late. <strong>Sensitivity analysis</strong> asks how much that measure changes when you change an input or assumption.</p>
     <div class="lesson-resources">
       <a class="resource-link" href="method-map.html">
