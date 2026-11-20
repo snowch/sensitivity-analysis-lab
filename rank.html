@@ -57,7 +57,7 @@
             <p>A <strong>cache</strong> can serve a stored copy and save time. The <strong>cache hit rate</strong> is the percentage of requests served this way.</p>
             <p>A <strong>Monte Carlo simulation</strong> draws values from assumed input ranges and calculates latency for each draw. The model samples each input independently, so drawing one value leaves the other inputs’ chances unchanged. Within each range, equal-width intervals are equally likely.</p>
             <h2>Read the direction of the relationship</h2>
-            <p><strong>Spearman rank correlation</strong> sorts the jobs by one input and again by latency. Compare the two orders.</p>
+            <p><strong>Spearman rank correlation</strong> compares two orders of the same jobs, one by input value and one by latency.</p>
             <ul>
               <li><strong>Near +1.</strong> Higher input values tend to go with longer jobs.</li>
               <li><strong>Near −1.</strong> Higher input values tend to go with shorter jobs.</li>
@@ -82,7 +82,7 @@
         <div class="experiment lesson-workspace">
           <form id="screen-form" class="controls">
             <h2>Simulation</h2>
-            <p>The page prepares 8,192 simulated jobs from seed 42 when you run.</p>
+            <p>Select <strong>Run simulation</strong> with the starting settings. The page draws 8,192 jobs using seed 42. A <strong>seed</strong> fixes the sequence of draws.</p>
             <button class="button dark" disabled>Run simulation</button>
             <p class="status" role="status"></p>
             <details class="settings">
@@ -96,13 +96,13 @@
           </form>
           <div class="results" id="screen-results">
             <h2>Spearman scores</h2>
-            <p>Find the two longest bars. Left of zero goes with shorter jobs as the input rises. Right of zero goes with longer jobs.</p>
+            <p>Find the two longest bars. Record the input names and whether each score is positive or negative. Which higher input values tend to go with shorter jobs?</p>
             <div class="output"></div>
           </div>
         </div>
         <section class="instructions investigation-next">
           <h3>Check another seed</h3>
-          <p>In <strong>Simulation settings</strong>, change <strong>Random seed</strong> from 42 to 19 and run again. A seed sets the sequence of draws. In <strong>Top two across runs</strong>, compare the input names and signs. Did your shortlist change?</p>
+          <p>Open <strong>Simulation settings</strong>. Set <strong>Random seed</strong> to 19 and leave <strong>Simulated runs</strong> at 8192. Select <strong>Run simulation</strong> again. In <strong>Top two across runs</strong>, compare <strong>First input</strong> and <strong>Second input</strong> for seeds 42 and 19. Did the names or signs change?</p>
         </section>
       </section>
       <div class="lesson-section">

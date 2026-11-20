@@ -51,7 +51,7 @@ function stepNav(id) {
 function frame(id,title,body,interactive=false) {
   const head=pageStart
     .replace(/<title>.*?<\/title>/,`<title>${html(title)} · Sensitivity Analysis Lab</title>`)
-    .replace("</head>",interactive ? '  <script type="module" src="assets/investigation.mjs?v=4"></script>\n</head>' : "</head>");
+    .replace("</head>",interactive ? '  <script type="module" src="assets/investigation.mjs?v=5"></script>\n</head>' : "</head>");
   return `${head}
   <div class="course-layout">
     ${sidebar(id)}
@@ -110,7 +110,7 @@ function renderLesson([id,title],lesson) {
       <div class="lesson-workspace">
         <form id="investigation" data-lesson="${id}" aria-labelledby="settings-title">
           <h3 id="settings-title">Settings</h3>
-          ${lesson.report ? "" : '<p class="investigation-start">Use the starting values for your first run.</p>'}
+          ${lesson.report ? "" : '<p class="investigation-start">Select <strong>Run experiment</strong> with the starting settings.</p>'}
           ${fields}
           <div class="investigation-actions">
             <button class="button dark" type="submit" disabled>Run experiment</button>

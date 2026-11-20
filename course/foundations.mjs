@@ -27,13 +27,13 @@ export const foundations = {
       <li><strong>Variance.</strong> Both trips are 10 minutes from the mean. Square those distances and average them. (100 + 100) ÷ 2 = 100 min².</li>
     </ul>
     <p>Use the mean to compare long-run journey times. Use the chance of going over the limit to compare missed deadlines.</p>`,
-    setup: "The page prepares five equally likely trips for each service. The time limit starts at 25 minutes. Once you run, the plot shows the five times for each service and the limit.",
+    setup: "Each service has five prepared journey times. The model treats each one as equally likely. <strong>Time limit (minutes)</strong> starts at 25.",
     fields: [select("scenario", "Variable service", "bursts", [["bursts","Occasional long trip"],["moderate","Moderate spread"]]),number("threshold","Time limit (minutes)",25,1,70),summary("Exceedance probability")],
     predict: "Can two services with the same mean journey time have different chances of missing a deadline?",
-    read: "In <strong>Five equally likely journey times</strong>, compare the mean, p95 and <strong>P(above limit)</strong>. The table shows chances as fractions, so 0.2 means 20%. Which measure distinguishes the risk of a late trip?",
-    steps: ["Set <strong>Variable service</strong> to <strong>Moderate spread</strong> and <strong>Time limit (minutes)</strong> to 30. Select <strong>Run experiment</strong> again. Compare <strong>P(above limit)</strong> for the two services. Would either miss the new deadline?"],
+    read: "In <strong>Five equally likely journey times</strong>, compare <strong>Mean (min)</strong> and <strong>p95 (min)</strong> for both services. Then find <strong>P(above limit)</strong>, the chance of missing the selected deadline. The table shows chances as fractions, so 0.2 means 20%. Which measure answers how often each service would arrive late?",
+    steps: ["Set <strong>Variable service</strong> to <strong>Moderate spread</strong> and <strong>Time limit (minutes)</strong> to 30. Select <strong>Run experiment</strong> again. Compare <strong>P(above limit)</strong> for the two services. Does either have a chance of missing the new deadline in this model?"],
     task: "Explain which output you would report if late arrival costs more than leaving early.",
-    answer: "Both original means are 20 minutes. One of five variable trips exceeds 25 minutes (20%). All five steady trips meet the deadline. Under the edited settings both risks are zero in this small model, even though the spreads differ. A real decision would also check how well the five outcomes represent the journeys you care about.",
+    answer: "Both services average 20 minutes in the first run. One of five variable trips exceeds 25 minutes, so the variable service has a 20% chance of being late. The steady service has a 0% chance. With the new times and 30-minute limit, both chances are zero in this model. For a real decision, check whether the five outcomes represent the journeys you expect.",
   },
   local: {
     experimentTitle: "Change the trip distance",
@@ -51,17 +51,17 @@ export const foundations = {
       <li><strong>Elasticity.</strong> Divide 16.7% by 25% to get about 0.667. The percentages stay the same in metres.</li>
     </ol>
     <p>The $4 starting charge makes up part of the reference fare. It stays the same as you add distance.</p>`,
-    setup: "The page prepares a $4 fixed fare and adds rate times distance. Changing the displayed unit converts both distances and the reported slope. Enter <strong>Starting distance (km)</strong> and <strong>Increase (km)</strong> in kilometres, even when the table shows metres.",
+    setup: "The model charges a fixed $4. <strong>Display distance in</strong> converts the distances and slope in the results. The distance and increase fields always take kilometres.",
     fields: [number("distance","Starting distance (km)",4,1,20),number("rate","Rate ($/km)",2,.1,5,.1),number("step","Increase (km)",1,.1,5,.1),select("units","Display distance in","km",[["km","Kilometres"],["m","Metres"]])],
     predict: "Which result changes when you display metres: cost change, slope, or elasticity?",
-    read: "In <strong>Cost calculation</strong>, compare the change in cost, the slope and the elasticity. Check the units next to each value.",
-    steps: ["Choose <strong>Metres</strong> in <strong>Display distance in</strong> and run again. Open the first run under <strong>Earlier runs</strong> to compare the three rows. Which number changes when the slope is shown in dollars per metre?","Set <strong>Starting distance (km)</strong> to 8. Keep the rate at $2/km and the increase at 1 km. Run and compare <strong>Elasticity (no units)</strong> with the first run."],
+    read: "In <strong>Cost calculation</strong>, find <strong>Change in cost ($)</strong>, the <strong>Slope</strong> row with its unit, and <strong>Elasticity (no units)</strong>.",
+    steps: ["Set <strong>Display distance in</strong> to <strong>Metres</strong> and run again. Open the first run under <strong>Earlier runs</strong> and compare the same three rows. Which value changes when the slope is shown in dollars per metre?","Set <strong>Starting distance (km)</strong> to 8. Leave <strong>Rate ($/km)</strong> at 2 and <strong>Increase (km)</strong> at 1. Run again and compare <strong>Elasticity (no units)</strong> with the first run. Does starting farther away make the fare more or less sensitive to distance in percentage terms?"],
     task: "Explain why a slope expressed per metre can look small and why the fixed charge changes the elasticity.",
-    answer: "The same $2 is divided by 1,000 metres instead of 1 km. At 8 km the reference fare is $20, so a $2 increase is 10% while a 1 km increase is 12.5%; elasticity is 0.8. The fixed $4 is a smaller share of the longer trip’s fare. Report the units when you use a slope to compare changes.",
+    answer: "The same $2 rise is $2 per kilometre or $0.002 per metre. At 8 km the reference fare is $20, so adding one kilometre raises the fare by 10% and the distance by 12.5%. The elasticity is 10 ÷ 12.5 = 0.8. The fixed $4 is a smaller share of the longer trip’s fare.",
   },
   curves: {
     experimentTitle: "Measure the slope over a step",
-    goal: "See how the same input can have a different effect at a new baseline or step.",
+    goal: "See how a slope changes when you move its starting point or change the step size.",
     concept: `<h2>Read the slope between two points</h2>
     <p>A response curve shows what the model predicts as one input varies. The straight line joining two points is a <strong>secant</strong>. Its slope is the change in output divided by the change in input.</p>
     <p>On a smooth curve, a smaller step brings that line closer to the <strong>tangent</strong>, which points in the curve’s direction at the start of the step. The slope at that point is called a <strong>derivative</strong>.</p>
@@ -73,10 +73,10 @@ export const foundations = {
       <li><strong>Step of 0.1.</strong> At input 2.1 the output is 4.41. The slope is (4.41 − 4) ÷ 0.1 = 4.1.</li>
     </ul>
     <p>The smaller step gives a slope closer to the tangent slope of 4 at input 2.</p>`,
-    setup: "The plot shows the selected illustrative response and a line between the two points used in the calculation.",
+    setup: "The starting settings use the square response at input 2 with a step of 1. The plot draws a secant between the start and end points.",
     fields: [select("shape","Response shape","curve",[["curve","Square: x²"],["saturation","Saturation: 10x ÷ (2+x)"],["threshold","Jump: add 5 at x=5"],["valley","Valley: (x−5)²"]]),number("baseline","Start input",2,0,8,.1),number("step","Step",1,.1,2,.1)],
     predict: "For the square response, will shrinking the step make the reported slope smaller or larger?",
-    read: "Find <strong>Change per input unit</strong> in <strong>Finite difference</strong>. Use it as your starting slope.",
+    read: "In <strong>Finite difference</strong>, find <strong>Change per input unit</strong>. This is the slope of the secant over the selected step.",
     steps: ["Set <strong>Step</strong> to 0.1 and run again. Compare <strong>Change per input unit</strong> with the first run. Which slope is closer to 4?","Set <strong>Response shape</strong> to <strong>Jump</strong> and <strong>Start input</strong> to 4.9. Keep <strong>Step</strong> at 0.1 and run. Set <strong>Start input</strong> to 5 and run again. Compare <strong>Start output</strong> and <strong>End output</strong> for the last two runs. Which step crosses the jump?","Set <strong>Response shape</strong> to <strong>Valley</strong>. Run at <strong>Start input</strong> 4 and again at 6, keeping the 0.1 step. Compare the signs in <strong>Change per input unit</strong>."],
     task: "Explain why a slope measured on one side of the valley or threshold does not describe the whole response. For a further check, set <strong>Response shape</strong> to <strong>Saturation</strong>. Run at <strong>Start input</strong> 1 and again at 7. Keep <strong>Step</strong> at 0.1. Which run has the smaller <strong>Change per input unit</strong>?",
     answer: "Across the jump, the output rises from 4.9 to 10, so the finite slope is 51. Just after the jump a 0.1 step gives slope 1. The valley slopes have opposite signs, and the saturation slope shrinks as the input rises. The appropriate baseline and step depend on the changes you could actually make.",
@@ -95,12 +95,12 @@ export const foundations = {
       <li><strong>Demand of 80.</strong> Demand exceeds capacity by 10 jobs/hour. That adds 0.2 × 10² = 20 minutes, so delay is 8 + 4 + 20 = 32 minutes.</li>
     </ul>
     <p>The endpoint span is 32 − 10 = 22 minutes.</p>`,
-    setup: "Start with demand at 60 jobs/hour. A half-range of 20 tests both 40 and 80. The model starts capacity at 70 jobs/hour and varies fixed delay from 4 to 12 minutes around 8.",
+    setup: "The page starts <strong>Reference demand (jobs/hour)</strong> at 60. The <strong>Demand half-range (jobs/hour)</strong> of 20 sets the low and high demand to 40 and 80. The model fixes reference capacity at 70 jobs/hour and tests fixed delay from 4 to 12 minutes around a reference of 8.",
     fields: [number("baseline","Reference demand (jobs/hour)",60,35,90),number("width","Demand half-range (jobs/hour)",20,2,30),number("rateWidth","Capacity half-range (jobs/hour)",10,2,30)],
     predict: "Which input gives the widest span? Will it still lead if demand varies less?",
-    read: "In the tornado plot, find the longest bar. In the <strong>One input varies at a time</strong> table, check the low and high delays for that input.",
-    steps: ["Change <strong>Demand half-range (jobs/hour)</strong> to 2 and rerun. Compare <strong>Endpoint span (min)</strong> with the first run under <strong>Earlier runs</strong>. Which input now has the largest span?","Set <strong>Reference demand (jobs/hour)</strong> to 75. Run again. In the spider plot, follow <strong>Capacity per hour</strong> from low to high and find where delay stops falling."],
-    task: "Explain the ranking reversal using the selected ranges. Name a combination this test would miss.",
+    read: "In the tornado plot, find the longest bar. In <strong>One input varies at a time</strong>, read <strong>Delay at low (min)</strong> and <strong>Delay at high (min)</strong> for that input. Subtract the smaller delay from the larger to get <strong>Endpoint span (min)</strong>.",
+    steps: ["Set <strong>Demand half-range (jobs/hour)</strong> to 2 and run again. Compare <strong>Endpoint span (min)</strong> with the first run under <strong>Earlier runs</strong>. Which input now has the largest span?","Set <strong>Reference demand (jobs/hour)</strong> to 75 and run again. In the spider plot, follow <strong>Capacity per hour</strong> from low to high. At what point in the selected half-range does delay stop falling?"],
+    task: "Explain why the leading input changes when you narrow the demand range. Name a pair of changes you would test together to check for a worse delay.",
     answer: "At demand 60 with a half-range of 2, demand contributes only a 0.2 min span and the fixed delay leads at 8 min. Changing the demand baseline to 75 brings the system near or above capacity. A joint change to high demand and low capacity could give much worse delays than either one-at-a-time run.",
   },
   inputs: {
@@ -116,20 +116,20 @@ export const foundations = {
     <p>Record where the bounds and typical values came from. You can use representative observations, a physical limit, expert judgement or a stated what-if assumption. Demand varies hour to hour. If you are also unsure how it will vary next month, compare plausible scenarios and report which ones change your conclusion.</p>
     <h2>Check which pairs can occur</h2>
     <p>Inputs are <strong>independent</strong> if knowing one leaves the other’s distribution unchanged. <strong>Correlation</strong> describes one kind of association.</p>
-    <p>A percentile marks a position in a distribution. For example, the 50th percentile marks its halfway point. The linked design here gives capacity the same percentile as demand 80% of the time. Each input keeps its own distribution, but different pairs appear.</p>
+    <p>A percentile marks how much of a distribution falls at or below a value. The 50th percentile has half the distribution at or below it. The linked design gives capacity the same percentile as demand 80% of the time. Each input keeps its own distribution while different pairs appear.</p>
     <p>For a real service, check the rule with paired measurements. For example, does capacity rise immediately with demand or respond after a delay?</p>`,
     example: `<p>Demand and capacity are each uniform from 40 to 100 jobs/hour. What’s the chance demand is above 80 while capacity is below 60?</p>
     <ul>
       <li><strong>Independent draws.</strong> Each condition occurs in one third of its range. Both happen with probability (1/3) × (1/3) = 1/9.</li>
       <li><strong>Linked draws.</strong> The two conditions cannot happen at the same percentile. Only the 20% of pairs drawn independently can meet both, so the chance is 0.2 × (1/9) ≈ 2.2%.</li>
     </ul>`,
-    setup: "The page draws 3,000 pairs. Demand and capacity range from 40 to 100 jobs/hour. The triangle peaks at 55. The scatter shows the first 200 pairs and highlights demand above 80 with capacity below 60.",
+    setup: "The page draws 3,000 demand and capacity pairs between 40 and 100 jobs/hour. Capacity stays uniform. The scatterplot shows the first 200 pairs and highlights demand above 80 with capacity below 60.",
     fields: [select("shape","Demand distribution","uniform",[["uniform","Uniform"],["triangle","Triangular, peak at 55"],["right","Weighted toward high demand"]]),select("dependence","How capacity follows demand","independent",[["independent","Independent percentiles"],["linked","Share demand percentile 80% of the time"]]),seed],
-    predict: "Will linking the percentiles change demand’s mean, the rate of mismatched pairs, or both?",
+    predict: "Will linking the percentiles change mean demand, the share of high-demand and low-capacity pairs, or both?",
     read: "In <strong>From 3,000 input pairs</strong>, read <strong>P(demand &gt;80 and capacity &lt;60)</strong>. Find those pairs in the plot to the right of 80 and below 60.",
-    steps: ["Set <strong>How capacity follows demand</strong> to <strong>Share demand percentile 80% of the time</strong>. Keep <strong>Random seed</strong> at 42 and run again. Compare the fraction of these pairs and <strong>Mean demand (jobs/h)</strong> with the first run. Which quantity stays the same?","Set <strong>Demand distribution</strong> to <strong>Triangular, peak at 55</strong> and run again. Compare <strong>Demand p95 (jobs/h)</strong>, the demand at or below which 95% of the draws sit, with the immediately preceding run. Open <strong>Plots from this run</strong> under that earlier run to compare where demand is most common."],
+    steps: ["Set <strong>How capacity follows demand</strong> to <strong>Share demand percentile 80% of the time</strong>. Keep <strong>Random seed</strong> at 42 and run again. In <strong>From 3,000 input pairs</strong>, compare <strong>P(demand &gt;80 and capacity &lt;60)</strong> and <strong>Mean demand (jobs/h)</strong> with the first run. Which stays the same?","Keep the linked setting. Set <strong>Demand distribution</strong> to <strong>Triangular, peak at 55</strong> and run again. Compare <strong>Demand p95 (jobs/h)</strong> with the preceding run. Open that run under <strong>Earlier runs</strong>, then open <strong>Plots from this run</strong>. Which demand values become more common in the distribution plot?"],
     task: "How could measurements of demand and capacity help you choose between drawing them independently, reusing measured pairs, or modelling how capacity follows demand?",
-    answer: "Sharing percentiles keeps the same demand values and reduces the fraction of high-demand, low-capacity pairs. The triangular distribution shifts most demand toward lower values. Matching both marginal distributions would not detect an unrealistic joint model. Look for joint load and capacity measurements across normal hours and transitions.",
+    answer: "Sharing percentiles keeps the same demand values and reduces the fraction of high-demand, low-capacity pairs. With the triangular shape, the demand p95 falls from about 97 to 88 jobs/hour in these runs. To check whether the simulated pairs are realistic, measure demand and capacity together during steady operation and as load changes.",
     refs: ["saltelli"],
   },
   designs: {
@@ -146,10 +146,10 @@ export const foundations = {
     <details><summary>How Halton places points</summary><p>On the first axis, write the indices 1, 2 and 3 in binary as 1, 10 and 11. Reverse the digits and put them after the binary point. The positions are 0.1, 0.01 and 0.11 in binary, or 1/2, 1/4 and 3/4. The other axis does the same in base 3.</p></details>`,
     example: `<p>Draw X and Z independently and uniformly from 0 to 1. Each has mean 0.5, so the exact mean of X × Z is 0.5 × 0.5 = 0.25.</p>
     <p>Suppose four sample points produce 0.04, 0.16, 0.36 and 0.64. The sample estimate is (0.04 + 0.16 + 0.36 + 0.64) ÷ 4 = 0.30. Its absolute error is |0.30 − 0.25| = 0.05.</p>`,
-    setup: "The page starts with 32 points per design. It displays the design for the selected seed, then draws 11 more per method for the average error. One point costs one model evaluation.",
+    setup: "The page starts with 32 points per design. The plots show the design for the selected seed. The average error uses that design and 11 more designs per method. Each point uses one model evaluation.",
     fields: [count("Points per design",32,[8,16,32,64,128,256]),seed],
     predict: "Which design will look least clustered? Will its estimate always be closest to 0.25?",
-    read: "Compare how the points fill the squares. In <strong>Exact mean = 0.25</strong>, look for the smallest <strong>Mean absolute error across 12 seeds</strong>.",
+    read: "Look for clusters and gaps in the three plots. In <strong>Exact mean = 0.25</strong>, find the smallest <strong>Mean absolute error across 12 seeds</strong>, the average distance from 0.25. Does the most evenly spread plot belong to that design?",
     steps: ["Change <strong>Points per design</strong> to 128 and rerun. Compare <strong>Mean absolute error across 12 seeds</strong> with the first run. Which method’s average error fell most?","Set <strong>Random seed</strong> to 19 and rerun. Does the design with the smallest <strong>Absolute error</strong> for this seed also have the smallest <strong>Mean absolute error across 12 seeds</strong>?"],
     task: "Recommend an evaluation budget and a stability check for a slow model. State why this example cannot guarantee a design always wins.",
     answer: "More regular coverage often helps this smooth two-input average. A single seed can favour a different design. How well a design works depends on the response shape and the number of inputs. Even an evenly spread design can miss a small region with a sudden jump. Compare error or stability against cost on the question you actually need to answer.",

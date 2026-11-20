@@ -47,7 +47,7 @@
       <header class="lesson-header">
         <p class="kicker">Lesson 2 of 4</p>
         <h1 id="ranges-title">Change the assumptions</h1>
-        <p>Test whether the same input stays important under two plausible sets of conditions.</p>
+        <p>Test whether network delay changes rank when you widen its range in a teaching model.</p>
       </header>
       <div class="lesson-section">
         <div class="teaching">
@@ -60,7 +60,7 @@
           </div>
           <figure class="worked">
             <figcaption>Example from the daily commute</figcaption>
-            <p>A train runs every 10 minutes at rush hour and every 30 minutes in the evening. If you arrive at a random time, the wait spans 0–10 or 0–30 minutes. The wider evening range gives waiting time more influence over how much journey times vary.</p>
+            <p>A train runs every 10 minutes at rush hour and every 30 minutes in the evening. If you arrive at a random time, the wait spans 0–10 or 0–30 minutes. If the rest of the trip varies in the same way, waiting contributes more variation in the evening.</p>
           </figure>
         </div>
       </div>
@@ -72,13 +72,13 @@
         <div class="experiment lesson-workspace">
           <form id="ranges-form" class="controls">
             <h2>Network scenarios</h2>
-            <p>The two prepared RTT ranges are 8–12 ms and 2–65 ms. The page matches 8,192 simulated jobs across scenarios and reuses every other input value for each matched job.</p>
+            <p>Select <strong>Compare ranges</strong> to run both prepared scenarios. The page simulates 8,192 pairs of jobs, changing only the RTT range from 8–12 ms to 2–65 ms.</p>
             <button class="button dark" disabled>Compare ranges</button>
             <p class="status" role="status"></p>
           </form>
           <div class="results" id="ranges-results">
             <h2>Network RTT across scenarios</h2>
-            <p>Compare the rank and Spearman score for the two ranges. Did network RTT overtake the other inputs?</p>
+            <p>The <strong>Spearman score</strong> tells you how consistently higher RTT goes with longer or shorter jobs. <strong>Rank</strong> orders inputs by the size of that score, ignoring its sign. Compare both columns. Does RTT move to rank 1 when its range widens?</p>
             <div class="output"></div>
           </div>
         </div>
@@ -86,7 +86,7 @@
       <div class="lesson-section">
         <section class="interpretation" aria-labelledby="ranges-read">
           <h2 id="ranges-read">Read the result</h2>
-          <p>Each millisecond of RTT contributes the same delay in both models. The wider range gives RTT more room to vary, so its ranking can rise. To estimate a saving, compare the delays before and after a specific change to RTT.</p>
+          <p>Each millisecond of RTT adds the same delay in both scenarios. A wider range lets RTT account for larger differences between jobs. To estimate a saving for a specific change, compare modelled delays at the old and new RTT under the same conditions.</p>
         </section>
       </div>
       <form class="knowledge-check">

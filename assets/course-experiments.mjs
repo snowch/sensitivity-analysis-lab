@@ -115,12 +115,12 @@ function inputs({ shape, dependence, seed }) {
     return [low + 3, mean(demand.map(d => Number(d >= low && d < low + 6)))];
   });
   return {
-    headline: "Marginal assumptions and joint possibilities",
+    headline: "Demand and capacity in the simulated pairs",
     tables: [table("From 3,000 input pairs", ["Mean demand (jobs/h)", "Demand p95 (jobs/h)", "P(demand >80 and capacity <60)", "Pearson correlation"], [
       [mean(demand), quantile(demand, .95), mean(sample.map(pair => Number(bad(pair)))), pearson(demand, sample.map(row => row[1]))],
     ])],
     charts: [
-      plot("Demand bin midpoint (jobs/hour)", "Fraction within each 6-job bin", [line("Demand distribution", histogram)]),
+      plot("Demand band midpoint (jobs/hour)", "Share in each demand band", [line("Demand distribution", histogram)]),
       plot("Demand (jobs/hour)", "Capacity (jobs/hour)", [dots("Other pairs", displayed.filter(pair => !bad(pair))), dots("High demand, low capacity", displayed.filter(bad))], { xDomain: [40, 100], yDomain: [40, 100] }),
     ],
   };
@@ -151,7 +151,7 @@ function patterns({ shape, noise, seed }) {
   const rows = [["X", x, bx], ["Z", z, bz]].map(([name, values, beta]) =>
     [name, pearson(values,y), pearson(tiedRanks(values),tiedRanks(y)), beta]);
   return {
-    headline: "Different screens answer different questions",
+    headline: "Correlation and regression scores",
     tables: [table("Global screens on the same sample", ["Input", "Pearson r", "Spearman ρ", "Standardised slope"], rows), table("Model fit", ["Linear model R²"], [[r2]])],
     charts: [plot("X (scaled units)", "Output (points)", [dots("Sampled output", x.map((value,i)=>[value,y[i]]))]),
       plot("Z (scaled units)", "Output (points)", [dots("Sampled output", z.map((value,i)=>[value,y[i]]))])],
@@ -251,7 +251,7 @@ function reliability({ count, seed, model }) {
   });
   return {
     headline: "Repeat the second-order estimate",
-    text: "The middle range shows the 10th to 90th percentiles of estimates from 20 designs. It describes run-to-run variation at a fixed model and settings.",
+    text: "Each row summarises 20 designs at the same sample size. The 10th and 90th percentiles describe the spread across those designs.",
     tables: [table("Run-to-run spread", ["Pairs per run", "Mean estimate", "10th percentile", "90th percentile", "Negative estimates (of 20)", "Exact share"], data.map(({n,estimates,average,low,high}) =>
       [n,average,low,high,estimates.filter(e=>e<0).length,exact])),
       table("Approximate 95% interval for the repeated-design mean", ["Pairs per run", "Lower end", "Upper end"], data.map(({ n,average,meanHalfWidth })=>[n,average-meanHalfWidth,average+meanHalfWidth]))],
@@ -290,7 +290,7 @@ function decisions({ premium, loss, risk, structure, seed, threshold }) {
   return {
     headline: "Costs and risks under matched conditions",
     tables: [
-      table("Technical model · one run is one job", ["Option", "p95 delay (min)", `P(delay > ${threshold} min)`, "Price per job ($)", "Expected total cost per job ($)"], result),
+      table("Delay and cost by option", ["Option", "p95 delay (min)", `P(delay > ${threshold} min)`, "Price per job ($)", "Expected total cost per job ($)"], result),
       table("Rare failure prevention versus current", ["Break-even price per job ($)"], [[loss*avoided]]),
       table("Perfect signal example · separate decision", ["Chance of severe day", "Best action without signal", "Best expected cost without signal ($)", "Expected cost with perfect signal ($)", "Value of perfect information ($)"], [[risk,risk < 0.3 ? "Wait" : risk > 0.3 ? "Mitigate" : "Either",without,perfect,without-perfect]]),
     ],
@@ -337,13 +337,13 @@ function capstone(o) {
   } else if (o.method === "rank") {
     results.push(table("Global rank screen on current staffing", ["Input", "Spearman ρ"], screen(setup).scores.map(row=>[row.label,row.rho])));
   } else if (linked) {
-    results.push(table("Sobol diagnostic", ["Result"], [["Linked inputs do not support this independent-input Sobol decomposition. Compare matched outcomes or select a descriptive rank screen."] ]));
+    results.push(table("Sobol diagnostic", ["Result"], [["Linked inputs need a different analysis. Compare the matched outcomes or set Sensitivity method to Spearman rank screen and run again. If independence is plausible, set Input dependence to Independent and run again to use the Sobol screen."]]));
   } else {
     try {
       results.push(table("Independent-input Sobol screen on current staffing", ["Input", "First order", "Total order"], sobol(setup).map(row=>[row.label,row.first,row.total])));
     } catch (error) {
       if (error.message !== "Sobol indices require a varying output.") throw error;
-      results.push(table("Sobol diagnostic", ["Result"], [["No output variation in the base sample. Use wait time or choose a threshold that produces both outcomes."]]));
+      results.push(table("Sobol diagnostic", ["Result"], [["All outputs in the base sample are the same. Set Per-event sensitivity output to Wait time or choose a Wait limit (minutes) that gives both late and on-time outcomes, then run again."]]));
     }
   }
   return {

@@ -2,14 +2,14 @@ import { number, select, seed, count, when } from "./foundations.mjs";
 
 export const methods = {
   patterns: {
-    experimentTitle: "Compare what the three scores pick up",
+    experimentTitle: "Compare the scores with the scatterplots",
     goal: "Use the shape of a scatterplot to decide whether a correlation or a fitted line is useful.",
     concept: `<h2>Look at the shape before reading a score</h2>
     <p>Each dot in the scatterplot is one run. <strong>Pearson correlation</strong> measures how closely the points follow a straight rising or falling line. <strong>Spearman correlation</strong> sorts each variable and compares the positions, or ranks. It can be strong for a curve that always rises.</p>
     <p>In a U shape, the left side falls and the right side rises. The two trends can cancel in either score.</p>
     <h2>Check what a fitted line explains</h2>
     <p>Linear regression fits a straight-line effect for each input and adds those effects to predict the output. Here, <strong>R²</strong> is the fraction of output variance explained by that fit.</p>
-    <p>A standard deviation is the square root of variance. It measures spread in the original units. A <strong>standardised slope</strong> tells you how many output standard deviations the fitted line moves when one input rises by one of its own standard deviations. Hold the other input fixed.</p>
+    <p>A standard deviation is the square root of variance. It measures spread in the original units. A <strong>standardised slope</strong> measures how many output standard deviations the prediction changes when one input rises by one of its own standard deviations and the other input stays fixed.</p>
     <p>Use the slopes when the fit represents the response and the inputs vary enough on their own. Separate slopes can be unstable when inputs move together. A fit with straight-line effects can miss bends and interactions.</p>`,
     example: `<p>Take the exact response Y = 3X + Z. X and Z are independent and each has standard deviation 1.</p>
     <ol>
@@ -17,11 +17,11 @@ export const methods = {
       <li><strong>Express both slopes on the same scale.</strong> For X, divide 3 by √10 to get about 0.949. For Z, divide 1 by √10 to get about 0.316.</li>
     </ol>
     <p>Squaring the slopes gives variance shares for this independent additive model. With dependent inputs or a poor fit, interpret them as slopes.</p>`,
-    setup: "The page samples 256 runs. X and Z independently range from −1 to 1. The model adds 0.35 × Z to the selected X response. It also adds a random amount between minus and plus the <strong>Noise half-width (points)</strong>. Set that control to 0 to remove the noise.",
+    setup: "The page samples X and Z independently from −1 to 1 for 256 runs. The model adds 0.35 × Z to the selected X response. Its random noise ranges from minus to plus the value in <strong>Noise half-width (points)</strong>.",
     fields: [select("shape","X response","linear",[["linear","Straight: X"],["cubic","Always rising: X³"],["u","U shape: X²"]]),number("noise","Noise half-width (points)",.05,0,.5,.05),seed],
     predict: "If X has a strong U-shaped effect, will a small correlation tell you it is safe to drop X?",
-    read: "In <strong>Global screens on the same sample</strong>, compare the Pearson, Spearman and standardised slope scores for X and Z.",
-    steps: ["Select <strong>Always rising</strong> and then <strong>U shape</strong>, running after each change. In each result, compare X’s row with the <strong>Output (points) by X (scaled units)</strong> plot. Which shape can have a strong response and small correlations? Check <strong>Linear model R²</strong> in <strong>Model fit</strong> for the amount of variance explained by the fitted plane.","Keep <strong>U shape</strong> selected, set <strong>Noise half-width (points)</strong> to 0.3 and run again. Can you still see both sides of the U in the X plot? Does the change in <strong>Linear model R²</strong> match what you see?"],
+    read: "In <strong>Global screens on the same sample</strong>, compare <strong>Pearson r</strong>, <strong>Spearman ρ</strong> and <strong>Standardised slope</strong> for X and Z. Which input scores higher in absolute value in the straight response?",
+    steps: ["Set <strong>X response</strong> to <strong>Always rising: X³</strong> and run again. Then select <strong>U shape: X²</strong> and run. Compare X’s row with <strong>Output (points) by X (scaled units)</strong> in each run. Which shape can have a strong response and small correlations? Read <strong>Linear model R²</strong> in <strong>Model fit</strong> to see how much variance the fit explains.","Keep <strong>U shape: X²</strong> selected. Set <strong>Noise half-width (points)</strong> to 0.3 and run again. Can you still see both sides of the U in the X plot? Compare <strong>Linear model R²</strong> with the previous U-shaped run."],
     task: "Decide whether to drop X in the U-shaped case. Name a method that could see the contribution.",
     answer: "Keep X. A square responds strongly at both ends, while its signed trends average out. The linear fit can favour Z and still miss much of the output. Inspect the scatter and use a more appropriate model, Morris or variance-based sensitivity. Check the resulting assumptions and fit as well.",
     refs: ["spearman","regression"],
@@ -43,8 +43,8 @@ export const methods = {
     setup: "The page uses four levels (0, 1/3, 2/3, 1), a step of 2/3, and random step directions and input order. Each path is sampled separately.",
     fields: [select("model","Response","add",[["add","Additive: 3X + Z + 0.5W"],["curved","Curved: 3X² + Z + 0.5W"],["product","Interacting: 3XZ + Z + 0.5W"]]),count("Trajectories",12,[4,12,32,128]),seed],
     predict: "Can both curvature and interaction give X a large σ?",
-    read: "In <strong>First trajectory</strong>, take the Start row and the next row. Divide the output change by the change in the input named under <strong>Changed</strong>. Check <strong>Effect for this step</strong>.",
-    steps: ["Set <strong>Response</strong> to <strong>Curved</strong> and run. Then set it to <strong>Interacting</strong> and run again. Compare <strong>Mean absolute effect μ*</strong> and <strong>Effect SD σ</strong> for X and Z in <strong>Screening results</strong>. For which input does <strong>Effect SD σ</strong> stay large when the way it affects the output changes?","Keep <strong>Interacting</strong> selected and set <strong>Trajectories</strong> to 128. Run again. Compare the μ* ordering with the 12-trajectory run under <strong>Earlier runs</strong>."],
+    read: "In <strong>First trajectory</strong>, compare the <strong>Start</strong> row with the next row. Subtract the earlier <strong>Output</strong> from the later one. Divide by the later minus earlier value of the input named under <strong>Changed</strong>. Check your calculation in <strong>Effect for this step</strong>.",
+    steps: ["Set <strong>Response</strong> to <strong>Curved</strong> and run. Then select <strong>Interacting</strong> and run again. In <strong>Screening results</strong>, compare <strong>Mean absolute effect μ*</strong> and <strong>Effect SD σ</strong> for X and Z. Which input has a large effect spread in both models?","Keep <strong>Interacting</strong> selected and set <strong>Trajectories</strong> to 128. Run again. Open the preceding run with 12 trajectories under <strong>Earlier runs</strong>. Does the order by <strong>Mean absolute effect μ*</strong> change?"],
     task: "Explain how you would investigate a high-μ*, high-σ input. Compare the conclusion to a single slope at the centre.",
     answer: "A centre slope cannot show how the slope changes elsewhere. In Curved, X changes effect as its own start value changes. In Interacting, X changes effect because Z changes. Plot conditional response lines or test a crossed grid to separate the reasons. Few trajectories can miss a narrow active regime, so test a larger design and investigate important thresholds separately.",
     refs: ["morris","campolongo","salib"],
@@ -65,11 +65,11 @@ export const methods = {
       <li><strong>Additive model.</strong> At Z = 0, delay rises from 9 to 11 minutes. At Z = 1, it rises from 12 to 14 minutes. The difference between the two changes is 2 − 2 = 0.</li>
       <li><strong>Regime model with threshold 5.</strong> At Z = 0, delay rises by 2 minutes. At Z = 1, it rises by 7 minutes. The high-pressure effect is 5 minutes larger.</li>
     </ul>`,
-    setup: "The page prepares arrivals 4 and 6 and computes the delay at pressure 0 and 1. The heatmap uses a wider grid. Its rows are pressure, its columns are arrivals and each cell gives delay in minutes.",
+    setup: "The starting settings compare arrival scores 4 and 6. The page calculates both at pressure 0 and 1. In the heatmap, rows are pressures, columns are arrival scores and cells are delays in minutes.",
     fields: [select("model","Response","add",[["add","Additive"],["regime","Regime interaction"]]),number("low","Low arrivals (scaled units)",4,0,9),number("high","High arrivals (scaled units)",6,1,10),when(number("regime","Regime threshold",5,1,9),"model","regime")],
     predict: "In the regime model, what delay do you get at high arrivals 6 and pressure 1?",
-    read: "In <strong>Complete a two-input comparison</strong>, read <strong>High minus low</strong> at both pressure settings. What do the two values and the parallel lines tell you about the effect of changing arrivals?",
-    steps: ["Set <strong>Response</strong> to <strong>Regime interaction</strong> and run again. Find the row for arrivals 6 and read <strong>Delay at Z=1 (min)</strong>. Compare the two <strong>High minus low</strong> values. Which part of the heatmap now has the longest delays?","Set <strong>Low arrivals (scaled units)</strong> to 2 and <strong>High arrivals (scaled units)</strong> to 4. Keep <strong>Regime threshold</strong> at 5 and run again. Does the difference between the two effects remain?"],
+    read: "In <strong>Complete a two-input comparison</strong>, read <strong>High minus low</strong> at both pressure settings. In the Additive run, what do those two values and the parallel lines tell you about the effect of changing arrivals?",
+    steps: ["Set <strong>Response</strong> to <strong>Regime interaction</strong>. The page shows <strong>Regime threshold</strong> at 5. Run again and read <strong>Delay at Z=1 (min)</strong> in the row for arrivals 6. Compare the two <strong>High minus low</strong> values. Which combinations have the largest delays in the heatmap?","Set <strong>Low arrivals (scaled units)</strong> to 2 and <strong>High arrivals (scaled units)</strong> to 4. Keep <strong>Regime threshold</strong> at 5 and run again. Compare the two <strong>High minus low</strong> values. Do they differ when both arrival settings are below the threshold?"],
     task: "Explain how one-at-a-time changes at low pressure could miss an important operating regime.",
     answer: "At pressure 0 the overload penalty is always zero. Under arrivals below 5 it is zero even at pressure 1. It appears when both conditions align. Separately check that your assumed operating distribution gives credible weight to that region.",
   },
@@ -87,7 +87,7 @@ export const methods = {
       <li><strong>Total-order index.</strong> Add the input’s own share and every interaction that involves it. With just two inputs, this equals 1 minus the other’s first-order share.</li>
     </ul>
     <p>With more inputs, interactions can involve three or more. The gap between total and first order gives the combined interaction share for an input. You need more detail to identify its partners.</p>`,
-    example: `<p>Two independent switches X and Z each turn on half the time. The output Y = X × Z gives four equally likely values: 0, 0, 0 and 1.</p>
+    example: `<p>Two independent switches X and Z each turn on half the time. The four switch combinations are equally likely. Their outputs Y = X × Z are 0, 0, 0 and 1.</p>
     <ol>
       <li><strong>Find total variance.</strong> The mean is 1/4. The variance is [3 × (1/4)² + (3/4)²] ÷ 4 = 3/16.</li>
       <li><strong>Group by X.</strong> The mean is 0 when X is off and 1/2 when it is on. The variance of those means is [(0 − 1/4)² + (1/2 − 1/4)²] ÷ 2 = 1/16.</li>
@@ -97,7 +97,7 @@ export const methods = {
     fields: [select("rule","Output rule","both",[["both","1 only when both switches are on"],["sum","Count the switches that are on"]])],
     predict: "If the output counts switches, what remains for a pair interaction?",
     read: "Find the mean and variance in <strong>Output summary</strong>. Then find X’s <strong>First-order share</strong> in <strong>Variance explained by conditional averages</strong>.",
-    steps: ["Set <strong>Output rule</strong> to <strong>Count the switches that are on</strong>. Calculate the mean output when X is off and when it is on. Run again and check <strong>Mean when off</strong> and <strong>Mean when on</strong> for X.","Compare <strong>Pair share</strong> in <strong>Output summary</strong> across the two runs. Then add the two values in <strong>Total-order share</strong> for each run. Which sum is greater than 1, and why?"],
+    steps: ["Set <strong>Output rule</strong> to <strong>Count the switches that are on</strong>. Calculate the mean output when X is off and when it is on. Run again and check <strong>Mean when off</strong> and <strong>Mean when on</strong> for X in <strong>Variance explained by conditional averages</strong>.","Open the first run under <strong>Earlier runs</strong>. Compare <strong>Pair share</strong> in <strong>Output summary</strong> for both runs. Add the values in <strong>Total-order share</strong> for X and Z in each run. When is that sum above 1, and why?"],
     task: "Explain why the first orders may sum below 1 and the total orders above 1.",
     answer: "For the count, outputs 0, 1, 1, 2 have variance 0.5. Conditional means 0.5 and 1.5 have variance 0.25. Both first orders equal their total orders, 0.5, and there is nothing left for the pair. In the product both totals count the same pair term, whereas neither first order counts it.",
     refs: ["sobol"],
@@ -106,7 +106,7 @@ export const methods = {
     experimentTitle: "Compare estimated and exact shares",
     goal: "Estimate first, second and total orders for continuous inputs, then change the output to study a rare event.",
     concept: `<h2>Estimate the shares by swapping inputs</h2>
-    <p>The page draws two input settings and runs the model at both. It makes two more settings by swapping one input between them. Each swap leaves the other input fixed.</p>
+    <p>For each sample pair, the page draws two independent input settings and evaluates the model at both. It also evaluates two mixed settings, one with X from the first draw and Z from the second, and one with those sources reversed.</p>
     <ul>
       <li><strong>Total order.</strong> Large output changes when you swap X suggest that X has a large total effect.</li>
       <li><strong>First order.</strong> Compare outputs that share the same X to estimate what X explains on its own.</li>
@@ -128,7 +128,7 @@ export const methods = {
     fields: [select("objective","Output to decompose","raw",[["raw","Model output Y"],["event","Event indicator: rare-jump Y > 14"]]),when(select("model","Continuous model","product",[["add","Additive: X + 2Z"],["product","Product: X × Z"],["tail","Rare jump"]]),"objective","raw"),count("Independent sample pairs",1024,[128,1024,8192,32768]),seed],
     predict: "Will the input with the largest share of continuous output variance always control the threshold event?",
     read: "In <strong>Estimated versus exact</strong>, compare each estimate with the value in <strong>Exact</strong>.",
-    steps: ["Set <strong>Independent sample pairs</strong> to 8,192 and run again. Open the first run under <strong>Earlier runs</strong>. Which estimates moved closer to their exact values?","Set <strong>Continuous model</strong> to <strong>Rare jump</strong>, leave <strong>Output to decompose</strong> set to <strong>Model output Y</strong>, and run.","Set <strong>Output to decompose</strong> to <strong>Event indicator</strong> and run again. Compare the <strong>X total order</strong> and <strong>Z total order</strong> rows with the preceding run on <strong>Model output Y</strong>. Which input drives the chance of Y exceeding 14?"],
+    steps: ["Set <strong>Independent sample pairs</strong> to 8,192 and run again. Open the first run under <strong>Earlier runs</strong>. In <strong>Estimated versus exact</strong>, which estimates moved closer to their exact values?","Keep <strong>Output to decompose</strong> at <strong>Model output Y</strong>. Set <strong>Continuous model</strong> to <strong>Rare jump</strong> and run again. In the <strong>Exact</strong> column, which input has the larger total-order share for the continuous output Y?","Set <strong>Output to decompose</strong> to <strong>Event indicator: rare-jump Y &gt; 14</strong> and run again. Compare <strong>X total order</strong> and <strong>Z total order</strong> in <strong>Estimated versus exact</strong> with the preceding run. Which input now explains all the exact variance?"],
     task: "Explain why the two outputs give different conclusions. Name one risk of interpreting a small negative pair estimate as a real effect.",
     answer: "X explains more continuous variance: 100/12 ≈ 8.33 versus 18² × 0.02 × 0.98 ≈ 6.35 for Z. Only the jump can take the output above 14, so Z explains all exact variance of the event indicator. Small negative estimates may reflect finite sampling; inspect repeated designs and the model before claiming a negligible or important effect.",
     refs: ["sobol","saltelli2009","jansen","salib"],
@@ -157,7 +157,7 @@ export const methods = {
     fields: [number("agreement","Chance the switches agree (0–1)",.9,.05,.95,.05),select("model","Output","proxy",[["proxy","Proxy case: output is Z"],["add","Additive formula: X + 2Z"]])],
     predict: "Can X receive credit when the formula only uses Z?",
     read: "In <strong>How each input adds information</strong>, compare <strong>Explained alone</strong> with <strong>Added after the other</strong> for X. How do they contribute to its Shapley effect?",
-    steps: ["Set <strong>Chance the switches agree (0–1)</strong> to 0.5 and run again. Compare the <strong>Shapley effect</strong> for X with the first run. When does it lose its credit?","Set <strong>Output</strong> to <strong>Additive formula</strong>. Run at 0.5, then set <strong>Chance the switches agree (0–1)</strong> to 0.9 and run again. When the switches are more likely to agree, does the gap between X’s and Z’s <strong>Shapley effect</strong> increase or decrease?"],
+    steps: ["Set <strong>Chance the switches agree (0–1)</strong> to 0.5 and run again. Compare X’s <strong>Shapley effect</strong> with the first run. Can X still tell you anything about Z?","Set <strong>Output</strong> to <strong>Additive formula: X + 2Z</strong>. Run with the agreement chance at 0.5. Change <strong>Chance the switches agree (0–1)</strong> to 0.9 and run again. Does the gap between X’s and Z’s <strong>Shapley effect</strong> get larger or smaller?"],
     task: "In the proxy case, what happens if you change X and hold Z fixed? Explain why that answer can differ from X’s Shapley effect.",
     answer: "At agreement 0.5, X reveals nothing about Z and earns zero credit in the proxy case. At 0.9, knowing X is informative and the allocation gives it 0.32. Holding Z fixed in the formula leaves Y unchanged when X changes. A real intervention can also change other variables and needs causal assumptions or experimental evidence.",
     refs: ["owen","song"],

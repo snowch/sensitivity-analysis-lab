@@ -54,7 +54,7 @@
           <div>
             <h2>Test on jobs the model hasn’t seen</h2>
             <p>On the first run, the page generates 10,000 synthetic pipeline records. It trains a <strong>random forest</strong> on 8,000 rows and tests it on the other 2,000. New shuffles during this visit reuse the fitted forest and test rows.</p>
-            <p>A forest averages predictions from decision trees, which split data into groups. The <strong>mean absolute error (MAE)</strong> is the average distance between predicted and recorded latency, in milliseconds.</p>
+            <p>A forest averages predictions from decision trees, which split data into groups. The <strong>mean absolute error (MAE)</strong> averages the size of each prediction error in milliseconds. An error of 5 ms counts the same whether the prediction is too high or too low.</p>
             <h2>Shuffle one signal and measure the error again</h2>
             <p><strong>Permutation importance</strong> shuffles the values in a test column and predicts again with the same model. Recorded latencies and the other columns stay in place. An increase in MAE shows how much accuracy the model loses when the shuffled values stop matching their jobs.</p>
           </div>
@@ -75,7 +75,7 @@
         <div class="experiment lesson-workspace">
           <form id="logs-form" class="controls">
             <h2>Shuffle the test data</h2>
-            <p>Start with individual features. The prepared settings repeat each shuffle five times.</p>
+            <p>Leave <strong>Shuffle</strong> at <strong>Individual features</strong> and select <strong>Run permutation importance</strong>. The page repeats each shuffle five times at the starting settings.</p>
             <fieldset>
               <legend>Shuffle</legend>
               <label class="choice"><input type="radio" name="grouping" value="individual" checked><span><strong>Individual features</strong><small>Shuffle one column at a time</small></span></label>
@@ -93,13 +93,13 @@
           </form>
           <div class="results" id="logs-results">
             <h2>Test error and feature importance</h2>
-            <p>Compare forest test MAE with median-only test MAE. Does the forest make smaller errors than always predicting the training median?</p>
+            <p>Compare <strong>Forest test MAE</strong> and <strong>Median-only test MAE</strong>. The median baseline always predicts the middle latency from the training data. Which has the smaller average error on the held-out jobs?</p>
             <div class="output"></div>
           </div>
         </div>
         <section class="instructions investigation-next">
           <h3>Shuffle both cache counters</h3>
-          <p>Set <strong>Shuffle</strong> to <strong>Group the cache counters</strong> and rerun with five shuffles. In <strong>Cache counter comparison</strong>, check whether shuffling the pair increases test MAE more than shuffling either counter alone.</p>
+          <p>Set <strong>Shuffle</strong> to <strong>Group the cache counters</strong> and leave <strong>Shuffles per feature or group</strong> at 5. Select <strong>Run permutation importance</strong> again. In <strong>Cache counter comparison</strong>, compare <strong>Increase in MAE (ms)</strong> for <strong>Edge miss rate</strong>, <strong>Origin fetch rate</strong> and the pair. Does shuffling the pair hurt accuracy the most?</p>
         </section>
       </section>
       <div class="lesson-section">

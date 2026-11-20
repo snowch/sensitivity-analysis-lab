@@ -14,7 +14,7 @@ export const methodMap = `<article class="lesson shell method-map-page">
       <div class="map-track">
         <div id="journey-model" class="map-node map-model">
           <h3>Journey-time model</h3>
-          <p>Use the route, departure time and traffic assumptions to estimate how long the trip takes.</p>
+          <p>The model estimates travel time from the route, departure time and traffic assumptions.</p>
         </div>
 
         <div class="map-fan" aria-hidden="true"></div>
@@ -59,11 +59,11 @@ export const methodMap = `<article class="lesson shell method-map-page">
         <ol class="map-observed" aria-label="How predictive attribution uses past trips">
           <li class="map-node">
             <h3>Past trip records</h3>
-            <p>Record journey times, traffic and distance.</p>
+            <p>Past trips supply journey times, traffic and distance.</p>
           </li>
           <li class="map-node">
             <h3>Travel-time predictor</h3>
-            <p>Fit a model on some trips and check its predictions on trips it has never seen.</p>
+            <p>The predictor learns from some trips. Trips held back during fitting are used to check its predictions.</p>
           </li>
           <li class="map-node">
             <h3><a href="logs.html">Predictive attribution</a></h3>

@@ -59,14 +59,14 @@
             <li>The model also includes other household electricity use.</li>
           </ul>
           <h2>Where the data come from</h2>
-          <p>The page prepares 8,192 simulated months and samples each bill-model input independently. A month can have 0–22 cold days in <strong>Usual conditions</strong> or 12–26 in <strong>Colder season</strong>. Both scenarios use the same ranges for the other inputs.</p>
+          <p>The teaching model samples the bill inputs independently. A month can have 0–22 cold days in <strong>Usual conditions</strong> or 12–26 in <strong>Colder season</strong>. Both scenarios use the same ranges for the other inputs.</p>
           <p>The predictor uses a separate set of 3,000 synthetic records from usual conditions. The records contain noisy bills and two measures of cold weather, <strong>Outdoor-sensor cold days</strong> and <strong>Thermostat-request days</strong>.</p>
         </div>
       </div>
       <section class="lesson-section lesson-experiment" aria-labelledby="experiment-title">
         <div class="instructions">
           <h2 id="experiment-title">Gather evidence for a recommendation</h2>
-          <p>For the first run, choose <strong>Spearman rank screen</strong> and <strong>Usual conditions</strong>.</p>
+          <p>Set <strong>Method</strong> to <strong>Spearman rank screen</strong>. The page reveals <strong>Model scenario</strong> with <strong>Usual conditions</strong> selected. Leave it there and select <strong>Run analysis</strong>. Which input has the longest <strong>Spearman ρ</strong> bar?</p>
         </div>
         <div class="experiment lesson-workspace">
           <form id="practice-form" class="controls">
@@ -100,18 +100,18 @@
           </form>
           <div id="practice-results" class="results">
             <h2>Evidence for your decision</h2>
-            <p>A comparison table appears after two runs in the same method with different scenarios, shuffles or interventions.</p>
+            <p>The page adds a comparison table after you run two settings with the same method. If you leave a method and run it again later in this tab, the table includes its earlier runs.</p>
             <div class="output"></div>
           </div>
         </div>
         <section class="instructions investigation-next">
           <h3>After the first run</h3>
           <ol>
-            <li><strong>Compare seasons.</strong> Keep the rank screen selected. Change <strong>Model scenario</strong> to <strong>Colder season</strong> and run again. Read <strong>Top input across scenarios</strong>.</li>
-            <li><strong>Check for interactions.</strong> Keep <strong>Colder season</strong> selected. Switch <strong>Method</strong> to <strong>First- and total-order Sobol</strong> and run again. Which input has the largest gap between <strong>First-order</strong> and <strong>Total-order</strong>?</li>
-            <li><strong>Check the predictor against the baseline.</strong> Set <strong>Method</strong> to <strong>Permutation importance</strong> and <strong>Shuffle</strong> to <strong>One feature at a time</strong>. Run the analysis. Compare <strong>Forest test MAE</strong> with <strong>Median-only test MAE</strong>.</li>
+            <li><strong>Compare seasons.</strong> Keep the rank screen selected. Set <strong>Model scenario</strong> to <strong>Colder season</strong> and run again. In <strong>Top input across scenarios</strong>, does <strong>First input</strong> change when the cold-day range changes?</li>
+            <li><strong>Check for interactions.</strong> Keep <strong>Colder season</strong> selected. Set <strong>Method</strong> to <strong>First- and total-order Sobol</strong> and run again. The page uses 8,192 sample pairs. Which input has the largest gap between <strong>First-order</strong> and <strong>Total-order</strong>?</li>
+            <li><strong>Check the predictor against the baseline.</strong> Set <strong>Method</strong> to <strong>Permutation importance</strong> and <strong>Shuffle</strong> to <strong>One feature at a time</strong>. Run again. Is <strong>Forest test MAE</strong> lower than <strong>Median-only test MAE</strong> on the test records?</li>
             <li><strong>Test the shared weather signal.</strong> Set <strong>Shuffle</strong> to <strong>Cold-weather signals together</strong> and run again. In <strong>Weather signal comparison</strong>, which shuffle gives the largest <strong>Increase in test MAE ($)</strong>?</li>
-            <li><strong>Test two ways to lower the bill.</strong> Set <strong>Method</strong> to <strong>Compare interventions</strong>. Run <strong>Reduce heat loss by 30%</strong> and <strong>Halve dryer cycles</strong> in each <strong>Model scenario</strong>. In <strong>Options across runs</strong>, check which values in <strong>Option over $200</strong> are 5% or less.</li>
+            <li><strong>Test two ways to lower the bill.</strong> Set <strong>Method</strong> to <strong>Compare interventions</strong> and <strong>Model scenario</strong> to <strong>Usual conditions</strong>. Set <strong>Intervention</strong> to <strong>Reduce heat loss by 30%</strong> and run. Then choose <strong>Halve dryer cycles</strong> and run again. Repeat both choices in <strong>Colder season</strong>. The page compares each option with its baseline on the same 8,192 simulated months. In <strong>Options across runs</strong>, which values in <strong>Option over $200</strong> are 5% or less?</li>
           </ol>
         </section>
       </section>

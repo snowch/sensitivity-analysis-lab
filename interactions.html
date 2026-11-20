@@ -57,7 +57,7 @@
             <p>The queue rule adds a 155 ms delay at 750 arrivals per second or more and 800 jobs per second of capacity or less. Arrivals and capacity <strong>interact</strong> because the effect of one depends on the other.</p>
             <h2>Compare individual and total effects</h2>
             <p><strong>Variance</strong> measures spread around the average and gives extra weight to large deviations. A <strong>first-order Sobol index</strong> estimates the share of variance explained by an input on its own.</p>
-            <p>The <strong>total-order index</strong> also includes every interaction involving that input. A score of 0.70 represents roughly 70% of the modelled variance under the chosen ranges.</p>
+            <p>The <strong>total-order index</strong> includes the input’s own share and every interaction involving it. For these independent inputs, a total-order score of 0.70 means that about 70% of modelled variance involves that input.</p>
           </div>
           <figure class="worked">
             <figcaption>Example of the queue rule</figcaption>
@@ -76,7 +76,7 @@
         <div class="experiment lesson-workspace">
           <form id="assumptions-form" class="controls">
             <h2>Queue model</h2>
-            <p>Start with the baseline. The page uses 8,192 pairs from seed 42 for both scenarios if the sample size stays fixed.</p>
+            <p>Leave <strong>Scenario</strong> at <strong>Baseline</strong> and select <strong>Run sensitivity analysis</strong>. The page uses 8,192 sample pairs from seed 42 at the starting sample size.</p>
             <fieldset>
               <legend>Scenario</legend>
               <label class="choice"><input type="radio" name="scenario" value="baseline" checked><span><strong>Baseline</strong><small>Extra queue delay off</small></span></label>
@@ -93,22 +93,22 @@
           </form>
           <div class="results" id="assumptions-results">
             <h2>Sobol indices and latency</h2>
-            <p>In the baseline, compare the first- and total-order bars for cache hit rate. How large is the gap?</p>
+            <p>In the Baseline result, compare <strong>First-order</strong> and <strong>Total-order</strong> for <strong>Cache hit rate</strong>. How large is the gap?</p>
             <div class="output"></div>
           </div>
         </div>
         <section class="instructions investigation-next">
           <h3>Turn on the queue penalty</h3>
           <ol>
-            <li>Select <strong>Queue saturation</strong> and rerun at the same sample size. Compare the first- and total-order gaps for <strong>Arrival rate</strong> and <strong>Worker capacity</strong> with the baseline gap for cache hit rate. Does <strong>Spearman rank</strong> also place both near the top?</li>
-            <li>In <strong>Latency across scenarios</strong>, compare p95, the time by which at least 95% of sampled jobs finish. How does <strong>Jobs with extra delay</strong> help explain the change?</li>
+            <li>Set <strong>Scenario</strong> to <strong>Queue saturation</strong> and leave <strong>Sample pairs</strong> at 8192 to reuse the same draws. Select <strong>Run sensitivity analysis</strong> again. Compare the <strong>First-order</strong> and <strong>Total-order</strong> gaps for <strong>Arrival rate</strong> and <strong>Worker capacity</strong> with the baseline gap for cache hit rate. Does <strong>Spearman rank</strong> place both near the top too?</li>
+            <li>In <strong>Latency across scenarios</strong>, compare <strong>p95 latency</strong>, the time by which at least 95% of sampled jobs finish. How does <strong>Jobs with extra delay</strong> help explain the change?</li>
           </ol>
         </section>
       </section>
       <div class="lesson-section">
         <section class="interpretation" aria-labelledby="sobol-read">
           <h2 id="sobol-read">Read the result</h2>
-          <p>When the total-order bar is much longer than the first-order bar, the input’s interactions account for much of its contribution. The Sobol bars describe variance across all jobs. Read p95 for a separate view of the slowest jobs.</p>
+          <p>A large gap between total and first order means interactions account for much of the input’s contribution to variance. The Sobol bars describe variance across all jobs. The p95 shows where the slowest 5% of jobs begin.</p>
           <details class="reference"><summary>Reveal the leading inputs and p95 for both scenarios</summary><p>With the penalty off, cache hit rate leads. With the penalty on, arrival rate and worker capacity lead by total order. The penalty affects about six in 100 jobs, enough to move p95 from about 124 to 239 ms.</p></details>
         </section>
       </div>

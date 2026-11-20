@@ -45,7 +45,7 @@
     <article class="lesson shell" aria-labelledby="worked-title">
       <header class="lesson-header">
         <h1 id="worked-title">Plan a fair test on real logs</h1>
-        <p>Choose test data, a baseline and a shuffle that answer the question you actually have.</p>
+        <p>Decide how to test a delivery-time predictor and which columns to shuffle to see what it relies on.</p>
       </header>
       <div class="guide">
         <h2>Test the predictor on realistic unseen examples</h2>
@@ -54,7 +54,7 @@
           <li><strong>Predict for new drivers.</strong> Train on some drivers and test on different drivers. Keep every record from the same driver together.</li>
         </ul>
         <p>Fit any rules for filling missing values on the training rows only.</p>
-        <p>Compare the model’s error with a simple baseline, such as always predicting the training median. The mean absolute error (MAE) averages how far each prediction is from the measured time. If late deliveries matter most, check errors on those cases too.</p>
+        <p>Compare the model’s error with a baseline that always predicts the median, the middle delivery time in the training data. The mean absolute error (MAE) averages how far each prediction is from the measured time. If late deliveries matter most, check errors on those cases too.</p>
         <h2>Shuffle the signal you want to investigate</h2>
         <p>Distance and delivery zone can carry overlapping information. Shuffle them separately to see how much the fitted model relies on each. Shuffle them as a pair to see how much the model relies on their shared information. Use the same row order for both columns so their values stay aligned.</p>
         <p>Even a paired shuffle can put a distance and zone beside an implausible route. Check whether the invented combinations make sense. Repeat the shuffle to see whether the conclusion depends on the particular row order.</p>
@@ -81,7 +81,7 @@
         <p>To estimate the effect of changing the route, run a controlled comparison or use a defensible causal design.</p>
         <p><a href="https://proceedings.neurips.cc/paper/2017/hash/8a20a8621978632d76c43dfd28b67767-Abstract.html">Lundberg &amp; Lee on interpreting model predictions</a></p>
         <h2>Write a test plan before departure</h2>
-        <p>Your available data are distance, delivery zone and the recorded arrival time. You want a prediction before the van leaves.</p>
+        <p>Imagine a log with distance, delivery zone and the recorded arrival time. The prediction is due before the van leaves. Write your plan in your own notes, then open <strong>Example test plan</strong> to compare.</p>
         <ol>
           <li>List the inputs available before departure.</li>
           <li>Pick two inputs to shuffle together.</li>

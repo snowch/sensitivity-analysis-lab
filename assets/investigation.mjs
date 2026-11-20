@@ -254,7 +254,7 @@ function renderHistory() {
   history.replaceChildren();
   if (runs.length < 2) return;
   history.append(node("h4", "Earlier runs"));
-  history.append(node("p", "Open a run to compare its tables with the latest result."));
+  history.append(node("p", "Open a numbered run to compare its tables with the latest result. If it has plots, open Plots from this run to compare those too."));
   for (const {id, options, result} of runs.slice(1)) {
     const details = node("details");
     const current = new Map(describe(runs[0].options));
@@ -300,7 +300,7 @@ function failure(message) {
   ready(false);
 }
 function startWorker() {
-  worker = new Worker(new URL("./course-worker.mjs?v=3",import.meta.url),{type:"module"});
+  worker = new Worker(new URL("./course-worker.mjs?v=4",import.meta.url),{type:"module"});
   worker.addEventListener("error",()=>{
     worker.terminate();
     worker=null;
