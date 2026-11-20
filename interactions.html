@@ -127,7 +127,7 @@
         <details class="reference">
           <summary>Sampling method and limits of the queue model</summary>
           <p>The experiment draws independent inputs into two samples. For each input it swaps values between the samples and reruns the model to estimate the two indices. Small negative first-order estimates can occur because the sample is finite. Total-order shares can add to more than one because two inputs can both contribute to the same interaction.</p>
-          <p>Each condition for the queue penalty covers a quarter of its input range. Under independent draws they coincide about one time in sixteen. The step penalty illustrates a slowdown and would need separate validation against a real queue.</p>
+          <p>Each condition for the queue penalty covers a quarter of its input range. Under independent draws they coincide about one time in sixteen. Before using this model to choose a worker capacity, compare measured latencies for similar workloads just above and below the proposed arrival and capacity cutoffs. If latency grows gradually, test a gradual penalty and see whether it changes which capacity you would choose.</p>
         </details>
       </div>
       <nav class="lesson-resources" aria-labelledby="lesson-references-title">

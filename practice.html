@@ -131,14 +131,14 @@
           <ol>
             <li><strong>Model.</strong> Name the leading input under each range and explain why the ranking moved. Give a plausible interaction in the bill formula. State where real ranges could come from and what dependence would invalidate the independent-input analysis.</li>
             <li><strong>Logs.</strong> Compare the model’s test error with the simple baseline. Compare individual and grouped shuffles. Explain what these scores measure and what evidence you’d need to estimate the effect of an intervention.</li>
-            <li><strong>Decision.</strong> Give the percentage of months over $200 for at least two alternatives and state which meet the target under each scenario. Propose a fair test, specify what changes and what you’d hold steady, and account for upfront costs before a real purchase.</li>
+            <li><strong>Decision.</strong> Give the percentage of months over $200 for at least two alternatives and state which meet the target under each scenario. Propose a fair test. Specify what changes and what you’d hold steady. Before a real purchase, compare the upfront cost with the bill savings over the number of months you expect the change to last.</li>
           </ol>
         </section>
       </div>
       <details class="method-note reading">
         <summary>Reveal a worked household recommendation</summary>
         <h3>Which inputs matter?</h3>
-        <p>Cold days lead the usual Spearman ranking. With the 12–26 day range, cold days vary less and the electricity rate ranks first. Heating demand multiplies cold days by the heat-loss factor, so a change in heat loss matters more during colder months.</p>
+        <p>Cold days lead the usual Spearman ranking. With the 12–26 day range, cold days vary less and the electricity rate ranks first. In this model, the same reduction in the heat-loss factor saves more heating electricity in a month with more cold days. Check <strong>Option over $200</strong> to see whether more than 5% of colder-season bills still exceed $200.</p>
         <p>On the synthetic logs, the forest has lower test MAE than the median baseline. The two cold-weather signals share information. Shuffling them together costs more accuracy than shuffling either alone.</p>
         <h3>Which option stays within budget?</h3>
         <p>In the usual model, about 15% of baseline months exceed $200. Reducing heat loss by 30% takes this to about 3.5%. Halving dryer cycles leaves about 12% over budget.</p>

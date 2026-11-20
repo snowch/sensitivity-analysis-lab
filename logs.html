@@ -107,7 +107,7 @@
           <h2 id="logs-read">Read the result</h2>
           <p>An edge cache stores copies close to users. <strong>Edge miss rate</strong> is the share of requests with no usable copy there. <strong>Origin fetch rate</strong> is the share that had to reach the original source.</p>
           <p>The synthetic data make both noisy measures of the same cache behaviour. Shuffling one leaves the other available. Moving both together keeps them aligned with each other while breaking their link to the original jobs.</p>
-          <p>The chart describes which signals help this predictor on these test rows. To test whether a change helps the pipeline, compare the same workload under two settings, such as current and increased worker capacity. Decide in advance which latency and cost measurements would justify the change.</p>
+          <p>Use the increase in test MAE after a shuffle to see which signals the predictor relies on for accurate latency estimates. If you need to decide whether to add worker capacity, compare current and higher capacity on the same workload. Before the test, specify how much latency must fall and the maximum extra cost per job.</p>
         </section>
       </div>
       <form class="knowledge-check">

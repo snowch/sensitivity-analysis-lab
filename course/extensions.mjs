@@ -21,7 +21,7 @@ export const extensions = {
     read: "In <strong>Predicted response times in a teaching model</strong>, compare <strong>A (ms)</strong> and <strong>B (ms)</strong>. Which system is faster at this workload?",
     steps: ["Set <strong>Workload design</strong> to <strong>Cross load and payload</strong>. The page shows <strong>High load (tens of requests/s)</strong> and <strong>Large payload (MB)</strong>, both at 8. Run again. Find a row where <strong>B minus A (ms)</strong> is negative and read its load and payload. Which system is faster there?","Set <strong>High load (tens of requests/s)</strong> and <strong>Large payload (MB)</strong> to 3 and run again. Read <strong>B minus A (ms)</strong> in all four rows. Does either system win at every workload in this narrower range?"],
     task:"Design a real benchmark to test whether A has lower response times at low load with a small payload, while B has lower response times at high load with a large payload. State which settings you vary together, which you hold fixed and how you would make the comparison fair.",
-    answer:"At high load and large payload B wins in the illustrative formula, though A wins at the low setting. Include a crossed design spanning plausible loads and sizes. Match request contents for both systems. Control software versions and hardware, vary execution order and repeat enough to check thermal, cache and scheduling effects.",
+    answer:"At high load and large payload B wins in the illustrative formula, though A wins at the low setting. Include a crossed design spanning plausible loads and sizes. Match request contents for both systems. Keep hardware and software versions fixed and vary which system runs first. Decide the smallest response-time difference that would change your choice. In a real benchmark, repeat paired measurements at each workload. Report the mean of B minus A and an uncertainty interval for that mean. Collect more pairs if the interval spans differences that would lead to different choices.",
     refs:["saltelli"],
   },
   tuning: {
@@ -29,7 +29,8 @@ export const extensions = {
     goal:"Use sensitivity to plan where to search and optimisation to choose a feasible setting.",
     concept:`<h2>Choose which settings to vary</h2>
     <p>A <strong>hyperparameter</strong> is a setting you choose before fitting a machine learning model. For example, the learning rate sets how far the model adjusts at each training step.</p>
-    <p>Use the sensitivity study to decide which settings, such as learning rate and model size, to vary in your tuning trials. Consider more trials for settings that move validation loss substantially within plausible ranges. Check whether the effect of one setting depends on another. If a setting barely changes prediction error across the range you tested, you might hold it fixed. Check whether that holds at other settings or on other data. Optimisation then searches for the best configuration that fits the training budget.</p>
+    <p>Before spending more trials on a setting, compare its effect on validation loss with the spread of losses across training seeds or validation splits. Prioritise settings that can change which configuration you would choose within the time limit.</p>
+    <p>Check learning rates at several plausible model sizes. If changing the rate gives little repeatable improvement in validation loss, fix it and use the trials to compare more sizes. Keep varying the rate if it improves loss enough to change your choice at a size you might select. Optimisation searches for the lowest-loss configuration within the budget.</p>
     <h2>Measure performance on fresh examples</h2>
     <ul>
       <li><strong>Training set.</strong> Use these examples to fit the model.</li>

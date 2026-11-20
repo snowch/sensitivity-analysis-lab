@@ -25,7 +25,7 @@ export const units = [
     ["stochastic", "Separate simulator noise", "Use repeated evaluations at the same input to partition variation."],
     ["decisions", "Compare decisions", "Compare costs, break-even points, tail risk and value of information."],
     ["benchmark", "Choose what to vary in a benchmark", "Find where workload conditions reverse a comparison."],
-    ["tuning", "Spend an ML tuning budget", "Distinguish a sensitive hyperparameter from a good configuration."],
+    ["tuning", "Spend an ML tuning budget", "Find settings that affect validation loss and choose the lowest-loss trial within the time limit."],
     ["logs", "Work from logs", "On unseen pipeline runs, compare individual and grouped permutation importance."],
     ["practice", "Independent household practice", "Choose methods and defend a budget recommendation across scenarios."],
     ["capstone", "Conduct your own analysis", "Choose assumptions, run checks and export a defensible report."],

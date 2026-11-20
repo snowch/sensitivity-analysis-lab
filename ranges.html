@@ -104,7 +104,7 @@
         <details class="reference">
           <summary>Why the range width and input dependence matter</summary>
           <p>A uniform draw gives equal chances to equal-width intervals. Its variance, a measure that gives more weight to large deviations from the mean, is the squared range width divided by 12. Widening the RTT range from 4 to 63 ms multiplies the network term’s variance by about 248. Its share of total variance also depends on the other inputs.</p>
-          <p>In an autoscaling service, worker capacity may rise with demand. Drawing the two independently can create high-load, low-capacity conditions that rarely occur. Sample measured pairs or model operating regimes separately when that dependence matters.</p>
+          <p>In an autoscaling service, worker capacity may rise with demand. Drawing the two independently can create high-load, low-capacity conditions that rarely occur. If independent draws overstate how often high arrivals coincide with low capacity, use arrival and capacity measurements from the same time windows to estimate how often the queue penalty applies. Model each operating mode separately if their demand and capacity patterns differ.</p>
         </details>
       </div>
       <nav class="lesson-actions" aria-label="Course sequence"><a href="rank.html">Previous · Rank the knobs</a><a class="button dark" href="interactions.html">Next · Find hidden interactions</a></nav>

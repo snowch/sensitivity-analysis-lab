@@ -1,7 +1,7 @@
 export const methodMap = `<article class="lesson shell method-map-page">
   <header class="lesson-header">
     <h1>How the methods fit together</h1>
-    <p>You need to get to class by 9 am. Use one journey to see how five methods help you choose a route and departure time.</p>
+    <p>You need to get to class by 9 am. The first diagram shows how modelled journey times and late-arrival chances inform your route and departure time. The second shows how to check which inputs a predictor trained on past trips relies on.</p>
   </header>
 
   <figure class="method-map" aria-labelledby="model-map-title">

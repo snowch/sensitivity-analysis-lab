@@ -54,10 +54,10 @@
           <li><strong>Predict for new drivers.</strong> Train on some drivers and test on different drivers. Keep every record from the same driver together.</li>
         </ul>
         <p>Fit any rules for filling missing values on the training rows only.</p>
-        <p>Compare the model’s error with a baseline that always predicts the median, the middle delivery time in the training data. The mean absolute error (MAE) averages how far each prediction is from the measured time. If late deliveries matter most, check errors on those cases too.</p>
+        <p>Compare the model’s error with a baseline that always predicts the median, the middle delivery time in the training data. The mean absolute error (MAE) averages how far each prediction is from the measured time. If you need to warn customers before the van leaves, flag a delivery when its predicted arrival is after the promised time. On held-out deliveries, count late deliveries the predictor missed and on-time deliveries it flagged by mistake.</p>
         <h2>Shuffle the signal you want to investigate</h2>
         <p>Distance and delivery zone can carry overlapping information. Shuffle them separately to see how much the fitted model relies on each. Shuffle them as a pair to see how much the model relies on their shared information. Use the same row order for both columns so their values stay aligned.</p>
-        <p>Even a paired shuffle can put a distance and zone beside an implausible route. Check whether the invented combinations make sense. Repeat the shuffle to see whether the conclusion depends on the particular row order.</p>
+        <p>Even a paired shuffle can assign a distance and zone that could never occur on the recorded route. The added prediction error may reflect these implausible inputs. Try shuffling within groups of deliveries on compatible routes, and describe the resulting score as reliance within those groups. Repeat the shuffle to see whether another row order changes the score.</p>
         <h2>Choose the meaning of importance</h2>
         <dl class="terms">
           <dt>Permutation importance</dt>

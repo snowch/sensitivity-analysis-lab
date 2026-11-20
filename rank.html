@@ -108,7 +108,7 @@
       <div class="lesson-section">
         <section class="interpretation" aria-labelledby="rank-read">
           <h2 id="rank-read">Read the result</h2>
-          <p>In this model, cache hits avoid slower fetches and larger jobs take longer to process. Changing the seed draws a different sample from the same ranges. Check whether the top two stay the same before interpreting small score changes.</p>
+          <p>In this model, cache hits avoid slower fetches and larger jobs take longer to process. Changing the seed draws a different sample from the same ranges. If changing the seed changes the top two, keep the competing inputs on your shortlist, increase <strong>Simulated runs</strong> under <strong>Simulation settings</strong> and compare the rankings again. Use the shortlist to decide which input changes to test first in the latency model.</p>
           <details class="reference"><summary>Reveal the two highest-ranked inputs for seed 42</summary><p>At seed 42 and 8,192 jobs, cache hit rate leads at −0.84 and payload size follows at +0.51.</p></details>
           <p>A small score can conceal a strong effect that changes direction. For example, fuel use can rise both below and above an efficient speed. Plot the input against the output before you rule it out.</p>
         </section>
