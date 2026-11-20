@@ -13,13 +13,7 @@ export const foundations = {
     <p>Suppose you’re choosing between two routes to campus. If you want to spend less time travelling over many trips, choose the route with the shorter average journey time. If you leave at 8:35 for a 9 am class and want to avoid being late, choose the route with the lower chance of taking longer than 25 minutes.</p>
     <p>A <strong>model</strong> uses inputs to calculate an outcome. Route and departure time are choices. Weather and traffic are conditions you face. A <strong>parameter</strong>, such as how many minutes the model adds per kilometre, sets how its calculation works.</p>
     <p>The model’s <strong>output</strong> for one trip is its journey time. When the possible journey times are equally likely, calculate each route’s chance of arriving late by dividing the number of journeys over 25 minutes by the total number of journeys for that route.</p>
-    <p>Before changing a model input, choose what you’ll compare across routes, such as average journey time or the chance of arriving late. <strong>Sensitivity analysis</strong> asks how much that measure changes when you change an input or assumption.</p>
-    <div class="lesson-resources">
-      <a class="resource-link" href="method-map.html">
-        <span>See how the methods fit together<small>Five ways to analyse the same journey</small></span>
-        <span class="resource-arrow" aria-hidden="true"></span>
-      </a>
-    </div>`,
+    <p>Before changing a model input, choose what you’ll compare across routes, such as average journey time or the chance of arriving late. <strong>Sensitivity analysis</strong> asks how much that measure changes when you change an input or assumption.</p>`,
     example: `<p>Suppose two equally likely trips take 10 and 30 minutes. Compare four ways to describe those times.</p>
     <ul>
       <li><strong>Mean.</strong> Add the times and divide by two. (10 + 30) ÷ 2 = 20 minutes.</li>

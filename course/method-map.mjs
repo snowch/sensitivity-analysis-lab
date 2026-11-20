@@ -80,6 +80,6 @@ export const methodMap = `<article class="lesson shell method-map-page">
   </div>
   <nav class="lesson-actions" aria-label="Continue learning">
     <a href="./#course">Course outline</a>
-    <a class="button dark" href="questions.html">Back to Lesson 1</a>
+    <a class="button dark" href="questions.html">Start lesson 1</a>
   </nav>
 </article>`;

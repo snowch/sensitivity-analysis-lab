@@ -34,7 +34,6 @@ export const units = [
 
 export const route = units.flatMap(([, pages]) => pages);
 export const references = [
-  ["method-map", "How the methods fit together"],
   ["spearman-calculation", "Calculate Spearman by hand"],
   ["sobol-calculation", "Calculate Sobol indices for two switches"],
   ["predictive-attribution", "Plan a fair test on real logs"],
