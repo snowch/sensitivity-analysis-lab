@@ -96,7 +96,7 @@
           </form>
           <div class="results" id="screen-results">
             <h2>Spearman scores</h2>
-            <p>Find the two longest bars. Record the input names and whether each score is positive or negative. Which higher input values tend to go with shorter jobs?</p>
+            <p>Find the two longest bars. Record the input names and whether each score is positive or negative. Of the two inputs with the longest bars, which one has a negative score, meaning higher values of that input tend to go with shorter jobs?</p>
             <div class="output"></div>
           </div>
         </div>
@@ -119,7 +119,7 @@
           <legend>Cache hit rate has a Spearman score of −0.84 in the prepared run. What does the score tell you?</legend>
           <label><input type="radio" name="answer" value="0" required data-feedback="Correct. The negative sign links higher cache hit rates with shorter jobs. A score close to −1 indicates that this ordering is common in the model.">Higher values usually go with lower latency.</label>
           <label><input type="radio" name="answer" value="1" required data-feedback="This score compares orderings. Use a variance-based method, such as Sobol indices, to estimate a share of variance.">Cache hit rate explains 84% of the spread in latency.</label>
-          <label><input type="radio" name="answer" value="2" required data-feedback="The score has no units. To estimate a saving in milliseconds, compare latency before and after a specific change in the model.">Raising cache hit rate by one percentage point saves 0.84 ms.</label>
+          <label><input type="radio" name="answer" value="2" required data-feedback="The score has no units. To estimate the milliseconds saved by raising the cache hit rate by one percentage point, compare modelled latency at the two hit rates with the other inputs held fixed.">Raising cache hit rate by one percentage point saves 0.84 ms.</label>
         </fieldset>
         <button class="button outline-button" disabled>Check answer</button>
         <p class="check-feedback" role="status"></p>

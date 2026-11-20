@@ -64,7 +64,7 @@
               <thead><tr><th scope="col">Actual latency</th><th scope="col">Original prediction</th><th scope="col">After swap</th></tr></thead>
               <tbody><tr><td>100 ms</td><td>105 ms</td><td>155 ms</td></tr><tr><td>160 ms</td><td>155 ms</td><td>105 ms</td></tr></tbody>
             </table>
-            <p>This example predictor uses only payload size. Swapping those two values swaps the predictions. Each absolute error grows from 5 to 55 ms. The average also rises by 55 − 5 = 50 ms.</p>
+            <p>The table shows what happens when the two jobs trade payload sizes. This predictor uses only payload size, so the predictions swap places and the recorded latencies stay the same. Each absolute error grows from 5 to 55 ms. The average also rises by 55 − 5 = 50 ms.</p>
           </figure>
         </div>
       </div>

@@ -39,7 +39,7 @@ export const methodMap = `<article class="lesson shell method-map-page">
           </li>
         </ul>
         <div class="map-join" aria-hidden="true"></div>
-        <p class="map-bridge">These results can inform the choice</p>
+        <p class="map-bridge">Use the journey-time and late-arrival estimates to compare routes and departure times.</p>
 
         <div class="map-node map-decision">
           <h3><a href="tuning.html">Optimisation</a></h3>
@@ -72,7 +72,7 @@ export const methodMap = `<article class="lesson shell method-map-page">
         </ol>
       </div>
     </div>
-    <p class="map-model-link">A fitted predictor can also provide estimates for the <a href="#journey-model">journey-time model above</a>.</p>
+    <p class="map-model-link">A predictor trained on past trips can supply travel-time estimates for the routes, departure times and traffic conditions that the <a href="#journey-model">journey-time model</a> compares.</p>
   </figure>
 
   <div class="reading map-note">

@@ -337,7 +337,7 @@ function capstone(o) {
   } else if (o.method === "rank") {
     results.push(table("Global rank screen on current staffing", ["Input", "Spearman ρ"], screen(setup).scores.map(row=>[row.label,row.rho])));
   } else if (linked) {
-    results.push(table("Sobol diagnostic", ["Result"], [["Linked inputs need a different analysis. Compare the matched outcomes or set Sensitivity method to Spearman rank screen and run again. If independence is plausible, set Input dependence to Independent and run again to use the Sobol screen."]]));
+    results.push(table("Sobol diagnostic", ["Result"], [["Linked inputs need a different sensitivity screen because classical Sobol indices require independent inputs. To compare staffing options with linked inputs, read Current team and One extra volunteer in Chosen decision summary. To screen inputs under the linked assumptions, set Sensitivity method to Spearman rank screen and run again. If independence is plausible, set Input dependence to Independent and run again to use the Sobol screen."]]));
   } else {
     try {
       results.push(table("Independent-input Sobol screen on current staffing", ["Input", "First order", "Total order"], sobol(setup).map(row=>[row.label,row.first,row.total])));

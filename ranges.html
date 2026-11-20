@@ -66,7 +66,7 @@
       </div>
       <section class="lesson-section lesson-experiment" aria-labelledby="experiment-title">
         <div class="instructions">
-          <h2 id="experiment-title">Can a wider range change which input ranks first?</h2>
+          <h2 id="experiment-title">Does widening the range of network round-trip time change which input ranks first by Spearman score?</h2>
           <p>Predict which range will put network RTT closer to the top.</p>
         </div>
         <div class="experiment lesson-workspace">
@@ -95,7 +95,7 @@
           <legend>Network RTT ranks first under the wider range. What evidence would tell you whether that ranking applies to your deployment?</legend>
           <label><input type="radio" name="answer" required data-feedback="That ranking describes the wide scenario. Check which range fits the deployment you care about.">Use the wide range for every deployment.</label>
           <label><input type="radio" name="answer" required data-feedback="Correct. Measure RTT during representative runs. Use that evidence to choose a range for a real analysis.">Measure RTT under the conditions you plan to operate in.</label>
-          <label><input type="radio" name="answer" required data-feedback="A ranking is based on variation across scenarios. Compare controlled model runs to estimate a specific saving.">Treat the rank as an estimate of milliseconds saved.</label>
+          <label><input type="radio" name="answer" required data-feedback="A ranking is based on variation across scenarios. To estimate milliseconds saved by reducing network RTT, run the model at the old and new RTT with the other inputs fixed. Subtract the new job latency from the old one.">Treat the rank as an estimate of milliseconds saved.</label>
         </fieldset>
         <button class="button outline-button" disabled>Check answer</button>
         <p class="check-feedback" role="status"></p>

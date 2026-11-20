@@ -51,7 +51,7 @@ function stepNav(id) {
 function frame(id,title,body,interactive=false) {
   const head=pageStart
     .replace(/<title>.*?<\/title>/,`<title>${html(title)} · Sensitivity Analysis Lab</title>`)
-    .replace("</head>",interactive ? '  <script type="module" src="assets/investigation.mjs?v=5"></script>\n</head>' : "</head>");
+    .replace("</head>",interactive ? '  <script type="module" src="assets/investigation.mjs?v=6"></script>\n</head>' : "</head>");
   return `${head}
   <div class="course-layout">
     ${sidebar(id)}

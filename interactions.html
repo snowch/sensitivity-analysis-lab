@@ -71,7 +71,7 @@
       </div>
       <section class="lesson-section lesson-experiment" aria-labelledby="experiment-title">
         <div class="instructions">
-          <h2 id="experiment-title">Does the queue change which inputs matter?</h2>
+          <h2 id="experiment-title">Does switching on the queue penalty change which inputs lead by total-order Sobol index?</h2>
         </div>
         <div class="experiment lesson-workspace">
           <form id="assumptions-form" class="controls">
@@ -100,7 +100,7 @@
         <section class="instructions investigation-next">
           <h3>Turn on the queue penalty</h3>
           <ol>
-            <li>Set <strong>Scenario</strong> to <strong>Queue saturation</strong> and leave <strong>Sample pairs</strong> at 8192 to reuse the same draws. Select <strong>Run sensitivity analysis</strong> again. Compare the <strong>First-order</strong> and <strong>Total-order</strong> gaps for <strong>Arrival rate</strong> and <strong>Worker capacity</strong> with the baseline gap for cache hit rate. Does <strong>Spearman rank</strong> place both near the top too?</li>
+            <li>Set <strong>Scenario</strong> to <strong>Queue saturation</strong> and leave <strong>Sample pairs</strong> at 8192 to reuse the same draws. Select <strong>Run sensitivity analysis</strong> again. Compare the <strong>First-order</strong> and <strong>Total-order</strong> gaps for <strong>Arrival rate</strong> and <strong>Worker capacity</strong> with the baseline gap for cache hit rate. Read the <strong>Spearman rank</strong> positions for <strong>Arrival rate</strong> and <strong>Worker capacity</strong>. Do these two inputs also take the top two places by Spearman rank?</li>
             <li>In <strong>Latency across scenarios</strong>, compare <strong>p95 latency</strong>, the time by which at least 95% of sampled jobs finish. How does <strong>Jobs with extra delay</strong> help explain the change?</li>
           </ol>
         </section>

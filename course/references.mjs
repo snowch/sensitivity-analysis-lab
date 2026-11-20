@@ -1,5 +1,5 @@
 export const sources = {
-  saltelli: ["Saltelli et al. (2020), Five ways to ensure that models serve society", "https://www.nature.com/articles/d41586-020-01812-9", "Make assumptions visible and test uncertainty in the inference."],
+  saltelli: ["Saltelli et al. (2020), Five ways to ensure that models serve society", "https://www.nature.com/articles/d41586-020-01812-9", "State the assumptions behind a model and check how much its conclusions change when those assumptions change."],
   lhs: ["McKay, Beckman & Conover (1979), A comparison of three methods for selecting values of input variables", "https://doi.org/10.1080/00401706.1979.10489755", "Original comparison introducing Latin hypercube sampling."],
   qmc: ["SciPy documentation, Quasi-Monte Carlo", "https://docs.scipy.org/doc/scipy/reference/stats.qmc.html", "How sampling designs spread points and where they can struggle."],
   spearman: ["SciPy documentation, spearmanr", "https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.spearmanr.html", "How to interpret a rank correlation and handle ties."],

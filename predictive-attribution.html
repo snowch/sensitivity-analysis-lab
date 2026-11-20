@@ -71,17 +71,17 @@
         </dl>
         <div class="worked">
           <h3>Explain a 32-minute prediction</h3>
-          <p>In this illustrative calculation, the reference is 20 minutes. Using distance alone gives 26 minutes. Using zone alone gives 24. Using both gives 32.</p>
+          <p>In this illustrative calculation, the predictor averages 20 minutes across its reference deliveries. With this delivery’s distance fixed, averaging the predictions over reference zones gives 26 minutes. With this delivery’s zone fixed, averaging over reference distances gives 24 minutes. Using both values for this delivery gives 32 minutes.</p>
           <ul>
-            <li><strong>Distance.</strong> It adds 26 − 20 = 6 minutes on its own, or 32 − 24 = 8 after zone. Its credit is (6 + 8) ÷ 2 = 7 minutes.</li>
-            <li><strong>Zone.</strong> It adds 24 − 20 = 4 minutes on its own, or 32 − 26 = 6 after distance. Its credit is (4 + 6) ÷ 2 = 5 minutes.</li>
+            <li><strong>Distance.</strong> Knowing distance adds 26 − 20 = 6 minutes when neither input is known, or 32 − 24 = 8 minutes when zone is already known. Its credit is (6 + 8) ÷ 2 = 7 minutes.</li>
+            <li><strong>Zone.</strong> Knowing zone adds 24 − 20 = 4 minutes when neither input is known, or 32 − 26 = 6 minutes when distance is already known. Its credit is (4 + 6) ÷ 2 = 5 minutes.</li>
           </ul>
-          <p>The credits sum to the 12-minute difference. Changing the reference group or the way you handle unknown values can change the credits.</p>
+          <p>Distance and zone together account for the 12 minutes between the predictor’s 32-minute estimate for this delivery and the 20-minute reference. Changing the reference group or the way you handle unknown values can change the credits.</p>
         </div>
         <p>To estimate the effect of changing the route, run a controlled comparison or use a defensible causal design.</p>
         <p><a href="https://proceedings.neurips.cc/paper/2017/hash/8a20a8621978632d76c43dfd28b67767-Abstract.html">Lundberg &amp; Lee on interpreting model predictions</a></p>
         <h2>Write a test plan before departure</h2>
-        <p>Imagine a log with distance, delivery zone and the recorded arrival time. The prediction is due before the van leaves. Write your plan in your own notes, then open <strong>Example test plan</strong> to compare.</p>
+        <p>Imagine a log with distance, delivery zone and the recorded arrival time. The prediction is due before the van leaves. Write your plan in your own notes. Then open <strong>Example test plan</strong>. Compare your plan with the example’s choice of inputs, the two columns to shuffle together, and the test of a route change.</p>
         <ol>
           <li>List the inputs available before departure.</li>
           <li>Pick two inputs to shuffle together.</li>
