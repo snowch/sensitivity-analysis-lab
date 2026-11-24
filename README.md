@@ -16,8 +16,9 @@ A self-paced course in four units. Start with arithmetic and a simple fare model
 The repository has no runtime package dependencies. Use Node.js 20 or newer for local builds and tests. Pages are rendered into `_site/` for deployment.
 
 ```sh
-node --test tests/*.test.mjs
-node scripts/build-course.mjs
+npm ci
+npm test
+npm run build
 python3 -m http.server 8000 --directory _site
 ```
 
@@ -34,3 +35,11 @@ node --input-type=module -e 'import {energyCsv} from "./assets/energy.mjs"; proc
 ```
 
 The [field guide](https://snowch.github.io/sensitivity-analysis-lab/apply.html) helps select a method for a question of your own. For further practice, see [Monte Carlo Lab](https://snowch.github.io/monte-carlo-lab/), [Scientific Method Lab](https://snowch.github.io/scientific-method-lab/) and [Sizing & TCO Lab](https://snowch.github.io/sizing/).
+
+## Offline access
+
+Open App status and choose **Save offline copy** before disconnecting. Wait for **Downloaded and ready to use offline**. The complete course includes all lessons and experiment workers; its CSV and report exports work offline. External reference websites need internet access. Online version checks are automatic and do not download the full course.
+
+Use **Update offline copy**, then **Restart to update**, to replace the saved version without discarding open work. Notes, settings and recorded results are restored; experiments are never rerun automatically. See [the offline design and verification](docs/offline-update-design.md).
+
+Run `npm run test:browser` after building to test real offline lessons and guarded updates. Set `CHROMIUM` to a Chromium executable, or use `npx playwright install --with-deps chromium` to install the pinned browser for CI.

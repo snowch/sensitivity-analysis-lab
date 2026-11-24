@@ -1,19 +1,42 @@
-name: Deploy lab to GitHub Pages
-
+name: Check and deploy Sensitivity Analysis Lab
 on:
   push:
     branches: [main]
+  pull_request:
   workflow_dispatch:
-
-permissions: {}
-
+permissions:
+  contents: read
 concurrency:
-  group: pages
-  cancel-in-progress: false
-
+  group: pages-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
-  deploy:
-    runs-on: ubuntu-latest
+  check:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+      - run: npm ci
+      - name: Verify numerical examples and offline build contract
+        run: npm test
+      - name: Prepare verified course
+        run: npm run build
+      - name: Install test browser
+        run: npx playwright install --with-deps chromium
+      - name: Test real offline lessons, downloads and guarded updates
+        run: CHROMIUM=$(node -e "console.log(require('playwright').chromium.executablePath())") npm run test:browser
+      - uses: actions/upload-artifact@v4
+        if: github.event_name != 'pull_request'
+        with:
+          name: verified-course
+          path: _site
+  publish:
+    if: github.event_name != 'pull_request'
+    needs: check
+    runs-on: ubuntu-24.04
     permissions:
       contents: read
       pages: write
@@ -25,11 +48,18 @@ jobs:
       - uses: actions/checkout@v7
         with:
           persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+      - uses: actions/download-artifact@v5
+        with:
+          name: verified-course
+          path: _site
+      - name: Preserve assets for older open lessons
+        env:
+          PUBLISHED_COURSE_URL: https://snowch.github.io/sensitivity-analysis-lab/
+        run: node scripts/retain-for-publish.mjs
       - uses: actions/configure-pages@v6
-      - name: Verify numerical examples
-        run: node --test tests/*.test.mjs
-      - name: Prepare static site
-        run: node scripts/build-course.mjs
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site
