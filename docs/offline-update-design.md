@@ -26,7 +26,7 @@ A missing worker is an infrastructure failure. Keep earlier output and show a pe
 
 The build clears only its owned output directory; custom output directories must be empty. It fingerprints the output and worker contract, copies assets to `releases/<id>/`, pins HTML assets, and emits exact bytes and SHA-256 for every required file. Font and worker imports resolve relative to their pinned modules/stylesheets. Service-worker installation does not silently download the course.
 
-Before publication, preserve legacy dependency aliases for older open pages and the two prior immutable releases. Verify fetched bytes; abort publication if preservation fails. The publish job consumes the already-tested build artifact, so a publication-only retry does not repeat numerical and browser checks. Tests import the actual retention helpers and exercise the publication entry point, guarding against incorrect adapter import paths.
+Before publication, discover legacy dependency aliases from published HTML, JavaScript imports, versioned workers, stylesheets and the prior runtime manifest, then preserve them along with the two prior immutable releases. Newly fingerprinted assets must not erase an old worker that an open lesson has yet to load. Requests retry transient transport failures up to three times; bad hashes and missing declared dependencies still stop publication. Verify fetched bytes; abort publication if preservation fails. The publish job consumes the already-tested build artifact, so a publication-only retry does not repeat numerical and browser checks. Tests import the actual retention helpers and exercise the publication entry point, guarding against incorrect adapter import paths.
 
 ## Functional verification
 
