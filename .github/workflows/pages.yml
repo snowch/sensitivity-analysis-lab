@@ -32,6 +32,7 @@ jobs:
         if: github.event_name != 'pull_request'
         with:
           name: verified-course
+          include-hidden-files: true
           path: _site
   publish:
     if: github.event_name != 'pull_request'
@@ -55,6 +56,8 @@ jobs:
         with:
           name: verified-course
           path: _site
+      - name: Verify the downloaded publication artifact
+        run: node scripts/verify-offline-build.mjs _site
       - name: Preserve assets for older open lessons
         env:
           PUBLISHED_COURSE_URL: https://snowch.github.io/sensitivity-analysis-lab/
