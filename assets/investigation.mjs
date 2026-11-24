@@ -1,3 +1,4 @@
+import {registerReading,experimentFilesUnavailable} from "./experiment-state.mjs";
 const form = document.querySelector("#investigation");
 const results = document.querySelector("#investigation-output");
 const resultSection = results.closest(".investigation-results");
@@ -301,10 +302,11 @@ function failure(message) {
 }
 function startWorker() {
   worker = new Worker(new URL("./course-worker.mjs?v=5",import.meta.url),{type:"module"});
-  worker.addEventListener("error",()=>{
+  worker.addEventListener("error",event=>{
+    event.preventDefault();
     worker.terminate();
     worker=null;
-    if (activeOptions) failure("The experiment could not run. Try again or reload this page.");
+    if (activeOptions) {failure("Experiment files could not be loaded. Your earlier results are kept.");experimentFilesUnavailable(submit.textContent.trim());}
   });
   worker.addEventListener("message",({data:{id,result,error}})=>{
     if (error) {failure(error);return;}
@@ -435,3 +437,12 @@ document.querySelector("#download-report")?.addEventListener("click",()=>{
 new MutationObserver(()=> {
   for (const canvas of document.querySelectorAll(".course-plot canvas")) canvas.drawPlot();
 }).observe(document.documentElement,{attributes:true,attributeFilter:["data-theme"]});
+
+registerReading('investigation',{
+ isBusy:()=>Boolean(activeOptions),
+ save:()=>({runs,nextRun}),
+ restore:saved=>{
+  runs=saved.runs||[];nextRun=saved.nextRun||1;
+  if(runs.length){showLatest();status.textContent=`Saved result from Run ${runs[0].id}. Select Run experiment to use the current settings.`;}
+ }
+});

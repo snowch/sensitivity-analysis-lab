@@ -1,0 +1,16 @@
+{
+  "name": "sensitivity-analysis-lab",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "node scripts/build-course.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "test:browser": "node tests/offline-browser.cjs"
+  },
+  "devDependencies": {
+    "playwright": "1.56.1"
+  }
+}

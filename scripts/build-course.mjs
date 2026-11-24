@@ -1,6 +1,8 @@
-import { cp, mkdir, readFile, readdir, writeFile } from "node:fs/promises";
+import { cp, rm, mkdir, readFile, readdir, writeFile } from "node:fs/promises";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import {execFileSync} from "node:child_process";
+import {buildOffline} from "./offline.mjs";
 import { units, route, references } from "../course/manifest.mjs";
 import { foundations } from "../course/foundations.mjs";
 import { methods } from "../course/methods.mjs";
@@ -169,6 +171,11 @@ function renderLesson([id,title],lesson) {
   </article>`,true);
 }
 
+if(target!==join(root,"_site")){
+ let entries=[];try{entries=await readdir(target);}catch(error){if(error.code!=="ENOENT")throw error;}
+ if(entries.length)throw Error("Use an empty custom build directory.");
+}
+await rm(target,{recursive:true,force:true});
 await mkdir(target,{recursive:true});
 await cp(join(root,"assets"),join(target,"assets"),{recursive:true});
 const existing = (await readdir(root)).filter(name=>name.endsWith(".html"));
@@ -206,4 +213,13 @@ await writeFile(join(target,"references.html"),frame("references","Bibliography"
   ${sourceGroups.map(([title, keys]) => `<section class="reading"><h2>${html(title)}</h2><dl class="terms">${keys.map(key=>`<dt>${sourceLink(key)}</dt><dd>${html(sources[key][2])}</dd>`).join("\n")}</dl></section>`).join("\n")}
   <nav class="lesson-actions"><a href="./#course">Course outline</a></nav>
 </article>`));
+for(const file of (await readdir(target)).filter(name=>name.endsWith(".html"))){
+ const path=join(target,file),page=await readFile(path,"utf8");
+ await writeFile(path,page.replace("</head>",'<link rel="stylesheet" href="assets/app-status.css"><link rel="stylesheet" href="assets/runtime-recovery.css"></head>'));
+}
 console.log(`Built ${route.length} lessons in ${target}`);
+
+const git = args => execFileSync("git",["-c","safe.directory="+root,...args],{cwd:root,encoding:"utf8"}).trim();
+const commit=process.env.COURSE_COMMIT || (git(["status","--porcelain"])?null:git(["rev-parse","HEAD"]));
+const release=await buildOffline(target,{commit,date:commit?git(["show","-s","--format=%cs",commit]):null});
+console.log(`Verified ${release.files.length} offline files (${(release.bytes/1e6).toFixed(2)} MB).`);

@@ -1,3 +1,4 @@
+import {registerReading,experimentFilesUnavailable} from "./experiment-state.mjs";
 import { inputs } from "./model.mjs";
 
 let worker;
@@ -13,12 +14,14 @@ function startWorker() {
     if (error) request.reject(new Error(error));
     else request.resolve(result);
   });
-  worker.addEventListener("error", () => {
+  worker.addEventListener("error", event => {
+    event.preventDefault();
     worker.terminate();
     worker = undefined;
     const failure = new Error("The experiment could not load. Try again or reload this page.");
     for (const { reject } of pending.values()) reject(failure);
     pending.clear();
+    experimentFilesUnavailable(document.querySelector("form.controls button:not([type])")?.textContent.trim() || "Run experiment");
   });
 }
 
@@ -161,6 +164,7 @@ function renderLogs(result, { grouped, count }) {
     <p class="chart-note">Positive values show how much prediction error rose. The number after ± shows how much the change varied across shuffles.</p>`;
 }
 
+const legacyForms=new Map();
 function connect(formId, resultId, task, getOptions, render) {
   const form = document.getElementById(formId);
   if (!form) return;
@@ -169,6 +173,7 @@ function connect(formId, resultId, task, getOptions, render) {
   const controls = Array.from(form.elements).filter(control => control.name);
   const submit = form.querySelector("button:not([type])");
   let hasResult = false;
+  legacyForms.set(formId,{output,status,get hasResult(){return hasResult;},set hasResult(value){hasResult=value;}});
   let running = false;
   form.addEventListener("input", () => {
     delete status.dataset.state;
@@ -356,3 +361,14 @@ for (const check of document.querySelectorAll(".knowledge-check")) {
   });
   check.querySelector("button").disabled = false;
 }
+
+const comparisonMaps={scenarioRuns,logRuns,practiceRanks,practiceShuffles,practiceChanges};
+registerReading('legacy',{
+ isBusy:()=>pending.size>0,
+ save:()=>({previousScreen,maps:Object.fromEntries(Object.entries(comparisonMaps).map(([name,map])=>[name,[...map]])),forms:[...legacyForms].map(([id,state])=>({id,html:state.output.innerHTML,hasResult:state.hasResult,status:state.status.textContent}))}),
+ restore:saved=>{
+  previousScreen=saved.previousScreen;
+  for(const [name,entries] of Object.entries(saved.maps||{})){const map=comparisonMaps[name];if(map){map.clear();for(const [key,value] of entries)map.set(key,value);}}
+  for(const value of saved.forms||[]){const state=legacyForms.get(value.id);if(!state)continue;state.output.innerHTML=value.html;state.hasResult=value.hasResult;state.status.textContent=value.hasResult?'Saved earlier result. Run the experiment to use the current settings.':value.status;}
+ }
+});

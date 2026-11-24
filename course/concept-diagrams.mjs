@@ -14,7 +14,7 @@ export const journeyDiagram = figure("journey-model-example", "From one trip to 
     <span class="concept-arrow" aria-hidden="true"></span>
     <strong class="concept-journey-model">Journey-time model</strong>
     <span class="concept-arrow" aria-hidden="true"></span>
-    <div class="concept-journey-time"><strong>18 min</strong><span>Output for one trip</span></div>
+    <div class="concept-journey-time"><strong>18 min</strong><span>Illustrative single trip</span></div>
   </div>
   <div class="concept-ticket-example">
     <div class="concept-row"><strong>Five equally likely journey times</strong><span>25-minute limit</span></div>
@@ -30,7 +30,7 @@ export const journeyDiagram = figure("journey-model-example", "From one trip to 
     </div>
     <div class="concept-result"><span>1 late trip out of 5</span><span class="concept-arrow" aria-hidden="true"></span><strong>20% chance of arriving late</strong></div>
   </div>`,
-  "These times are illustrative. The route, departure time and model settings stay fixed while weather and traffic vary. A parameter is a setting that changes how the model calculates its output. Trips exactly at the limit count as on time.");
+  "These times are illustrative, not sampled or measured. The five listed times are assumed equally likely and average 22 minutes. The route, departure time and model settings stay fixed while weather and traffic vary. A parameter is a setting that changes how the model calculates its output. Trips exactly at the limit count as on time.");
 
 export const secantDiagram = figure("square-secants", "Compare two steps on Y = X²", `
   <canvas class="concept-curve" role="img" aria-label="The long and short secants and the tangent meet at input 2, output 4. The shorter secant lies closer to the tangent."></canvas>
