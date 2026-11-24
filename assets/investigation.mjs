@@ -301,7 +301,7 @@ function failure(message) {
   ready(false);
 }
 function startWorker() {
-  worker = new Worker(new URL("./course-worker.mjs?v=5",import.meta.url),{type:"module"});
+  worker = new Worker(new URL("./course-worker.mjs?v=6",import.meta.url),{type:"module"});
   worker.addEventListener("error",event=>{
     event.preventDefault();
     worker.terminate();

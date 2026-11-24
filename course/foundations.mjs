@@ -9,7 +9,7 @@ export const count = (label, value, choices) => select("count", label, value, ch
 
 export const foundations = {
   questions: {
-    experimentTitle: "Compare the two services",
+    experimentTitle: "Compare the two routes",
     goal: "Choose a measure that helps you decide which route to take.",
     concept: `<h2>What matters about the journey?</h2>
     <p>Suppose you’re choosing between two routes to campus. If you want to spend less time travelling over many trips, choose the route with the shorter average journey time. If you leave at 8:35 for a 9 am class and want to avoid being late, choose the route with the lower chance of taking longer than 25 minutes.</p>
@@ -23,13 +23,13 @@ export const foundations = {
       <li><strong>Variance.</strong> Both trips are 10 minutes from the mean. Square those distances and average them. (100 + 100) ÷ 2 = 100 min².</li>
     </ul>
     <p>Use the mean to compare long-run journey times. Use the chance of going over the limit to compare missed deadlines.</p>`,
-    setup: "Each service has five prepared journey times. The model treats each one as equally likely. <strong>Time limit (minutes)</strong> starts at 25.",
-    fields: [select("scenario", "Variable service", "bursts", [["bursts","Occasional long trip"],["moderate","Moderate spread"]]),number("threshold","Time limit (minutes)",25,1,70),summary("Exceedance probability")],
-    predict: "Can two services with the same mean journey time have different chances of missing a deadline?",
-    read: "In <strong>Five equally likely journey times</strong>, compare <strong>Mean (min)</strong> and <strong>p95 (min)</strong> for both services. Then find <strong>P(above limit)</strong>, the chance of missing the selected deadline. The table shows chances as fractions, so 0.2 means 20%. Which measure answers how often each service would arrive late?",
-    steps: ["Set <strong>Variable service</strong> to <strong>Moderate spread</strong> and <strong>Time limit (minutes)</strong> to 30. Select <strong>Run experiment</strong> again. Compare <strong>P(above limit)</strong> for the two services. Does either have a chance of missing the new deadline in this model?"],
-    task: "A classmate needs to choose between the two services and cares most about arriving on time. Would you report average trip time, p95 trip time or the chance of missing the deadline? Explain why.",
-    answer: "Both services average 20 minutes in the first run. One of five variable trips exceeds 25 minutes, so the variable service has a 20% chance of being late. The steady service has a 0% chance. With the new times and 30-minute limit, both chances are zero in this model. To choose a route for weekday classes, collect journey times for each route around 8:35 on weekdays. Include rush-hour trips if you normally travel in rush hour. Use those times to estimate how often each route takes longer than 25 minutes.",
+    setup: "The page prepares five possible journey times for each route and treats them as equally likely. <strong>Time limit (minutes)</strong> starts at 25.",
+    fields: [select("scenario", "Variable route", "bursts", [["bursts","Occasional long trip"],["moderate","Moderate spread"]]),number("threshold","Time limit (minutes)",25,1,70),summary("Exceedance probability")],
+    predict: "Can two routes with the same mean journey time have different chances of making you late?",
+    read: "In <strong>Five equally likely journey times</strong>, compare <strong>Mean (min)</strong> and <strong>p95 (min)</strong> for both routes. Then find <strong>P(above limit)</strong>, the chance of missing the selected deadline. The table shows chances as fractions, so 0.2 means 20%. Which measure tells you how often you’d arrive late on each route?",
+    steps: ["Set <strong>Variable route</strong> to <strong>Moderate spread</strong> and <strong>Time limit (minutes)</strong> to 30. Select <strong>Run experiment</strong> again. Compare <strong>P(above limit)</strong> for the two routes. Is there a chance you’d miss the new deadline on either route in this model?"],
+    task: "A classmate needs to choose between the two routes and cares most about arriving on time. Would you report average trip time, p95 trip time or the chance of missing the deadline? Explain why.",
+    answer: "Both routes average 20 minutes in the first run. One of five possible trips on the variable route takes longer than 25 minutes, so its chance of making you late is 20%. The steady route has a 0% chance. With the new times and 30-minute limit, both chances are zero in this model. To choose a route for weekday classes, collect journey times for each route around 8:35 on weekdays. Include rush-hour trips if you normally travel in rush hour. Use those times to estimate how often each route takes longer than 25 minutes.",
   },
   local: {
     experimentTitle: "Change the trip distance",

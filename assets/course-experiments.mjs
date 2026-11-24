@@ -20,15 +20,17 @@ function questions({ scenario, threshold, metric }) {
   const selected = metrics.indexOf(metric);
   const summarise = value => selected === 3 ? `${Math.round(value * 100)}%`
     : `${Number(value.toFixed(3))} ${selected === 1 ? "min²" : "min"}`;
-  const label = scenario === "bursts" ? "Variable · occasional long trip" : "Variable · moderate spread";
-  const rows = [["Steady", stable], [label, variable]].map(([label, runs]) =>
+  const steadyRoute = "Steady route";
+  const variableRoute = "Variable route";
+  const pattern = scenario === "bursts" ? "occasional long trip" : "moderate spread";
+  const rows = [[steadyRoute, stable], [`${variableRoute} · ${pattern}`, variable]].map(([label, runs]) =>
     [label, runs.join(", "), ...outputStats(runs, threshold)]);
   return {
     headline: metric,
-    text: `Steady: ${summarise(rows[0][2 + selected])}. Variable: ${summarise(rows[1][2 + selected])}. A trip is late when it takes more than ${threshold} minutes.`,
-    tables: [table("Five equally likely journey times", ["Service", "Time (minutes)", "Mean (min)", "Variance (min²)", "p95 (min)", "P(above limit)"], rows)],
+    text: `${steadyRoute}: ${summarise(rows[0][2 + selected])}. ${variableRoute}: ${summarise(rows[1][2 + selected])}. A trip is late when it takes more than ${threshold} minutes.`,
+    tables: [table("Five equally likely journey times", ["Route", "Time (minutes)", "Mean (min)", "Variance (min²)", "p95 (min)", "P(above limit)"], rows)],
     charts: [plot("Outcome number", "Journey time (minutes)", [
-      dots("Steady", stable.map((y, i) => [i + 1, y])), dots("Variable", variable.map((y, i) => [i + 1, y])),
+      dots(steadyRoute, stable.map((y, i) => [i + 1, y])), dots(variableRoute, variable.map((y, i) => [i + 1, y])),
       line("Limit", [[1, threshold], [5, threshold]]),
     ])],
   };
