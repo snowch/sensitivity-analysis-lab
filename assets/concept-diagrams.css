@@ -250,13 +250,13 @@
 .concept-policy, .concept-subtotal { display: grid; gap: .04rem; padding-top: .28rem; border-top: 1px solid var(--line); font-size: .84rem; }
 .concept-subtotal { color: var(--diagram-teal); }
 
-.concept-tuning { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .7rem; }
-.concept-tuning li { position: relative; display: grid; align-content: start; gap: .2rem; padding: .55rem .6rem; background: var(--diagram-blue-fill); }
-.concept-tuning li + li::before { content: "→"; position: absolute; left: -.76rem; top: .35rem; color: var(--diagram-teal); }
-.concept-tuning li:last-child { background: var(--diagram-teal-fill); }
-.concept-tuning li span { font-weight: 625; font-size: .85rem; color: var(--diagram-blue); }
-.concept-tuning li:last-child span { color: var(--diagram-teal); }
-.concept-tuning small { color: var(--prose); font-size: .83rem; }
+.concept-steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .7rem; }
+.concept-steps li { position: relative; display: grid; align-content: start; gap: .2rem; padding: .55rem .6rem; background: var(--diagram-blue-fill); }
+.concept-steps li + li::before { content: "→"; position: absolute; left: -.76rem; top: .35rem; color: var(--diagram-teal); }
+.concept-steps li:last-child { background: var(--diagram-teal-fill); }
+.concept-steps li span { font-weight: 625; font-size: .85rem; color: var(--diagram-blue); }
+.concept-steps li:last-child span { color: var(--diagram-teal); }
+.concept-steps small { color: var(--prose); font-size: .83rem; }
 
 .concept-shuffle-top { display: grid; grid-template-columns: 1fr 2.35rem 1fr; gap: .3rem; align-items: center; }
 .concept-shuffle-tags { display: grid; gap: .24rem; text-align: center; }
@@ -291,8 +291,8 @@
   .concept-curve-key { grid-template-columns: 1fr; }
   .concept-curve-key br { display: none; }
   .concept-curve-key strong { margin-inline-end: .4rem; }
-  .concept-tuning { grid-template-columns: 1fr; }
-  .concept-tuning li + li::before { content: "↓"; left: auto; right: .65rem; top: -.88rem; }
+  .concept-steps { grid-template-columns: 1fr; }
+  .concept-steps li + li::before { content: "↓"; left: auto; right: .65rem; top: -.88rem; }
 }
 
 @container (max-width: 355px) {

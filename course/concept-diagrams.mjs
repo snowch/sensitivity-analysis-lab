@@ -244,7 +244,7 @@ export const tuningRelationshipDiagram = figure("tuning-sensitivity-relationship
   "Compare losses to understand what changes when you vary a setting. Apply the time limit when choosing a configuration.");
 
 export const tuningDiagram = figure("tuning-data-flow", "Which data can influence the model you choose?", `
-  <ol class="concept-tuning">
+  <ol class="concept-steps">
     <li><strong>Fit candidates</strong><span>Training rows</span><small>Try different learning rates and model sizes.</small></li>
     <li><strong>Choose one</strong><span>Validation rows</span><small>Pick the lowest loss among trials within the time limit.</small></li>
     <li><strong>Evaluate the choice</strong><span>Untouched test rows</span><small>Measure how the chosen configuration performs on new examples.</small></li>
@@ -278,6 +278,14 @@ export const backlogDiagram = figure("staffing-backlog", "The same burst of arri
       <div class="concept-capacity-bar" style="--served:75%"><span>90 served</span><span>30 waiting</span></div></div>
   </div>`,
   "Divide the backlog by the number the team can serve in 30 minutes, then multiply by 30 minutes. This proxy assumes a fixed service rate and adds no arrivals during clearance. Exactly 10 minutes counts as meeting the wait limit.");
+
+export const benchmarkSizingWorkflow = figure("benchmark-sizing-workflow", "How the pilot shapes the benchmark and the sizing decision", `
+  <ol class="concept-steps">
+    <li><strong>Run a pilot</strong><span>Screen plausible factors</span><small>Repeat a baseline and test combinations. Check which changes move capacity beyond the variation across repeats.</small></li>
+    <li><strong>Focus the benchmark</strong><span>Measure capacity across the important inputs</span><small>Vary interacting inputs together. Add measurements near the point where capacity flattens or crosses the target.</small></li>
+    <li><strong>Size and confirm</strong><span>Use the measured capacity curve</span><small>Pick a tested configuration that handles peak demand with reserve capacity. Confirm it in a separate run.</small></li>
+  </ol>`,
+  "In the Kafka example, message size describes the workload, partition count is a choice, and broker count is fixed for this benchmark.");
 
 export const kafkaSizingDiagram = figure("kafka-sizing-curves", "Which tested partition count meets the target?", `
   <svg class="concept-sizing-plot" viewBox="0 0 340 232" role="img" aria-labelledby="kafka-plot-title" aria-describedby="kafka-plot-description">

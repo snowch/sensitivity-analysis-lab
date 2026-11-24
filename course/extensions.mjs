@@ -1,5 +1,5 @@
 import { number, select, seed, when } from "./foundations.mjs";
-import { kafkaSizingDiagram, tuningDiagram, tuningRelationshipDiagram } from "./concept-diagrams.mjs";
+import { benchmarkSizingWorkflow, kafkaSizingDiagram, tuningDiagram, tuningRelationshipDiagram } from "./concept-diagrams.mjs";
 
 export const extensions = {
   benchmark: {
@@ -25,12 +25,16 @@ export const extensions = {
     answer:"At high load and large payload B wins in the illustrative formula, though A wins at the low setting. Include a crossed design spanning plausible loads and sizes. Match request contents for both systems. Keep hardware and software versions fixed and vary which system runs first. Decide the smallest response-time difference that would change your choice. In a real benchmark, repeat paired measurements at each workload. Report the mean of B minus A and an uncertainty interval for that mean. Collect more pairs if the interval spans differences that would lead to different choices.",
     followup: `<section class="lesson-section" aria-labelledby="benchmark-sizing">
       <div class="reading">
-        <h2 id="benchmark-sizing">Turn benchmark results into a Kafka sizing calculator</h2>
-        <p>Start by defining capacity. Here it means the highest observed sustained throughput that meets a 20 ms p99 produce latency limit without a growing consumer backlog. This example measures throughput in mebibytes per second (MiB/s). Use messages per second if your demand forecast counts messages.</p>
-        <p>At a fixed broker count, benchmark combinations of message size and partition count. Keep replication, producer acknowledgements, compression and batching fixed. Include realistic payload formats in the initial sweep. If payload type has little effect across the tested settings, keep it as a documented assumption. A different format can change compressibility or the work producers do per message.</p>
+        <h2 id="benchmark-sizing">Design a Kafka benchmark for sizing</h2>
+        <p>Start with the decision. How many partitions should you provision for a given workload and cluster? Define capacity as the highest sustained rate you observe with p99 produce latency at or below 20 ms and no growing consumer backlog. Increase the offered rate at each setting to find that limit. Use the same throughput unit for capacity and peak demand.</p>
+        ${benchmarkSizingWorkflow}
+        <h3>Use the pilot to decide what to vary</h3>
+        <p>Try a few combinations of message size, partition count and realistic payload formats. Repeat the same settings to measure ordinary run-to-run variation. If changing format shifts capacity by about as much as repeat runs across the tested workloads and leaves the sizing choice the same, fix one format and record that assumption. If adding partitions has a different effect at different message sizes, vary those two factors together in the main benchmark. Keep replication and producer settings fixed unless they are part of the decision.</p>
         ${kafkaSizingDiagram}
-        <p><strong>Size for a peak of 45 MiB/s.</strong> To leave 25% of capacity unused at peak, require 45 ÷ 0.75 = <strong>60 MiB/s</strong>. For 8 KiB messages, 12 is the smallest tested partition count that meets the target. It reaches 71 MiB/s. Doubling to 24 partitions adds just 3 MiB/s. With 1 KiB messages, even 24 partitions fall short.</p>
-        <p>Use the sensitivity results to choose which inputs the calculator exposes. Use benchmark measurements to estimate capacity. Start with tested configurations and confirm the recommendation in a separate run. To recommend broker counts, benchmark multiple cluster sizes too.</p>
+        <h3>Spend more runs near the sizing cutoff</h3>
+        <p>Suppose peak demand is 45 MiB/s. Leaving 25% of capacity unused requires 45 ÷ 0.75 = <strong>60 MiB/s</strong>. For 8 KiB messages, 6 partitions fall short and 12 reach 71 MiB/s. If the exact minimum matters, test counts between 6 and 12. Doubling from 12 to 24 adds only 3 MiB/s in this example. For 1 KiB messages, even 24 partitions fall short, so test a different cluster size or configuration.</p>
+        <h3>Turn the measurements into a sizing rule</h3>
+        <p>Ask for message size, peak rate and the desired reserve. At a fixed broker count, choose the lowest tested partition count that reaches the required rate and meets the latency limit. Show the tested range and confirm the recommendation in a separate run at the required rate. If the calculator should choose broker count, benchmark multiple cluster sizes.</p>
       </div>
     </section>`,
     refs:["saltelli"],
