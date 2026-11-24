@@ -20,7 +20,7 @@ const home = await readFile(join(root,"index.html"),"utf8");
 const pageStart = home.slice(0,home.indexOf('<main id="main"')).trimEnd();
 const footer = home.slice(home.indexOf('<footer class="shell"'));
 const pageName = id => id + ".html";
-const conceptStyles = '  <link rel="stylesheet" href="assets/concept-diagrams.css?v=1">';
+const conceptStyles = '  <link rel="stylesheet" href="assets/concept-diagrams.css?v=2">';
 
 function sidebar(current) {
   function entry([id,title]) {
@@ -157,6 +157,7 @@ function renderLesson([id,title],lesson) {
           <button type="button" id="download-report" class="button outline-button">Download report</button>` : ""}
       </div>
     </section>
+    ${lesson.followup ?? ""}
     ${lesson.refs ? `<nav class="lesson-resources" aria-labelledby="lesson-references-title">
       <h2 id="lesson-references-title">References</h2>
       <ul>${lesson.refs.map(key=>{

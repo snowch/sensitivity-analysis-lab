@@ -159,6 +159,90 @@ export const forecastDiagram = figure("forecast-decision-timing", "When you lear
   <div class="concept-result"><span>Value of the perfect forecast</span><strong>$15 − $4.50 = $10.50/day</strong></div>`,
   "Prevention avoids the full $60 loss on a severe day. The saving is before paying for the forecast. A real forecast can be worth less.");
 
+export const tuningRelationshipDiagram = figure("tuning-sensitivity-relationship", "One set of trials, two purposes", `
+  <p class="sr-only">Try combinations of learning rate and model size. Measure validation loss and training time for each trial. Sensitivity analysis asks how much the loss changes and whether the effect depends on model size. Use that information to plan the next trials. Tuning chooses the lowest-loss combination within the time limit from the trials you ran.</p>
+  <svg class="concept-tuning-wide" viewBox="0 0 720 392" aria-hidden="true" focusable="false">
+    <defs>
+      <marker id="tuning-arrow-wide" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse">
+        <path d="M1 1L7 4L1 7" fill="none" stroke="var(--edge)" stroke-width="1.4" stroke-linejoin="round"/>
+      </marker>
+      <marker id="tuning-return-wide" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse">
+        <path d="M1 1L7 4L1 7" fill="none" stroke="var(--diagram-blue)" stroke-width="1.4" stroke-linejoin="round"/>
+      </marker>
+    </defs>
+
+    <g transform="translate(0, -35)">
+      <rect class="tuning-neutral" x="190" y="47" width="340" height="65" rx="12"/>
+      <text class="tuning-heading" x="360" y="73" text-anchor="middle">Try combinations of settings</text>
+      <text class="tuning-detail" x="360" y="95" text-anchor="middle">Learning rate and model size</text>
+
+      <path class="tuning-line" d="M360 112V132" marker-end="url(#tuning-arrow-wide)"/>
+      <rect class="tuning-neutral" x="190" y="134" width="340" height="65" rx="12"/>
+      <text class="tuning-heading" x="360" y="160" text-anchor="middle">Record the results for each trial</text>
+      <text class="tuning-detail" x="360" y="182" text-anchor="middle">Validation loss and training time</text>
+
+      <path class="tuning-line" d="M360 199V218H181V241" marker-end="url(#tuning-arrow-wide)"/>
+      <path class="tuning-line" d="M360 218H539V241" marker-end="url(#tuning-arrow-wide)"/>
+
+      <rect class="tuning-analysis-surface" x="33" y="243" width="296" height="100" rx="12"/>
+      <text class="tuning-heading tuning-analysis-ink" x="53" y="271">Sensitivity analysis</text>
+      <text class="tuning-copy" x="53" y="299">How much does the loss change?</text>
+      <text class="tuning-copy" x="53" y="322">Does the effect depend on model size?</text>
+      <path class="tuning-feedback" d="M181 343V359 M87 386H17V79H189" marker-end="url(#tuning-return-wide)"/>
+      <rect class="tuning-analysis-surface" x="87" y="360" width="188" height="49" rx="12"/>
+      <text class="tuning-copy tuning-action" x="181" y="390" text-anchor="middle">Plan what to try next</text>
+
+      <rect class="tuning-choice-surface" x="391" y="243" width="296" height="100" rx="12"/>
+      <text class="tuning-heading tuning-choice-ink" x="411" y="271">Hyperparameter tuning</text>
+      <text class="tuning-copy" x="411" y="299">Which tested combination has the</text>
+      <text class="tuning-copy" x="411" y="322">lowest loss within the time limit?</text>
+      <path class="tuning-line" d="M539 343V359" marker-end="url(#tuning-arrow-wide)"/>
+      <rect class="tuning-choice-surface" x="445" y="360" width="188" height="49" rx="12"/>
+      <text class="tuning-copy tuning-action" x="539" y="390" text-anchor="middle">Choose settings to use</text>
+    </g>
+  </svg>
+
+  <svg class="concept-tuning-narrow" viewBox="4 0 312 514" aria-hidden="true" focusable="false">
+    <defs>
+      <marker id="tuning-arrow-narrow" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto" markerUnits="userSpaceOnUse">
+        <path d="M1 1L6 3.5L1 6" fill="none" stroke="var(--edge)" stroke-width="1.4" stroke-linejoin="round"/>
+      </marker>
+      <marker id="tuning-return-narrow" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto" markerUnits="userSpaceOnUse">
+        <path d="M1 1L6 3.5L1 6" fill="none" stroke="var(--diagram-blue)" stroke-width="1.4" stroke-linejoin="round"/>
+      </marker>
+    </defs>
+
+    <g transform="translate(0, -29)">
+      <rect class="tuning-neutral" x="24" y="40" width="272" height="61" rx="11"/>
+      <text class="tuning-heading" x="160" y="66" text-anchor="middle">Try combinations of settings</text>
+      <text class="tuning-detail" x="160" y="86" text-anchor="middle">Learning rate and model size</text>
+      <path class="tuning-line" d="M160 101V121" marker-end="url(#tuning-arrow-narrow)"/>
+
+      <rect class="tuning-neutral" x="24" y="123" width="272" height="61" rx="11"/>
+      <text class="tuning-heading" x="160" y="149" text-anchor="middle">Record the results for each trial</text>
+      <text class="tuning-detail" x="160" y="169" text-anchor="middle">Validation loss and training time</text>
+      <path class="tuning-line" d="M160 184V204" marker-end="url(#tuning-arrow-narrow)"/>
+      <path class="tuning-line" d="M296 153H311V429H298" marker-end="url(#tuning-arrow-narrow)"/>
+
+      <rect class="tuning-analysis-surface" x="24" y="206" width="272" height="100" rx="11"/>
+      <text class="tuning-heading tuning-analysis-ink" x="39" y="233">Sensitivity analysis</text>
+      <text class="tuning-copy" x="39" y="258">How much does the loss change?</text>
+      <text class="tuning-copy" x="39" y="281">Does the effect depend on model size?</text>
+      <path class="tuning-feedback" d="M160 306V319 M48 340H9V70H23" marker-end="url(#tuning-return-narrow)"/>
+      <rect class="tuning-analysis-surface" x="48" y="320" width="224" height="42" rx="10"/>
+      <text class="tuning-copy tuning-action" x="160" y="346" text-anchor="middle">Plan what to try next</text>
+
+      <rect class="tuning-choice-surface" x="24" y="379" width="272" height="100" rx="11"/>
+      <text class="tuning-heading tuning-choice-ink" x="39" y="407">Hyperparameter tuning</text>
+      <text class="tuning-copy" x="39" y="432">Which tested combination has the</text>
+      <text class="tuning-copy" x="39" y="455">lowest loss within the time limit?</text>
+      <path class="tuning-line" d="M160 479V493" marker-end="url(#tuning-arrow-narrow)"/>
+      <rect class="tuning-choice-surface" x="48" y="495" width="224" height="41" rx="10"/>
+      <text class="tuning-copy tuning-action" x="160" y="521" text-anchor="middle">Choose settings to use</text>
+    </g>
+  </svg>`,
+  "Compare losses to understand what changes when you vary a setting. Apply the time limit when choosing a configuration.");
+
 export const tuningDiagram = figure("tuning-data-flow", "Which data can influence the model you choose?", `
   <ol class="concept-tuning">
     <li><strong>Fit candidates</strong><span>Training rows</span><small>Try different learning rates and model sizes.</small></li>
@@ -194,3 +278,32 @@ export const backlogDiagram = figure("staffing-backlog", "The same burst of arri
       <div class="concept-capacity-bar" style="--served:75%"><span>90 served</span><span>30 waiting</span></div></div>
   </div>`,
   "Divide the backlog by the number the team can serve in 30 minutes, then multiply by 30 minutes. This proxy assumes a fixed service rate and adds no arrivals during clearance. Exactly 10 minutes counts as meeting the wait limit.");
+
+export const kafkaSizingDiagram = figure("kafka-sizing-curves", "Which tested partition count meets the target?", `
+  <svg class="concept-sizing-plot" viewBox="0 0 340 232" role="img" aria-labelledby="kafka-plot-title" aria-describedby="kafka-plot-description">
+    <title id="kafka-plot-title">Illustrative Kafka throughput by partition count and message size</title>
+    <desc id="kafka-plot-description">At 6, 12 and 24 partitions, 1 KiB messages reach 24, 42 and 46 MiB per second. Messages of 8 KiB reach 40, 71 and 74 MiB per second. With a 60 MiB per second target, 12 is the smallest tested partition count that qualifies for 8 KiB messages. None of the tested counts qualify for 1 KiB.</desc>
+    <text class="concept-sizing-axis-title" x="11" y="16">Sustained throughput (MiB/s)</text>
+    <path class="concept-sizing-grid" d="M46 24H271 M46 64H271 M46 104H271 M46 144H271 M46 184H271 M52 24V184 M124 24V184 M268 24V184"/>
+    <path class="concept-sizing-axes" d="M46 24V184H271"/>
+    <g class="concept-sizing-ticks" text-anchor="end">
+      <text x="38" y="28">80</text><text x="38" y="68">60</text><text x="38" y="108">40</text><text x="38" y="148">20</text><text x="38" y="188">0</text>
+    </g>
+    <g class="concept-sizing-ticks" text-anchor="middle">
+      <text x="52" y="204">6</text><text x="124" y="204">12</text><text x="268" y="204">24</text>
+    </g>
+    <text class="concept-sizing-axis-title" x="157" y="225" text-anchor="middle">Partition count</text>
+    <path class="concept-sizing-threshold" d="M46 64H271"/>
+    <text class="concept-sizing-ticks" x="277" y="68">Target</text>
+    <g class="concept-sizing-small">
+      <path d="M52 136 124 100 268 92"/>
+      <rect x="49" y="133" width="6" height="6"/><rect x="121" y="97" width="6" height="6"/><rect x="265" y="89" width="6" height="6"/>
+      <text x="277" y="97">1 KiB</text>
+    </g>
+    <g class="concept-sizing-large">
+      <path d="M52 104 124 42 268 36"/>
+      <circle cx="52" cy="104" r="4"/><circle cx="124" cy="42" r="4.5"/><circle cx="268" cy="36" r="4"/>
+      <text x="118" y="34">71</text><text x="277" y="41">8 KiB</text>
+    </g>
+  </svg>`,
+  "Illustrative values for a fixed three-broker cluster. Each point represents sustained throughput with p99 produce latency at or below 20 ms and no growing consumer backlog. At that latency limit, at least 99% of produce requests complete within 20 ms.");

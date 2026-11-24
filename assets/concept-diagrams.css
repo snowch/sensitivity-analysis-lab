@@ -303,3 +303,62 @@
   .concept-group { padding-inline: .38rem; gap: .3rem; font-size: .84rem; }
   .concept-capacity-bar span { font-size: .77rem; }
 }
+
+#tuning-sensitivity-relationship svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  fill: var(--ink);
+  font-family: inherit;
+}
+
+#tuning-sensitivity-relationship .concept-tuning-narrow { display: none; }
+#tuning-sensitivity-relationship .tuning-neutral { fill: var(--soft); stroke: var(--line); }
+#tuning-sensitivity-relationship .tuning-analysis-surface { fill: var(--diagram-blue-fill); stroke: var(--line); }
+#tuning-sensitivity-relationship .tuning-choice-surface { fill: var(--diagram-teal-fill); stroke: var(--line); }
+#tuning-sensitivity-relationship .tuning-heading { font-size: 18px; font-weight: 650; }
+#tuning-sensitivity-relationship .tuning-copy,
+#tuning-sensitivity-relationship .tuning-detail { font-size: 15px; }
+#tuning-sensitivity-relationship .tuning-detail { fill: var(--muted); }
+#tuning-sensitivity-relationship .tuning-action { font-weight: 650; }
+#tuning-sensitivity-relationship .tuning-analysis-ink { fill: var(--diagram-blue); }
+#tuning-sensitivity-relationship .tuning-choice-ink { fill: var(--diagram-teal); }
+#tuning-sensitivity-relationship .tuning-line,
+#tuning-sensitivity-relationship .tuning-feedback { fill: none; stroke-width: 1.5; stroke-linejoin: round; }
+#tuning-sensitivity-relationship .tuning-line { stroke: var(--edge); }
+#tuning-sensitivity-relationship .tuning-feedback { stroke: var(--diagram-blue); stroke-dasharray: 5 4; }
+
+@container (max-width: 560px) {
+  #tuning-sensitivity-relationship .concept-tuning-wide { display: none; }
+  #tuning-sensitivity-relationship .concept-tuning-narrow { display: block; max-width: 25rem; margin-inline: auto; }
+  #tuning-sensitivity-relationship .tuning-heading { font-size: 16px; }
+  #tuning-sensitivity-relationship .tuning-copy,
+  #tuning-sensitivity-relationship .tuning-detail { font-size: 14px; }
+}
+
+.tuning-worked-trials { margin-block: .65rem; }
+.tuning-worked-trials :is(th, td) { padding-inline: .35rem; }
+
+.concept-sizing-plot {
+  display: block;
+  width: min(100%, 32rem);
+  height: auto;
+  margin-inline: auto;
+  font-family: inherit;
+  font-size: 15px;
+}
+.concept-sizing-axis-title { fill: var(--ink); font-weight: 650; }
+.concept-sizing-ticks { fill: var(--muted); }
+.concept-sizing-grid,
+.concept-sizing-axes,
+.concept-sizing-threshold,
+.concept-sizing-plot g > path { fill: none; }
+.concept-sizing-grid { stroke: var(--line); }
+.concept-sizing-axes { stroke: var(--edge); }
+.concept-sizing-threshold { stroke: var(--muted); stroke-dasharray: 5 4; }
+.concept-sizing-small { color: var(--diagram-blue); }
+.concept-sizing-large { color: var(--diagram-teal); }
+.concept-sizing-plot g > path { stroke: currentColor; stroke-width: 2; }
+.concept-sizing-plot g > rect { fill: var(--panel); stroke: currentColor; stroke-width: 1.5; }
+.concept-sizing-plot g > circle,
+.concept-sizing-plot g:not(.concept-sizing-ticks) > text { fill: currentColor; }

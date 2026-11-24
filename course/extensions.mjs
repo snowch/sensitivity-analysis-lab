@@ -1,5 +1,5 @@
 import { number, select, seed, when } from "./foundations.mjs";
-import { tuningDiagram } from "./concept-diagrams.mjs";
+import { kafkaSizingDiagram, tuningDiagram, tuningRelationshipDiagram } from "./concept-diagrams.mjs";
 
 export const extensions = {
   benchmark: {
@@ -23,31 +23,48 @@ export const extensions = {
     steps: ["Set <strong>Workload design</strong> to <strong>Cross load and payload</strong>. The page shows <strong>High load (tens of requests/s)</strong> and <strong>Large payload (MB)</strong>, both at 8. Run again. Find a row where <strong>B minus A (ms)</strong> is negative and read its load and payload. Which system is faster there?","Set <strong>High load (tens of requests/s)</strong> and <strong>Large payload (MB)</strong> to 3 and run again. Read <strong>B minus A (ms)</strong> in all four rows. Does either system win at every workload in this narrower range?"],
     task:"Design a real benchmark to test whether A has lower response times at low load with a small payload, while B has lower response times at high load with a large payload. State which settings you vary together, which you hold fixed and how you would make the comparison fair.",
     answer:"At high load and large payload B wins in the illustrative formula, though A wins at the low setting. Include a crossed design spanning plausible loads and sizes. Match request contents for both systems. Keep hardware and software versions fixed and vary which system runs first. Decide the smallest response-time difference that would change your choice. In a real benchmark, repeat paired measurements at each workload. Report the mean of B minus A and an uncertainty interval for that mean. Collect more pairs if the interval spans differences that would lead to different choices.",
+    followup: `<section class="lesson-section" aria-labelledby="benchmark-sizing">
+      <div class="reading">
+        <h2 id="benchmark-sizing">Turn benchmark results into a Kafka sizing calculator</h2>
+        <p>Start by defining capacity. Here it means the highest observed sustained throughput that meets a 20 ms p99 produce latency limit without a growing consumer backlog. This example measures throughput in mebibytes per second (MiB/s). Use messages per second if your demand forecast counts messages.</p>
+        <p>At a fixed broker count, benchmark combinations of message size and partition count. Keep replication, producer acknowledgements, compression and batching fixed. Include realistic payload formats in the initial sweep. If payload type has little effect across the tested settings, keep it as a documented assumption. A different format can change compressibility or the work producers do per message.</p>
+        ${kafkaSizingDiagram}
+        <p><strong>Size for a peak of 45 MiB/s.</strong> To leave 25% of capacity unused at peak, require 45 ÷ 0.75 = <strong>60 MiB/s</strong>. For 8 KiB messages, 12 is the smallest tested partition count that meets the target. It reaches 71 MiB/s. Doubling to 24 partitions adds just 3 MiB/s. With 1 KiB messages, even 24 partitions fall short.</p>
+        <p>Use the sensitivity results to choose which inputs the calculator exposes. Use benchmark measurements to estimate capacity. Start with tested configurations and confirm the recommendation in a separate run. To recommend broker counts, benchmark multiple cluster sizes too.</p>
+      </div>
+    </section>`,
     refs:["saltelli"],
   },
   tuning: {
     experimentTitle: "Search within a training budget",
-    goal:"Use sensitivity to plan where to search and optimisation to choose a feasible setting.",
-    concept:`<h2>Choose which settings to vary</h2>
-    <p>A <strong>hyperparameter</strong> is a setting you choose before fitting a machine learning model. For example, the learning rate sets how far the model adjusts at each training step.</p>
-    <p>Before spending more trials on a setting, compare its effect on validation loss with the spread of losses across training seeds or validation splits. Prioritise settings that can change which configuration you would choose within the time limit.</p>
-    <p>Check learning rates at several plausible model sizes. If changing the rate gives little repeatable improvement in validation loss, fix it and use the trials to compare more sizes. Keep varying the rate if it improves loss enough to change your choice at a size you might select. Optimisation searches for the lowest-loss configuration within the budget.</p>
+    goal:"Use the same trials to understand what affects prediction error and to choose settings within a time limit.",
+    concept:`<h2>What to vary and what to choose</h2>
+    <p>A <strong>hyperparameter</strong> is a setting you choose before fitting a machine learning model. The learning rate, for example, controls how far the model adjusts at each training step. <strong>Validation loss</strong> measures prediction error on examples held back during fitting. Lower is better.</p>
+    ${tuningRelationshipDiagram}
+    <p>Use <strong>sensitivity analysis</strong> to compare the effects of settings over the ranges you tested. If the effect of learning rate depends on model size, try varying them together in the next round. When training is noisy, repeat trials with different seeds to see whether the loss differences persist.</p>
+    <p>Use <strong>hyperparameter tuning</strong> to choose settings. In this lesson, the rule is to pick the lowest validation loss among the trials that finish within the time limit.</p>
     <h2>Measure performance on fresh examples</h2>
     ${tuningDiagram}
     <p>A procedure can appear better because it fit quirks in one validation set. When results vary across splits or training seeds, repeat the comparison.</p>`,
-    example:`<p>Suppose two trial pairs compare learning rates of 0.001 and 0.01. Hold model size fixed within each pair.</p>
-    <ul>
-      <li><strong>Size 3.</strong> Loss drops from 0.36 to 0.24, an improvement of 0.12.</li>
-      <li><strong>Size 7.</strong> Loss drops from 0.39 to 0.38, an improvement of 0.01.</li>
-    </ul>
-    <p>The effect of the learning rate depends on size in this example. If the 0.24 candidate takes 34 seconds and the budget is 30 seconds, look for the best candidate among trials that fit the budget.</p>`,
-    setup:"The page computes loss and training time from illustrative formulas. It samples model sizes 1–8 and learning rates from 0.0001 to 0.1 on a base-10 log scale. Each step of 1 on that scale multiplies the rate by 10. The page selects the lowest simulated loss among trials that fit the time limit.",
+    example:`<p>These five illustrative trials use the same validation examples. Suppose each trial must finish within 30 seconds.</p>
+    <table class="tuning-worked-trials">
+      <caption class="sr-only">Illustrative tuning trials</caption>
+      <thead><tr><th scope="col">Model size</th><th scope="col">Learning rate</th><th scope="col">Validation loss</th><th scope="col">Time (s)</th></tr></thead>
+      <tbody><tr><td>2</td><td>0.001</td><td>0.33</td><td>26</td></tr>
+        <tr><td>3</td><td>0.001</td><td>0.36</td><td>34</td></tr>
+        <tr><td>3</td><td>0.01</td><td>0.24</td><td>34</td></tr>
+        <tr><td>7</td><td>0.001</td><td>0.39</td><td>66</td></tr>
+        <tr><td>7</td><td>0.01</td><td>0.38</td><td>66</td></tr></tbody>
+    </table>
+    <p><strong>Sensitivity analysis.</strong> Increasing the rate from 0.001 to 0.01 lowers loss by 0.12 at size 3 and by 0.01 at size 7. The effect of learning rate depends on size.</p>
+    <p><strong>Tuning.</strong> With a 30-second limit, choose size 2 at rate 0.001, with loss 0.33. With a 45-second limit, choose size 3 at rate 0.01, with loss 0.24.</p>`,
+    setup:"The page computes loss and training time from illustrative formulas. It compares settings at a fixed reference for the sensitivity table. It separately samples trials with model sizes 1–8 and rates from 0.0001 to 0.1 on a base-10 log scale. Each step of 1 on that scale multiplies the rate by 10. The page selects the lowest simulated loss among trials that fit the time limit.",
     fields:[select("budget","Trial budget",12,[4,12,32,64],true),select("dataset","Dataset regime","small",[["small","Small sample"],["large","Large sample"]]),number("cost","Training time limit (seconds)",45,16,90),seed],
     predict:"Will the lowest-loss candidate always satisfy the time limit or stay best on another dataset?",
     read: "In <strong>Sensitivity at a shared reference</strong>, compare <strong>Loss at low</strong> and <strong>Loss at high</strong> with <strong>Loss at reference</strong> for each parameter. Which change moves the loss most? In <strong>Selected by simulated validation score</strong>, find the chosen <strong>Validation loss</strong> and <strong>Training time (seconds)</strong>.",
-    steps: ["Set <strong>Trial budget</strong> to 32 and run again. Open the first run under <strong>Earlier runs</strong> and compare <strong>Validation loss</strong> and <strong>Training time (seconds)</strong> in <strong>Selected by simulated validation score</strong>. The 32-trial design draws a fresh set of candidates. Does it give a lower loss within the time limit?","Set <strong>Dataset regime</strong> to <strong>Large sample</strong>. Keep <strong>Trial budget</strong> at 32 and <strong>Training time limit (seconds)</strong> at 45. Run again. Compare the selected <strong>Model size</strong> and <strong>Learning rate</strong> with the preceding run. In <strong>Candidate runs in design order</strong>, find trials with a <strong>Validation loss</strong> below that of the selected trial. Does any of those trials have a <strong>Training time (seconds)</strong> above 45?"],
+    steps: ["Set <strong>Training time limit (seconds)</strong> to 30 and run again. Open the first run under <strong>Earlier runs</strong>. In <strong>Selected by simulated validation score</strong>, compare <strong>Model size</strong> and <strong>Validation loss</strong>. Do any values in <strong>Sensitivity at a shared reference</strong> change?", "Set <strong>Training time limit (seconds)</strong> back to 45 and set <strong>Trial budget</strong> to 32. Run again. Open the first run under <strong>Earlier runs</strong> and compare <strong>Validation loss</strong> and <strong>Training time (seconds)</strong> in <strong>Selected by simulated validation score</strong>. The 32-trial design draws a fresh set of candidates. Does it give a lower loss within the time limit?","Set <strong>Dataset regime</strong> to <strong>Large sample</strong>. Keep <strong>Trial budget</strong> at 32 and <strong>Training time limit (seconds)</strong> at 45. Run again. Compare the selected <strong>Model size</strong> and <strong>Learning rate</strong> with the preceding run. In <strong>Candidate runs in design order</strong>, find trials with a <strong>Validation loss</strong> below that of the selected trial. Does any of those trials have a <strong>Training time (seconds)</strong> above 45?"],
     task:"Outline a tuning plan. Name the settings you would vary first, how many runs you would spend, and which data you would set aside for the final evaluation.",
-    answer:"With seed 42 on Small sample, the selected loss is about 0.202 in 34 seconds at 12 trials and about 0.212 in 42 seconds at 32 trials. The larger design can miss a good candidate from the smaller one. On Large sample, one excluded trial scores about 0.264 at 50 seconds, below the selected loss of about 0.310. For a real search, vary plausible rates and sizes together. Compare configurations on validation data and reserve untouched test data for final evaluation.",
+    answer:"With seed 42 and 12 trials on Small sample, the 45-second limit selects size 3 with loss about 0.202. At 30 seconds, the same trials select size 2 with loss about 0.223. The sensitivity values at the shared reference stay the same. Back at 45 seconds, the 32-trial design selects a loss of about 0.212 in 42 seconds. The larger design can miss a good candidate from the smaller one. On Large sample, one excluded trial scores about 0.264 at 50 seconds, below the selected loss of about 0.310. For a real search, vary plausible rates and sizes together. Compare configurations on validation data and reserve untouched test data for final evaluation.",
     refs:["randomsearch","validation"],
   },
 };
