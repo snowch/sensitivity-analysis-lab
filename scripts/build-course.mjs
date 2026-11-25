@@ -56,7 +56,7 @@ function frame(id,title,body,interactive=false) {
   const assets = [];
   if (body.includes('class="concept-figure"')) assets.push(conceptStyles);
   if (id === "curves") assets.push('  <script type="module" src="assets/concept-curve.mjs?v=1"></script>');
-  if (interactive) assets.push('  <script type="module" src="assets/investigation.mjs?v=7"></script>');
+  if (interactive) assets.push('  <script type="module" src="assets/investigation.mjs?v=8"></script>');
   const head=pageStart
     .replace(/<title>.*?<\/title>/,`<title>${html(title)} · Sensitivity Analysis Lab</title>`)
     .replace("</head>", [...assets, "</head>"].join("\n"));
@@ -182,7 +182,7 @@ const existing = (await readdir(root)).filter(name=>name.endsWith(".html"));
 for (const file of existing) {
   if (file==="index.html") continue;
   const id=file.slice(0,-5);
-  let page=(await readFile(join(root,file),"utf8")).replace(/lab\.css\?v=\d+/,"lab.css?v=9").replace("lab.mjs?v=2","lab.mjs?v=4");
+  let page=(await readFile(join(root,file),"utf8")).replace(/lab\.css\?v=\d+/,"lab.css?v=10").replace("lab.mjs?v=2","lab.mjs?v=4");
   page=page.replace("</head>", '  <script type="module" src="assets/scroll-tables.mjs?v=2"></script>\n</head>');
   if (id === "logs") {
     page = page.replace("<!-- payload-shuffle-diagram -->", shuffleDiagram);

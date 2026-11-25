@@ -1,4 +1,4 @@
-import { experiments } from "./course-experiments.mjs?v=6";
+import { experiments } from "./course-experiments.mjs?v=7";
 
 self.onmessage = ({ data: { id, lesson, options } }) => {
   try {

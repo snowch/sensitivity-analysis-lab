@@ -413,6 +413,7 @@ footer p { color: var(--muted); }
 .course-plot canvas { display:block; width:100%; height:206px; }
 .course-plot details { margin-top:4px; font-size:.84rem; }
 .course-legend { display:flex; flex-wrap:wrap; gap:4px 12px; margin:4px 0 0; padding:0; list-style:none; font-size:.82rem; }
+.course-legend svg { vertical-align: middle; margin-inline-end: .25em; }
 .course-legend [data-series="0"] { color: var(--series-0); }
 .course-legend [data-series="1"] { color: var(--series-1); }
 .course-legend [data-series="2"] { color: var(--series-2); }

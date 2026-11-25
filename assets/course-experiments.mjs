@@ -10,7 +10,7 @@ const modelNames = { add: "Additive", product: "Product", tail: "Rare jump" };
 const designNames = { random: "Random", lhs: "Latin hypercube", halton: "Shifted Halton" };
 const plot = (x, y, series, extra = {}) => ({ x, y, series, ...extra });
 const line = (label, points) => ({ label, points });
-const dots = (label, points) => ({ label, points, dots: true });
+const dots = (label, points, marker) => ({ label, points, dots: true, marker });
 const table = (caption, columns, rows) => ({ caption, columns, rows });
 const factors = ["Guests", "Service rate", "Burst share"].map((label, id) => ({ id, label }));
 
@@ -30,9 +30,10 @@ function questions({ scenario, threshold, metric }) {
     text: `${steadyRoute}: ${summarise(rows[0][2 + selected])}. ${variableRoute}: ${summarise(rows[1][2 + selected])}. A trip is late when it takes more than ${threshold} minutes.`,
     tables: [table("Five equally likely journey times", ["Route", "Time (minutes)", "Mean (min)", "Variance (min²)", "p95 (min)", "P(above limit)"], rows)],
     charts: [plot("Outcome number", "Journey time (minutes)", [
-      dots(steadyRoute, stable.map((y, i) => [i + 1, y])), dots(variableRoute, variable.map((y, i) => [i + 1, y])),
-      line("Limit", [[1, threshold], [5, threshold]]),
-    ])],
+      dots(steadyRoute, stable.map((y, i) => [i + 1, y]), "ring"),
+      dots(variableRoute, variable.map((y, i) => [i + 1, y]), "diamond"),
+      line("Time limit", [[1, threshold], [5, threshold]]),
+    ], { xTicks: stable.map((_, i) => [i + 1, String(i + 1)]) })],
   };
 }
 

@@ -18,6 +18,11 @@ const runKey = lesson === "capstone" ? "sensitivity-analysis-lab:capstone:runs-v
 const plots = new ResizeObserver(entries => {
   for (const { target } of entries) target.drawPlot();
 });
+const markerShapes = {
+  ring: "M 17.5 10 A 7.5 7.5 0 1 1 2.5 10 A 7.5 7.5 0 1 1 17.5 10 Z",
+  diamond: "M 10 5 L 15 10 L 10 15 L 5 10 Z",
+};
+const markerStroke = 2.5;
 
 const format = new Intl.NumberFormat("en", { maximumFractionDigits: 4 });
 const display = value => {
@@ -89,6 +94,23 @@ function paddedDomain(values, fixed) {
   return [low - pad, high + pad];
 }
 
+function legendMarker(marker) {
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  const path = document.createElementNS(svg.namespaceURI, "path");
+  svg.setAttribute("viewBox", "0 0 20 20");
+  svg.setAttribute("width", "20");
+  svg.setAttribute("height", "20");
+  svg.setAttribute("aria-hidden", "true");
+  path.setAttribute("d", markerShapes[marker]);
+  path.setAttribute("fill", marker === "ring" ? "none" : "currentColor");
+  if (marker === "ring") {
+    path.setAttribute("stroke", "currentColor");
+    path.setAttribute("stroke-width", markerStroke);
+  }
+  svg.append(path);
+  return svg;
+}
+
 function createPlot(spec) {
   const figure = node("figure", undefined, "course-plot");
   const caption = node("figcaption", `${spec.y} by ${spec.x}`);
@@ -96,9 +118,10 @@ function createPlot(spec) {
   canvas.setAttribute("aria-hidden", "true");
   figure.append(caption, canvas);
   const legend = node("ul", undefined, "course-legend");
-  spec.series.forEach(({ label, dots }, index) => {
+  spec.series.forEach(({ label, dots, marker }, index) => {
     const symbol = (dots ? ["●","■","▲","●"] : ["━","┄","⋯","━"])[index % 4];
-    const item = node("li", `${symbol} ${label}`);
+    const item = node("li", marker ? label : `${symbol} ${label}`);
+    if (marker) item.prepend(legendMarker(marker));
     item.dataset.series = index % 4;
     legend.append(item);
   });
@@ -157,7 +180,8 @@ function createPlot(spec) {
       ctx.beginPath();ctx.moveTo(left,y);ctx.lineTo(right,y);ctx.stroke();
       ctx.textAlign="right";ctx.fillText(label,left-5,y+4,left-7);
     }
-    spec.series.forEach(({points,dots,width: stroke = 2},i) => {
+    spec.series.forEach(({points,dots,marker,width: stroke = 2},i) => {
+      if (marker) return;
       const color = theme.getPropertyValue(`--series-${i%4}`);
       ctx.fillStyle=color;ctx.strokeStyle=color;ctx.lineWidth=stroke;
       ctx.setLineDash(i%4===1 ? [5,3] : i%4===2 ? [2,3] : []);
@@ -178,6 +202,22 @@ function createPlot(spec) {
       }
       if(dots) {ctx.globalAlpha=.7;ctx.fill();ctx.globalAlpha=1;}
       else ctx.stroke();
+    });
+    // Keep these markers above reference lines, including at the time limit.
+    ctx.setLineDash([]);
+    spec.series.forEach(({ points, marker }, index) => {
+      if (!marker) return;
+      const path = new Path2D(markerShapes[marker]);
+      ctx.fillStyle = ctx.strokeStyle = theme.getPropertyValue(`--series-${index % 4}`);
+      ctx.lineWidth = markerStroke;
+      for (const [x, y] of points) {
+        if (y === null) continue;
+        ctx.save();
+        ctx.translate(xAt(x) - 10, yAt(y) - 10);
+        if (marker === "ring") ctx.stroke(path);
+        else ctx.fill(path);
+        ctx.restore();
+      }
     });
   };
   plots.observe(canvas);
@@ -301,7 +341,7 @@ function failure(message) {
   ready(false);
 }
 function startWorker() {
-  worker = new Worker(new URL("./course-worker.mjs?v=6",import.meta.url),{type:"module"});
+  worker = new Worker(new URL("./course-worker.mjs?v=7",import.meta.url),{type:"module"});
   worker.addEventListener("error",event=>{
     event.preventDefault();
     worker.terminate();
