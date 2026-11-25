@@ -56,7 +56,7 @@ function frame(id,title,body,interactive=false) {
   const assets = [];
   if (body.includes('class="concept-figure"')) assets.push(conceptStyles);
   if (id === "curves") assets.push('  <script type="module" src="assets/concept-curve.mjs?v=1"></script>');
-  if (interactive) assets.push('  <script type="module" src="assets/investigation.mjs?v=8"></script>');
+  if (interactive) assets.push('  <script type="module" src="assets/investigation.mjs?v=9"></script>');
   const head=pageStart
     .replace(/<title>.*?<\/title>/,`<title>${html(title)} · Sensitivity Analysis Lab</title>`)
     .replace("</head>", [...assets, "</head>"].join("\n"));

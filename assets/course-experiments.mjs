@@ -14,20 +14,18 @@ const dots = (label, points, marker) => ({ label, points, dots: true, marker });
 const table = (caption, columns, rows) => ({ caption, columns, rows });
 const factors = ["Guests", "Service rate", "Burst share"].map((label, id) => ({ id, label }));
 
-function questions({ scenario, threshold, metric }) {
+function questions({ scenario, threshold }) {
   const stable = [20, 20, 20, 20, 20];
   const variable = scenario === "bursts" ? [10, 10, 10, 10, 60] : [12, 16, 20, 24, 28];
-  const selected = metrics.indexOf(metric);
-  const summarise = value => selected === 3 ? `${Math.round(value * 100)}%`
-    : `${Number(value.toFixed(3))} ${selected === 1 ? "min²" : "min"}`;
   const steadyRoute = "Steady route";
   const variableRoute = "Variable route";
   const pattern = scenario === "bursts" ? "occasional long trip" : "moderate spread";
   const rows = [[steadyRoute, stable], [`${variableRoute} · ${pattern}`, variable]].map(([label, runs]) =>
     [label, runs.join(", "), ...outputStats(runs, threshold)]);
+  const lateChance = row => `${Math.round(row.at(-1) * 100)}%`;
   return {
-    headline: metric,
-    text: `${steadyRoute}: ${summarise(rows[0][2 + selected])}. ${variableRoute}: ${summarise(rows[1][2 + selected])}. A trip is late when it takes more than ${threshold} minutes.`,
+    headline: "Chance of arriving late",
+    text: `${steadyRoute}: ${lateChance(rows[0])}. ${variableRoute}: ${lateChance(rows[1])}. A trip is late when it takes more than ${threshold} minutes.`,
     tables: [table("Five equally likely journey times", ["Route", "Time (minutes)", "Mean (min)", "Variance (min²)", "p95 (min)", "P(above limit)"], rows)],
     charts: [plot("Outcome number", "Journey time (minutes)", [
       dots(steadyRoute, stable.map((y, i) => [i + 1, y]), "ring"),
