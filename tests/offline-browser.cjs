@@ -133,6 +133,8 @@ async function coldCourse() {
       "Downloaded and ready to use offline",
       { timeout: 60000 },
     );
+    await expect(p.locator("#app-status-open [data-badge='saved']")).toBeVisible();
+    await expect(p.locator("#app-status-open")).toHaveAccessibleDescription(/Downloaded and ready to use offline/);
     await context.close();
     context = null;
     await host.stop();
@@ -290,7 +292,7 @@ async function updates() {
     const root = (roots[version] = path.join(directory, version));
     await fs.mkdir(path.join(root, "assets"), { recursive: true });
     for (const file of [
-      "offline.mjs",
+      "offline.mjs", "header-controls.mjs", "header-controls.LICENSE.txt",
       "release-contract.mjs",
       "release-metadata.mjs",
       "experiment-state.mjs",
@@ -388,6 +390,7 @@ async function updates() {
       "Update offline copy",
       { timeout: 30000 },
     );
+    await expect(p.locator("#app-status-open [data-badge='update']")).toBeVisible();
     await p.locator("#download-update").click();
     await expect(p.locator("#app-status-error")).not.toBeEmpty({
       timeout: 30000,
